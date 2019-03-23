@@ -78,12 +78,12 @@
         <h4 class="fw-300 c-grey-900 mB-40">Login</h4>
         <form>
           <div class="form-group">
-            <label class="text-normal text-dark">Username</label>
-            <input type="email" class="form-control" placeholder="John Doe">
+            <label class="text-normal text-dark">Email</label>
+            <input id="l_email" type="email" class="form-control" placeholder="name@email.com">
           </div>
           <div class="form-group">
             <label class="text-normal text-dark">Password</label>
-            <input type="password" class="form-control" placeholder="Password">
+            <input id="l_password" type="password" class="form-control" placeholder="Password">
           </div>
           <div class="form-group">
             <div class="peers ai-c jc-sb fxw-nw">
@@ -95,8 +95,13 @@
                   </label>
                 </div>
               </div>
+
               <div class="peer">
-                <button class="btn btn-primary">Login</button>
+                <button class="btn btn-primary"  type="button" onclick="location.href='signup.html'">Sign Up</button>
+              </div>
+
+              <div class="peer">
+                <button id="login_user" class="btn btn-primary">Login</button>
               </div>
             </div>
           </div>
