@@ -97,16 +97,29 @@
             <label class="text-normal text-dark">Confirm Password</label>
             <input id="r_confirm_password" type="password" class="form-control" placeholder="Password">
           </div>
+
           <div class="form-group">
-            <button id="register_user" class="btn btn-primary">Register</button>
+          <div class="peers ai-c jc-sb fxw-nw">
+            <div class="peer">
+              <button class="btn btn-primary" type="button" onclick="window.location.href = 'signin.html';">Back</button>
+            </div>
+            <div class="peer">
+                  <button id="register_user" class="btn btn-primary">Register</button>
+            </div>
           </div>
-          <div class="form-group">
-            <button class="btn btn-primary" type="button" onclick="window.location.href = 'signin.html';">Back</button>
           </div>
+
         </form>
-        <p id="message">
+        <div id="r_err_message" class="alert alert-danger" role="alert"></div>
+        <div id="r_succ_message" class="alert alert-success" role="alert"></div>
+        <div id="r_loading" class="spinner-border text-success float-right" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
       </div>
     </div>
   </body>
+  <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-firestore.js"></script>
 
 </html>

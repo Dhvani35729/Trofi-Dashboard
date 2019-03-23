@@ -54,6 +54,7 @@
     "datatables": "^1.10.13",
     "easy-pie-chart": "^2.1.7",
     "file-loader": "^1.1.5",
+    "firebase": "^5.9.1",
     "fullcalendar": "^3.6.2",
     "jquery": "^3.2.1",
     "jquery-sparkline": "^2.4.0",

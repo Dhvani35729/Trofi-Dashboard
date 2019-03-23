@@ -89,7 +89,7 @@
             <div class="peers ai-c jc-sb fxw-nw">
               <div class="peer">
                 <div class="checkbox checkbox-circle checkbox-info peers ai-c">
-                  <input type="checkbox" id="inputCall1" name="inputCheckboxesCall" class="peer">
+                  <input type="checkbox" id="remember_me" name="inputCheckboxesCall" class="peer">
                   <label for="inputCall1" class=" peers peer-greed js-sb ai-c">
                     <span class="peer peer-greed">Remember Me</span>
                   </label>
@@ -106,6 +106,12 @@
             </div>
           </div>
         </form>
+
+        <div id="l_err_message" class="alert alert-danger" role="alert"></div>
+        <div id="l_succ_message" class="alert alert-success" role="alert"></div>
+        <div id="l_loading" class="spinner-border text-success float-right" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
       </div>
     </div>
   </body>
