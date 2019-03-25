@@ -71,7 +71,7 @@ var db = firebase.firestore();
     });
 
   $('#login_user').on('click', e => {
-    loginUser();
+    loginUser(db);
     e.preventDefault();
   });
 }
@@ -220,6 +220,7 @@ function registerUser(db){
                               resPrivateRef.set({
                                   accepted_code: trofi_code,
                                   name: name,
+                                  allow_in: false,
                                   payment_id: "",
                                   total_orders: 0,
                                   credit_card_percentage: 0,
@@ -822,7 +823,7 @@ function registerUser(db){
 
 }
 
-function loginUser(){
+function loginUser(db){
   console.log("login in...");
 
   var email = $('#l_email').val();
@@ -839,19 +840,55 @@ function loginUser(){
 
       firebase.auth().signInWithEmailAndPassword(email, password).then(function(){
         console.log("signed in");
+        var user = firebase.auth().currentUser;
+        const resRef = db.collection("restaurants").doc(user.uid);
+        const resPrivateRef = resRef.collection('private').doc(user.uid);
 
-        $('l_err_message').hide();
-        $('#l_loading').hide();
-        $('#l_succ_message').text("Successfully signed in! Redirecting you to dashboard...").show();
+        resPrivateRef.get().then(function(doc) {
+            if (doc.exists) {
+                //console.log("Document data:", doc.data());
 
-        localStorage.setItem("remember_me_trofi",rememberMe);
+                if(doc.data().allow_in == true){
+                  $('l_err_message').hide();
+                  $('#l_loading').hide();
+                  $('#l_succ_message').text("Successfully signed in! Redirecting you to dashboard...").show();
+
+                  localStorage.setItem("remember_me_trofi",rememberMe);
 
 
-                         // Sign-out successful.''
-       setTimeout( function() {
-                           // code that must be executed after pause
-             window.location.href = "index.html";
-       }, 3000 );
+                                   // Sign-out successful.''
+                 setTimeout( function() {
+                                     // code that must be executed after pause
+                       window.location.href = "index.html";
+                 }, 3000 );
+                }
+                else{
+                  $('#l_err_message').text("Trofi has not verified your account yet. Please wait to receive an email.").show();
+
+                  // sign out without navigating pages
+                  firebase.auth().signOut().then(function() {
+                  // Sign-out successful.
+
+                    //  return false;
+
+                }, function(error) {
+                  // An error happened.
+                    $('#l_err_message').text(error).show();
+                });
+
+
+                }
+
+            } else {
+                // doc.data() will be undefined in this case
+              //   console.log("No such document!");
+            }
+        }).catch(function(error) {
+          //  console.log("Error getting document:", error);
+              $('#l_err_message').text(error).show();
+        });
+
+
 
       }).catch(function(error) {
           // Handle Errors here.
