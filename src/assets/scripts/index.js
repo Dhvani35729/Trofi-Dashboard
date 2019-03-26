@@ -1,6 +1,6 @@
 import '../styles/index.scss';
 
-import './app';
+import './auth';
 
 import './masonry';
 import './charts';
