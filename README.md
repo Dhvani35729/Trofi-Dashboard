@@ -1,5 +1,8 @@
 # Trofi Dashboard
 
+## Live: 
+https://daydesign-a277f.firebaseapp.com/signin.html
+
 ## To run:
 
 `npm install`
@@ -9,9 +12,6 @@
 
 ## Production Env:
 `npm run build`
-
-## Live: 
-https://daydesign-a277f.firebaseapp.com/signin.html
 
 ### Template Credit: Adminator
 Author: Colorlib
