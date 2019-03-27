@@ -106,17 +106,21 @@ function handleUserAuth(db){
 
     var incomingOrdersData = [];
 
-    var tableIncoming = new Tabulator("#example-table", {
+    var tableIncoming = new Tabulator("#incoming-table", {
      height:"100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
      reactiveData:true, //enable reactive data
      data:incomingOrdersData, //assign data to table
      layout:"fitColumns", //fit columns to width of table (optional)
      columns:[ //DeffitDataine Table Columns
+       {formatter:"rownum", align:"center", width:40},
        {title:"Order Number", field:"id"},
        {title:"Order Placed At", field:"placed_at"},
        {title:"Order Active Between", field:"active_between"},
        {title:"Current Price $CAD", field:"current_price", sorter:"string"},
-       {title:"Status Ready", field:"status", formatter:"tickCross", editor:true, align:"center", sorter:"boolean"},
+       {title:"Status Ready", field:"status", formatter:"tickCross", editor:true, align:"center", sorter:"boolean", cellEdited:function(cell){
+    //cell - cell component
+    ready_food(db, user, cell)
+    }},
      ],
      rowFormatter:function(row){
        //create and style holder elements
@@ -259,6 +263,29 @@ function handleUserAuth(db){
     }
 
   }
+});
+
+}
+
+function ready_food(db, user, cell){
+  console.log(cell);
+  console.log(cell.getRow().getData().id);
+
+  // set status of food to ready:
+  var orderUpdateRef = db.collection("orders").doc("wbc_transc_" + cell.getRow().getData().id);
+  var incomingUpdateRef = db.collection("restaurants").doc(user.uid).collection("private").doc(user.uid).collection("orders").doc("wbc_transc_" + cell.getRow().getData().id);
+
+  orderUpdateRef.update({
+    "status_ready": cell.getValue(),
+})
+.then(function() {
+  //  console.log("Status successfully updated!");
+    incomingUpdateRef.update({
+      "incoming": !cell.getValue(),
+  })
+  .then(function() {
+      console.log("Status successfully updated!");
+  });
 });
 
 }
