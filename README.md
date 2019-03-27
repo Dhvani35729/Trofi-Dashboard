@@ -1,7 +1,7 @@
 # Trofi Dashboard
 
 ## Live: 
-https://daydesign-a277f.firebaseapp.com/signin.html
+https://daydesign-a277f.firebaseapp.com/
 
 ## To run:
 
