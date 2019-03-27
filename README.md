@@ -18,7 +18,8 @@ Author: Colorlib
 https://github.com/puikinsh/Adminator-admin-dashboard
 
 ### Libraries Added:
-Firebase
+Firebase 
+
 Tabulator
 
 WBC & LETAP
