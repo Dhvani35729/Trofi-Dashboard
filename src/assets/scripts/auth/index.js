@@ -129,11 +129,11 @@ function handleUserAuth(db){
          data:manageData, //assign data to table
          dataLoading:function(data){
           //data - the data loading into the table
-            $('#m_loading').show();
+          //  $('#m_loading').show();
           },
           dataLoaded:function(data){
          //data - all data loaded into the table
-           $('#m_loading').hide();
+
          },
          layout:"fitColumns", //fit columns to width of table (optional)
          initialSort:[
@@ -194,7 +194,7 @@ console.log("render");
           }
       });
 
-
+      $('#m_loading').show();
       var hoursRef = db.collection("restaurants").doc(user.uid).collection("hours");
     hoursRef.get().then(function(querySnapshot) {
           querySnapshot.forEach(function(doc) {
@@ -227,7 +227,7 @@ console.log("render");
               }
 
               manageData.push(hour);
-              tableManage.setSort("sort_id", "asc");
+
             //  console.log("sorting..");
             //  console.log(manageData.length);
             //  manageData.sort((a, b) => parseInt(a.sort_id) - parseInt(b.sort_id));
@@ -236,6 +236,9 @@ console.log("render");
               // }
             //  console.log("sorted..");
           });
+
+          tableManage.setSort("sort_id", "asc");
+          $('#m_loading').hide();
       });
 
 
