@@ -151,7 +151,13 @@ console.log("render");
     //   return "<label class=\"switch\"><input id=\"slider_" + cell.getRow().getData().id + "\" type=\"checkbox\" checked><span class=\"slider round\"></span></label>"
     // }
     // else{
-      return "<label class=\"switch\"><input id=\"slider_" + cell.getRow().getData().id + "\" type=\"checkbox\"><span class=\"slider round\"></span></label>"
+    onRendered(function(){
+      console.log('set active');
+      console.log(cell.getValue());
+       $("#slider_" + cell.getRow().getData().sort_id).prop('checked', cell.getValue());
+    });
+
+      return "<label class=\"switch\"><input id=\"slider_" + cell.getRow().getData().sort_id + "\" type=\"checkbox\"><span class=\"slider round\"></span></label>"
     // }
 
 
@@ -192,6 +198,11 @@ console.log("render");
                 //Do stuff
                 console.log("checked!");
           }
+
+          var updateActiveRef = db.collection("restaurants").doc(user.id).collection("hours").doc("0");
+
+
+
       });
 
       $('#m_loading').show();
