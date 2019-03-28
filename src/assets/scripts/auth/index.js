@@ -104,6 +104,127 @@ function handleUserAuth(db){
      window.location.href = "index.html";
     }
 
+      if(document.URL.indexOf("manage.html") != -1){
+
+
+        var manageData = [{
+            active: true,
+            id: "10:00 AM",
+            edit_details: "Edit Details",
+            starting_discount: 10,
+        }
+
+        ];
+
+        var activeEditor = function(cell, onRendered, success, cancel, editorParams){
+    //cell - the cell component for the editable cell
+    //onRendered - function to call when the editor has been rendered
+    //success - function to call to pass the successfuly updated value to Tabulator
+    //cancel - function to call to abort the edit and return to a normal cell
+    //editorParams - params object passed into the editorParams column definition property
+
+    //create and style editor
+
+    var label = document.createElement("label");
+    label.setAttribute("class", "switch");
+
+    var input = document.createElement("input");
+    input.setAttribute("type", "checkbox");
+
+    label.appendChild(input);
+
+    var slider = document.createElement("span");
+    slider.setAttribute("class", "slider round");
+    input.appendChild(slider);
+
+    input.value = cell.getValue();
+
+    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+    onRendered(function(){
+        input.focus();
+        input.style.css = "100%";
+    });
+
+    //when the value has been set, trigger the cell to update
+    function successFunc(){
+      console.log(input.value);
+      //  success(moment(editor.value, "YYYY-MM-DD").format("DD/MM/YYYY"));
+    }
+     input.addEventListener("change", successFunc);
+  //  editor.addEventListener("change", successFunc);
+  //  editor.addEventListener("blur", successFunc);
+    //return the editor element
+    return label;
+};
+
+
+        var tableManage = new Tabulator("#manage-table", {
+         height:"100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+         reactiveData:true, //enable reactive data
+         data:manageData, //assign data to table
+         layout:"fitColumns", //fit columns to width of table (optional)
+         columns:[ //DeffitDataine Table Columns
+           {title:"Active", field:"active", formatter:function(cell, formatterParams, onRendered){
+    //cell - the cell component
+    //formatterParams - parameters set for the column
+    //onRendered - function to call when the formatter has been rendered
+console.log("render");
+    console.log(cell.getValue());
+    // if(cell.getValue() == true){
+    //   return "<label class=\"switch\"><input id=\"slider_" + cell.getRow().getData().id + "\" type=\"checkbox\" checked><span class=\"slider round\"></span></label>"
+    // }
+    // else{
+      return "<label class=\"switch\"><input id=\"slider_" + cell.getRow().getData().id + "\" type=\"checkbox\"><span class=\"slider round\"></span></label>"
+    // }
+
+
+},cellClick:function(e, cell){
+    //e - the click event object
+    //cell - cell component
+    console.log("click");
+    // cell.setValue(!cell.getValue(), true);
+
+    }
+},
+           {title:"Hour", field:"id"},
+           {title:"Edit Details", field:"edit_details", formatter:function(cell, formatterParams, onRendered){
+    //cell - the cell component
+    //formatterParams - parameters set for the column
+    //onRendered - function to call when the formatter has been rendered
+     return "<button type=\"button\" class=\"btn cur-p btn-outline-primary\">Edit Details</button>"
+
+}},
+           {title:"Starting Discount %", field:"starting_discount: 10", formatter:function(cell, formatterParams, onRendered){
+    //cell - the cell component
+    //formatterParams - parameters set for the column
+    //onRendered - function to call when the formatter has been rendered
+     return "<input type=\"number\" min=\"0\" max=\"100\" name=\"set_discount\" value=\"0\">"
+
+}},
+         ],
+         rowClick:function(e, row){ //trigger an alert message when the row is clicked
+          //  alert("Row " + row.getData().id + " Clicked!!!!");
+          console.log("Row " + row.getData().id + " Clicked!!!!");
+         },
+       });
+
+       $('[id^="slider_"]').keypress(function() {
+         console.log("yay");
+         console.log($(this));
+       });
+
+
+
+      }
+
+
+
+
+  if(document.URL.indexOf("index.html") != -1){
+
+                      // display table:
+
+                      //create Tabulator on DOM element with id "example-table"
     var incomingOrdersData = [];
 
     var tableIncoming = new Tabulator("#incoming-table", {
@@ -235,22 +356,142 @@ function handleUserAuth(db){
 
     });
 
-
-
-
-
-
-
-                if(document.URL.indexOf("index.html") != -1){
-
-                  // display table:
-
-                  //create Tabulator on DOM element with id "example-table"
-
-
-
                 }
 
+
+    if(document.URL.indexOf("history.html") != -1){
+
+                                    // display table:
+
+                                    //create Tabulator on DOM element with id "example-table"
+                  var allOrdersData = [];
+
+                  var tableAll = new Tabulator("#history-table", {
+                   height:"100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+                   reactiveData:true, //enable reactive data
+                   data:allOrdersData, //assign data to table
+                   layout:"fitColumns", //fit columns to width of table (optional)
+                   columns:[ //DeffitDataine Table Columns
+                     {formatter:"rownum", align:"center", width:40},
+                     {title:"Order Number", field:"id"},
+                     {title:"Order Placed At", field:"placed_at"},
+                     {title:"Order Active Between", field:"active_between"},
+                     {title:"Current Price $CAD", field:"current_price", sorter:"string"},
+                     {title:"Status Ready", field:"status", formatter:"tickCross", align:"center", sorter:"boolean"},
+                   ],
+                   rowFormatter:function(row){
+                     //create and style holder elements
+                    var holderEl = document.createElement("div");
+                    var tableEl = document.createElement("div");
+
+                    holderEl.style.boxSizing = "border-box";
+                    holderEl.style.padding = "10px 30px 10px 10px";
+                    holderEl.style.borderTop = "1px solid #333";
+                    holderEl.style.borderBotom = "1px solid #333";
+                    holderEl.style.background = "#ddd";
+
+                    tableEl.style.border = "1px solid #333";
+
+                    holderEl.appendChild(tableEl);
+
+                    row.getElement().appendChild(holderEl);
+
+                    var subTable = new Tabulator(tableEl, {
+                        layout:"fitColumns",
+                        data:row.getData().items,
+                        columns:[
+                        {title:"Food Name", field:"name"},
+                        {title:"Quantity", field:"quantity"},
+                        {title:"Price", field:"initial_price"},
+                        {title:"Toppings", field:"toppings"},
+                        {title:"Comments", field:"comments"},
+                        ]
+                    })
+                 },
+                   rowClick:function(e, row){ //trigger an alert message when the row is clicked
+                    //  alert("Row " + row.getData().id + " Clicked!!!!");
+                    console.log("Row " + row.getData().id + " Clicked!!!!");
+                   },
+                 });
+
+                       //Trigger sort when "Trigger Sort" button is clicked
+                 $("#sort-trigger").click(function(){
+                    tableAll.setSort($("#sort-field").val(), $("#sort-direction").val());
+                 });
+
+                  var totalOrdersListener = db.collection("restaurants").doc(user.uid).collection("private").doc(user.uid);
+
+                  totalOrdersListener.onSnapshot(function(doc) {
+                      //console.log("Current data: ", doc.data());
+                      // console.log(doc.data().total_orders);
+
+                      console.log("listener for # total orders set");
+                      // tableIncoming.clearData();
+                      var ordersRef = db.collection("restaurants").doc(user.uid).collection("private").doc(user.uid).collection("orders");
+
+                      ordersRef.get().then(function(querySnapshot) {
+
+                      querySnapshot.forEach(function(doc) {
+                            // doc.data() is never undefined for query doc snapshots
+                          console.log(doc.id, " => ", doc.data());
+
+                          // Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
+                          console.log("getting incoming orders")
+                          console.log(allOrdersData);
+                          for(var i = 0; i < allOrdersData.length; i++){
+                            allOrdersData.pop();
+                            console.log("popping");
+                          }
+                          console.log("done popping" + allOrdersData.length);
+
+                          var inOrderRef = db.collection("orders").doc(doc.id);
+
+                          inOrderRef.get().then(function(doc) {
+                              if (doc.exists) {
+                                  console.log("Order data:", doc.data());
+                                  var orderData = doc.data();
+
+                                  var orderHours = pad(orderData.placed_at.toDate().getHours(), 2);
+                                  var orderMins = pad(orderData.placed_at.toDate().getMinutes(), 2);
+                                  var activeHours = tConvert(orderData.hours_order.substring(0, 2) + ":00") + " - " + tConvert(orderData.hours_order.substring(3, 5) + ":00");
+                                  console.log(activeHours);
+
+                                  var an_order = {
+                                    id: orderData.order_id,
+                                    placed_at: tConvert(orderHours + ":" + orderMins),
+                                    active_between: activeHours,
+                                    current_price: orderData.total_price,
+                                    items: orderData.foods,
+                                    status: orderData.status_ready,
+                                  };
+                                  console.log(an_order);
+                                  console.log("show order ^");
+                                //  incomingOrdersData.push(an_order);
+                                  console.log(allOrdersData);
+                                  //table.redraw(true);
+                                  allOrdersData.push(an_order);
+
+                                  // console.log('shifted');
+
+                              } else {
+                                  // doc.data() will be undefined in this case
+                                  console.log("No such document!");
+                              }
+                          }).catch(function(error) {
+                              console.log("Error getting document:", error);
+                          });
+
+
+
+                      });
+                        })
+                        .catch(function(error) {
+                            console.log("Error getting documents: ", error);
+                        });
+
+                  });
+
+                              }
 
 
 
@@ -265,6 +506,11 @@ function handleUserAuth(db){
   }
 });
 
+}
+
+function discountsSwitch(event){
+  console.log(event);
+  console.log("disc");
 }
 
 function ready_food(db, user, cell){
