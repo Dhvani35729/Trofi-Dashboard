@@ -106,64 +106,41 @@ function handleUserAuth(db){
 
       if(document.URL.indexOf("manage.html") != -1){
 
+        var sort_by = function(field, reverse, primer){
 
-        var manageData = [{
-            active: true,
-            id: "10:00 AM",
-            edit_details: "Edit Details",
-            starting_discount: 10,
-        }
+   var key = primer ?
+       function(x) {return primer(x[field])} :
+       function(x) {return x[field]};
 
-        ];
+   reverse = !reverse ? 1 : -1;
 
-        var activeEditor = function(cell, onRendered, success, cancel, editorParams){
-    //cell - the cell component for the editable cell
-    //onRendered - function to call when the editor has been rendered
-    //success - function to call to pass the successfuly updated value to Tabulator
-    //cancel - function to call to abort the edit and return to a normal cell
-    //editorParams - params object passed into the editorParams column definition property
+   return function (a, b) {
+       return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+     }
+}
 
-    //create and style editor
 
-    var label = document.createElement("label");
-    label.setAttribute("class", "switch");
-
-    var input = document.createElement("input");
-    input.setAttribute("type", "checkbox");
-
-    label.appendChild(input);
-
-    var slider = document.createElement("span");
-    slider.setAttribute("class", "slider round");
-    input.appendChild(slider);
-
-    input.value = cell.getValue();
-
-    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-    onRendered(function(){
-        input.focus();
-        input.style.css = "100%";
-    });
-
-    //when the value has been set, trigger the cell to update
-    function successFunc(){
-      console.log(input.value);
-      //  success(moment(editor.value, "YYYY-MM-DD").format("DD/MM/YYYY"));
-    }
-     input.addEventListener("change", successFunc);
-  //  editor.addEventListener("change", successFunc);
-  //  editor.addEventListener("blur", successFunc);
-    //return the editor element
-    return label;
-};
+        var manageData = [];
 
 
         var tableManage = new Tabulator("#manage-table", {
          height:"100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
          reactiveData:true, //enable reactive data
          data:manageData, //assign data to table
+         dataLoading:function(data){
+          //data - the data loading into the table
+            $('#m_loading').show();
+          },
+          dataLoaded:function(data){
+         //data - all data loaded into the table
+           $('#m_loading').hide();
+         },
          layout:"fitColumns", //fit columns to width of table (optional)
+         initialSort:[
+    {column:"sort", dir:"asc"}, //sort by this first
+  ],
          columns:[ //DeffitDataine Table Columns
+           {title:"sort", field:"sort_id", visible: false},
            {title:"Active", field:"active", formatter:function(cell, formatterParams, onRendered){
     //cell - the cell component
     //formatterParams - parameters set for the column
@@ -194,11 +171,11 @@ console.log("render");
      return "<button type=\"button\" class=\"btn cur-p btn-outline-primary\">Edit Details</button>"
 
 }},
-           {title:"Starting Discount %", field:"starting_discount: 10", formatter:function(cell, formatterParams, onRendered){
+           {title:"Starting Discount %", field:"starting_discount", formatter:function(cell, formatterParams, onRendered){
     //cell - the cell component
     //formatterParams - parameters set for the column
     //onRendered - function to call when the formatter has been rendered
-     return "<input type=\"number\" min=\"0\" max=\"100\" name=\"set_discount\" value=\"0\">"
+     return "<input type=\"number\" min=\"0\" max=\"100\" name=\"set_discount\" value=\"" + cell.getValue() + "\">"
 
 }},
          ],
@@ -208,10 +185,58 @@ console.log("render");
          },
        });
 
-       $('[id^="slider_"]').keypress(function() {
-         console.log("yay");
-         console.log($(this));
-       });
+       $('[id^="slider_"]').change(function() {
+         console.log("clicked :>");
+         console.log(this);
+            if(this.checked) {
+                //Do stuff
+                console.log("checked!");
+          }
+      });
+
+
+      var hoursRef = db.collection("restaurants").doc(user.uid).collection("hours");
+    hoursRef.get().then(function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+              // doc.data() is never undefined for query doc snapshots
+              console.log(doc.id, " => ", doc.data());
+
+              var startingDisc = 0;
+              for(var i = 0; i < doc.data().discounts.length; i++){
+
+                  if(doc.data().discounts[i].is_active == true){
+                    startingDisc = doc.data().discounts[i].percent_discount;
+                    break;
+                  }
+              }
+            //  console.log(startingDisc);
+              var timeId = 0;
+              if(doc.id < 10){
+                timeId = tConvert("0" + doc.id + ":00");
+              }
+              else{
+                timeId = tConvert(doc.id + ":00");
+              }
+
+              var hour = {
+                sort_id: doc.id,
+                id: timeId,
+                edit_details: "Edit Details",
+                starting_discount: startingDisc,
+                active: doc.data().hour_is_active,
+              }
+
+              manageData.push(hour);
+              tableManage.setSort("sort_id", "asc");
+            //  console.log("sorting..");
+            //  console.log(manageData.length);
+            //  manageData.sort((a, b) => parseInt(a.sort_id) - parseInt(b.sort_id));
+              // for(var i = 0; i < manageData.length; i++){
+              //   console.log(manageData[i].id);
+              // }
+            //  console.log("sorted..");
+          });
+      });
 
 
 
