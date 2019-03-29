@@ -106,39 +106,13 @@ function handleUserAuth(db){
 
       if(document.URL.indexOf("manage.html") != -1){
 
-        var sort_by = function(field, reverse, primer){
-
-   var key = primer ?
-       function(x) {return primer(x[field])} :
-       function(x) {return x[field]};
-
-   reverse = !reverse ? 1 : -1;
-
-   return function (a, b) {
-       return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
-     }
-}
-
-
         var manageData = [];
-
 
         var tableManage = new Tabulator("#manage-table", {
          height:"100%", // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
          reactiveData:true, //enable reactive data
          data:manageData, //assign data to table
-         dataLoading:function(data){
-          //data - the data loading into the table
-          //  $('#m_loading').show();
-          },
-          dataLoaded:function(data){
-         //data - all data loaded into the table
-
-         },
          layout:"fitColumns", //fit columns to width of table (optional)
-         initialSort:[
-    {column:"sort", dir:"asc"}, //sort by this first
-  ],
          columns:[ //DeffitDataine Table Columns
            {title:"sort", field:"sort_id", visible: false},
            {title:"Active", field:"active", formatter:function(cell, formatterParams, onRendered){
@@ -164,7 +138,23 @@ console.log("render");
 },cellClick:function(e, cell){
     //e - the click event object
     //cell - cell component
-    console.log("click");
+    console.log("click time active");
+    console.log(cell.getRow().getData().sort_id);
+    var timeRef = db.collection("restaurants").doc(user.uid).collection("hours").doc(cell.getRow().getData().sort_id);
+
+    timeRef.update({
+          hour_is_active: !cell.getValue()
+    })
+    .then(function() {
+        console.log("Cell Active successfully updated!");
+        // cell.setValue(!cell.getValue(), true);
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });
+
+
     // cell.setValue(!cell.getValue(), true);
 
     }
@@ -191,68 +181,120 @@ console.log("render");
          },
        });
 
-       $('[id^="slider_"]').change(function() {
-         console.log("clicked :>");
-         console.log(this);
-            if(this.checked) {
-                //Do stuff
-                console.log("checked!");
-          }
-
-          var updateActiveRef = db.collection("restaurants").doc(user.id).collection("hours").doc("0");
-
-
-
-      });
 
       $('#m_loading').show();
-      var hoursRef = db.collection("restaurants").doc(user.uid).collection("hours");
-    hoursRef.get().then(function(querySnapshot) {
-          querySnapshot.forEach(function(doc) {
-              // doc.data() is never undefined for query doc snapshots
-              console.log(doc.id, " => ", doc.data());
+       $('#all_slider_message').hide();
+       $('#s_all_active').hide();
 
-              var startingDisc = 0;
-              for(var i = 0; i < doc.data().discounts.length; i++){
+      $('#s_all_active').change(function() {
+                console.log("all slider");
+                console.log(this);
 
-                  if(doc.data().discounts[i].is_active == true){
-                    startingDisc = doc.data().discounts[i].percent_discount;
-                    break;
+                var allRef = db.collection("restaurants").doc(user.uid);
+                var statusActive = this.checked;
+                allRef.update({
+                    all_discounts_active: statusActive
+                })
+                .then(function() {
+                    console.log("Active successfully updated!");
+                    if(statusActive) {
+                        //Do stuff
+                        // console.log("checked!");
+                        $('#all_slider_message').text("Discounts Live").show();
                   }
-              }
-            //  console.log(startingDisc);
-              var timeId = 0;
-              if(doc.id < 10){
-                timeId = tConvert("0" + doc.id + ":00");
-              }
-              else{
-                timeId = tConvert(doc.id + ":00");
-              }
+                  else{
+                    $('#all_slider_message').text("Discounts Disabled").show();
+                  }
+                })
+                .catch(function(error) {
+                    // The document probably doesn't exist.
+                    console.error("Error updating document: ", error);
+                });
 
-              var hour = {
-                sort_id: doc.id,
-                id: timeId,
-                edit_details: "Edit Details",
-                starting_discount: startingDisc,
-                active: doc.data().hour_is_active,
-              }
 
-              manageData.push(hour);
 
-            //  console.log("sorting..");
-            //  console.log(manageData.length);
-            //  manageData.sort((a, b) => parseInt(a.sort_id) - parseInt(b.sort_id));
-              // for(var i = 0; i < manageData.length; i++){
-              //   console.log(manageData[i].id);
-              // }
-            //  console.log("sorted..");
-          });
 
-          tableManage.setSort("sort_id", "asc");
-          $('#m_loading').hide();
       });
 
+      var resRef = db.collection("restaurants").doc(user.uid);
 
+      resRef.get().then(function(doc) {
+        if (doc.exists) {
+            console.log("Document data:", doc.data());
+
+
+            var hoursRef = db.collection("restaurants").doc(user.uid).collection("hours");
+            var opHours = doc.data().op_hours;
+            var opening = parseInt(opHours.substring(0, 2));
+            var closing = parseInt(opHours.substring(3, 5));
+            console.log(opening);
+            console.log(closing);
+
+            var query = hoursRef.where("start_id", ">=", opening).where("start_id", "<", closing)
+
+            query.get()
+    .then(function(querySnapshot) {
+                  console.log("got em");
+               querySnapshot.forEach(function(doc) {
+
+                 console.log(doc.id, " => ", doc.data());
+
+                 var startingDisc = 0;
+                 for(var i = 0; i < doc.data().discounts.length; i++){
+
+                     if(doc.data().discounts[i].is_active == true){
+                       startingDisc = doc.data().discounts[i].percent_discount;
+                       break;
+                     }
+                 }
+               //  console.log(startingDisc);
+                 var timeId = 0;
+                 if(doc.id < 10){
+                   timeId = tConvert("0" + doc.id + ":00");
+                 }
+                 else{
+                   timeId = tConvert(doc.id + ":00");
+                 }
+
+                 var hour = {
+                   sort_id: doc.id,
+                   id: timeId,
+                   edit_details: "Edit Details",
+                   starting_discount: startingDisc,
+                   active: doc.data().hour_is_active,
+                 }
+
+
+                   manageData.push(hour);
+
+
+               });
+
+
+
+                     tableManage.setSort("sort_id", "asc");
+                      $('#m_loading').hide();
+                      $('#s_all_active').prop("checked", doc.data().all_discounts_active);
+                              if(doc.data().all_discounts_active == true) {
+                                     //Do stuff
+                                     // console.log("checked!");
+                                     $('#all_slider_message').text("Discounts Live").show();
+                               }
+                               else{
+                                 $('#all_slider_message').text("Discounts Disabled").show();
+                               }
+
+           });
+
+
+
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
 
       }
 
@@ -689,6 +731,7 @@ function registerUser(db){
                                   // console.log("Document successfully written!");
 
                                   init0HoursRef.set({
+                                      start_id: 0,
                                       operating_cost: 0,
                                       current_contributed: 0,
                                       hour_is_active: false,
@@ -704,6 +747,7 @@ function registerUser(db){
                                     //  console.log("Document successfully written!");
 
                                     init1HoursRef.set({
+                                      start_id: 1,
                                         operating_cost: 0,
                                         current_contributed: 0,
                                         hour_is_active: false,
@@ -719,6 +763,7 @@ function registerUser(db){
                                       //  console.log("Document successfully written!");
 
                                       init2HoursRef.set({
+                                        start_id: 2,
                                           operating_cost: 0,
                                           current_contributed: 0,
                                           hour_is_active: false,
@@ -734,6 +779,7 @@ function registerUser(db){
                                         //  console.log("Document successfully written!");
 
                                         init3HoursRef.set({
+                                          start_id: 3,
                                             operating_cost: 0,
                                             current_contributed: 0,
                                             hour_is_active: false,
@@ -749,6 +795,7 @@ function registerUser(db){
                                           //  console.log("Document successfully written!");
 
                                           init4HoursRef.set({
+                                            start_id: 4,
                                               operating_cost: 0,
                                               current_contributed: 0,
                                               hour_is_active: false,
@@ -764,6 +811,7 @@ function registerUser(db){
                                             //  console.log("Document successfully written!");
 
                                             init5HoursRef.set({
+                                              start_id: 5,
                                                 operating_cost: 0,
                                                 current_contributed: 0,
                                                 hour_is_active: false,
@@ -779,6 +827,7 @@ function registerUser(db){
                                               //  console.log("Document successfully written!");
 
                                               init6HoursRef.set({
+                                                start_id: 6,
                                                   operating_cost: 0,
                                                   current_contributed: 0,
                                                   hour_is_active: false,
@@ -794,6 +843,7 @@ function registerUser(db){
                                                 //  console.log("Document successfully written!");
 
                                                 init7HoursRef.set({
+                                                  start_id: 7,
                                                     operating_cost: 0,
                                                     current_contributed: 0,
                                                     hour_is_active: false,
@@ -809,6 +859,7 @@ function registerUser(db){
                                                   //  console.log("Document successfully written!");
 
                                                   init8HoursRef.set({
+                                                    start_id: 8,
                                                       operating_cost: 0,
                                                       current_contributed: 0,
                                                       hour_is_active: false,
@@ -824,6 +875,7 @@ function registerUser(db){
                                                     //  console.log("Document successfully written!");
 
                                                     init9HoursRef.set({
+                                                      start_id: 9,
                                                         operating_cost: 0,
                                                         current_contributed: 0,
                                                         hour_is_active: false,
@@ -839,6 +891,7 @@ function registerUser(db){
                                                       //  console.log("Document successfully written!");
 
                                                       init10HoursRef.set({
+                                                        start_id: 10,
                                                           operating_cost: 0,
                                                           current_contributed: 0,
                                                           hour_is_active: false,
@@ -854,6 +907,7 @@ function registerUser(db){
                                                         // console.log("Document successfully written!");
 
                                                         init11HoursRef.set({
+                                                              start_id: 11,
                                                             operating_cost: 0,
                                                             current_contributed: 0,
                                                             hour_is_active: false,
@@ -869,6 +923,7 @@ function registerUser(db){
                                                           // console.log("Document successfully written!");
 
                                                           init12HoursRef.set({
+                                                                start_id: 12,
                                                               operating_cost: 0,
                                                               current_contributed: 0,
                                                               hour_is_active: false,
@@ -884,6 +939,7 @@ function registerUser(db){
                                                             // console.log("Document successfully written!");
 
                                                             init13HoursRef.set({
+                                                                  start_id: 13,
                                                                 operating_cost: 0,
                                                                 current_contributed: 0,
                                                                 hour_is_active: false,
@@ -899,6 +955,7 @@ function registerUser(db){
                                                               // console.log("Document successfully written!");
 
                                                               init14HoursRef.set({
+                                                                    start_id: 14,
                                                                   operating_cost: 0,
                                                                   current_contributed: 0,
                                                                   hour_is_active: false,
@@ -914,6 +971,7 @@ function registerUser(db){
                                                                 // console.log("Document successfully written!");
 
                                                                 init15HoursRef.set({
+                                                                      start_id: 15,
                                                                     operating_cost: 0,
                                                                     current_contributed: 0,
                                                                     hour_is_active: false,
@@ -929,6 +987,7 @@ function registerUser(db){
                                                                   // console.log("Document successfully written!");
 
                                                                   init16HoursRef.set({
+                                                                        start_id: 16,
                                                                       operating_cost: 0,
                                                                       current_contributed: 0,
                                                                       hour_is_active: false,
@@ -944,6 +1003,7 @@ function registerUser(db){
                                                                     // console.log("Document successfully written!");
 
                                                                     init17HoursRef.set({
+                                                                          start_id: 17,
                                                                         operating_cost: 0,
                                                                         current_contributed: 0,
                                                                         hour_is_active: false,
@@ -959,6 +1019,7 @@ function registerUser(db){
                                                                       // console.log("Document successfully written!");
 
                                                                       init18HoursRef.set({
+                                                                            start_id: 18,
                                                                           operating_cost: 0,
                                                                           current_contributed: 0,
                                                                           hour_is_active: false,
@@ -974,6 +1035,7 @@ function registerUser(db){
                                                                         // console.log("Document successfully written!");
 
                                                                         init19HoursRef.set({
+                                                                              start_id: 19,
                                                                             operating_cost: 0,
                                                                             current_contributed: 0,
                                                                             hour_is_active: false,
@@ -989,6 +1051,7 @@ function registerUser(db){
                                                                           // console.log("Document successfully written!");
 
                                                                           init20HoursRef.set({
+                                                                                start_id: 20,
                                                                               operating_cost: 0,
                                                                               current_contributed: 0,
                                                                               hour_is_active: false,
@@ -1004,6 +1067,7 @@ function registerUser(db){
                                                                             // console.log("Document successfully written!");
 
                                                                             init21HoursRef.set({
+                                                                              start_id: 21,
                                                                                 operating_cost: 0,
                                                                                 current_contributed: 0,
                                                                                 hour_is_active: false,
@@ -1019,6 +1083,7 @@ function registerUser(db){
                                                                               // console.log("Document successfully written!");
 
                                                                               init22HoursRef.set({
+                                                                                start_id: 22,
                                                                                   operating_cost: 0,
                                                                                   current_contributed: 0,
                                                                                   hour_is_active: false,
@@ -1034,6 +1099,7 @@ function registerUser(db){
                                                                                 // console.log("Document successfully written!");
 
                                                                                 init23HoursRef.set({
+                                                                                  start_id: 23,
                                                                                     operating_cost: 0,
                                                                                     current_contributed: 0,
                                                                                     hour_is_active: false,
