@@ -176,20 +176,62 @@ function handleUserAuth(db){
                                                                                 cellClick:function(e, cell){
                                                                                 console.log("whowowhi");
                                                                                 
+                                                                                
+                                                                                var tabledata = [
+                                                                                                 {id:1, name:"Pasta", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:2, name:"Pasta", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:3, name:"Pasta", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:4, name:"Pasta", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:5, name:"Pasta", salesprice:10, cost:4, profit:2 },
+                                                                                                 ];
+                                                                                
+                                                                                //Build Tabulator
                                                                                 var table = new Tabulator("#example-table", {
-                                                                                                          height:"311px",
+                                                                                                          height:"800spx",
+                                                                                                          layout:"fitColumns",
+                                                                                                          reactiveData:true, //turn on data reactivity
+                                                                                                          data:tabledata, //load data into table
                                                                                                           columns:[
-                                                                                                                   {title:"Name", field:"name"},
-                                                                                                                   {title:"Progress", field:"progress", sorter:"number"},
-                                                                                                                   {title:"Gender", field:"gender"},
-                                                                                                                   {title:"Rating", field:"rating"},
-                                                                                                                   {title:"Favourite Color", field:"col"},
-                                                                                                                   {title:"Date Of Birth", field:"dob", align:"center"},
+                                                                                                                   {title:"Item Name", field:"name", sorter:"string"},
+                                                                                                                     {title:"Sales Price", field:"salesprice", sorter:"number"},
+                                                                                                                   {title:"Cost of Ingredients", field:"cost", sorter:"number"},
+                                                                                                                        {title:"Profit", field:"profit", sorter:"number"},
+                                                                                                               
                                                                                                                    ],
                                                                                                           });
                                                                                 
-                                                                                }
+                                                                                var tabledatatwo = [
+                                                                                                 {id:1, payroll:50, overhead:40, ccf:0.3, ccp:0.02 },
+                                                                                                 ];
                                                                                 
+                                                                                //Build Tabulator
+                                                                                var table = new Tabulator("#example-table-two", {
+                                                                                                          height:"800spx",
+                                                                                                          layout:"fitColumns",
+                                                                                                          reactiveData:true, //turn on data reactivity
+                                                                                                          data:tabledatatwo, //load data into table
+                                                                                                          columns:[
+                                                                                                                   {title:"Hourly Payroll", field:"payroll", sorter:"string"},
+                                                                                                                   {title:"Hourly Overhead Costs", field:"overhead", sorter:"number"},
+                                                                                                                   {title:"Credit Card Fixed Fee", field:"ccf", sorter:"number"},
+                                                                                                                   {title:"Credit Card Percentage Fee", field:"ccp", sorter:"number"},
+                                                                                                                   
+                                                                                                                   ],
+                                                                                                          });
+                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                }
                                                                                 },
                                                                                 
                                                                                
