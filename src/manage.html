@@ -9,129 +9,18 @@
                     
                     
                     
+
                     
-                    
-                    
-                    
-                    @import "compass/css3";
-                    
-                    @import "compass";
-                    @import url("https://fonts.googleapis.com/css?family=Lato");
-                    
-                    $select-color: #fff;
-                    $select-width: 220px;
-                    $select-height: 40px;
-                    
-                    body {
-                        font-family: Lato, Arial;
-                        color: $select-color;
-                        padding: 20px;
-                    }
-                h1 {
-                    font-weight: normal;
-                    font-size: 40px;
-                    font-weight: normal;
-                    text-transform: uppercase;
-                    span {
-                        font-size: 13px;
-                        display: block;
-                        padding-left: 4px;
-                    }
-                }
-                p {
-                    margin-top: 200px;
-                    a {
-                        text-transform: uppercase;
-                        text-decoration: none;
+                    #div1 {
                         display: inline-block;
-                        color: #fff;
-                        padding: 5px 10px;
-                        margin: 0 5px;
-                        background-color: darken($select-background, 2);
-                        @include transition(all 0.2s ease-in);
-                        &:hover {
-                            background-color: darken($select-background, 5);
-                        }
+                        height:80px;
                     }
-                }
-                .select-hidden {
-                    display: none;
-                    visibility: hidden;
-                    padding-right: 10px;
-                }
-                .select {
-                    cursor: pointer;
+                #div2 {
                     display: inline-block;
-                    position: relative;
-                    font-size: 16px;
-                    color: $select-color;
-                    width: $select-width;
-                    height: $select-height;
-                }
-                .select-styled {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    background-color: $select-background;
-                    padding: 8px 15px;
-                    @include transition(all 0.2s ease-in);
-                    &:after {
-                        content:"";
-                        width: 0;
-                        height: 0;
-                        border: 7px solid transparent;
-                        border-color: $select-color transparent transparent transparent;
-                        position: absolute;
-                        top: 16px;
-                        right: 10px;
-                    }
-                    &:hover {
-                        background-color: darken($select-background, 2);
-                    }
-                    &:active, &.active {
-                        background-color: darken($select-background, 5);
-                        &:after {
-                            top: 9px;
-                            border-color: transparent transparent $select-color transparent;
-                        }
-                    }
-                }
-                
-                .select-options {
-                    display: none;
-                    position: absolute;
-                    top: 100%;
-                    right: 0;
-                    left: 0;
-                    z-index: 999;
-                    margin: 0;
-                    padding: 0;
-                    list-style: none;
-                    background-color: darken($select-background, 5);
-                    li {
-                        margin: 0;
-                        padding: 12px 0;
-                        text-indent: 15px;
-                        border-top: 1px solid darken($select-background, 10);
-                        @include transition(all 0.15s ease-in);
-                        &:hover {
-                            color: $select-background;
-                            background: $select-color;
-                        }
-                        &[rel="hide"] {
-                            display: none;
-                        }
-                    }
+                    height:80px;
                 }
                     
-                    
-                    
-                    
-                    
-                    
-                    
+               
                     
                     .switch {
                         position: relative;
@@ -345,32 +234,33 @@
                 
                 
                 .blog-slider {
+                    text-align: "center";
                     width: 95%;
                     position: relative;
-                    max-width: 800px;
+                    max-width: 500px;
                     margin: auto;
                     background: #fff;
                     box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
                     padding: 25px;
                     border-radius: 25px;
-                    height: 400px;
+                    height: 300px;
                     transition: all .3s;
                     
                     
                     @media screen and (max-width: 992px) {
                         max-width: 680px;
-                        height: 400px;
+                        height: 300px;
                     }
                     
                     @media screen and (max-width: 768px) {
-                        min-height: 500px;
+                        min-height: 300px;
                         height: auto;
                         margin: 180px auto;
                     }
                     
                     
                     @media screen and (max-height: 500px) and (min-width: 992px) {
-                        height: 350px;
+                        height: 300px;
                     }
                     
                     &__item {
@@ -628,7 +518,7 @@
                                     <div class="peers ai-c fxw-nw">
                                         <div class="peer">
                                             <div class="logo">
-                                                <img src="assets/static/images/logo.png" alt="">
+                                                <img src="assets/static/images/sm-sq.png" alt="">
                                                     </div>
                                         </div>
                                         <div class="peer peer-greed">
@@ -712,7 +602,9 @@
                 <main class='main-content bgc-grey-100'>
                     <div id='mainContent'>
                         <h4 class="c-grey-900 mT-10 mB-30">Control Center</h4>
+                        
                         <div class="gap-10 float-right peers">
+                            
                             <div class="peer">
                                 <h5 id="all_slider_message"></h5>
                             </div>
@@ -724,32 +616,64 @@
                             <span class="sr-only">Loading...</span>
                         </div>
                         
+                        <div id="manage-table"></div>
                         
-                     
                         
                         
                         <div class="blog-slider">
-                            <div class="blog-slidaer__content">
+                            <div class="blog-slider__content">
                                 
-                                <div class="blog-slider__title">Loyalty Points</div>
-                                
-                                <div class="blog-slider__text">Pick Free Reward to be Unlocked</div>
-                                
-                                <select id="mounth">
-                                    <option value="hide">-- Menu Item --</option>
-                                    <option value="january" rel="icon-temperature">None</option>
-                                    <option value="february">Pizza</option>
-                                    <option value="march">Pasta</option>
-                                    <option value="april">Paneer</option>
-                                </select>
-                                
+                                <h1>Loyalty Points Settings</h1>
 
+                                <div id="div2">
+
+                                    <h3>Free Reward to be Unlocked:</h3>
+                                    
+                                    <!-- Default -->
+                                    <div class="form__group">
+                                        <div class="form__select">
+                                            <select
+                                                class="form__input"
+                                                id="select-default"
+                                                aria-invalid="false"
+                                                required
+                                                >
+                                                <option value="" disabled selected>Select</option>
+                                                <option value="item1">None</option>
+                                                <option value="item2">Jawad's Style Shawerma</option>
+                                                <option value="item3">Paneer</option>
+                                                <option value="item4">Pasta</option>
+                                                <option value="item5">Dal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+<br>
+                                
+                                <div id="div1">
+                                
+                                    <h3>Number of Points:</h3>
+                                    
+                                    <div class="form__group">
+                                        <input
+                                        class="form__input"
+                                        id="default-hint"
+                                        type="text"
+                                        placeholder="Suggestion: 100 points"
+                                        aria-invalid="false"
+                                        aria-describedBy="default-hint"
+                                        />
+                                        <br>
+                                         <h10>Based on Competitors and Cost of Reward <h10>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
                         
                         
                         
-                        <div id="manage-table"></div>
+                        
                         <div id="popup1" class="overlay">
                             <div class="popup">
                                 <a class="close" href="#">&times;</a>
