@@ -21,6 +21,55 @@ export default (function () {
                 
                 console.log("app scripts :)");
                 
+                                
+                $('select').each(function(){
+                                 var $this = $(this), numberOfOptions = $(this).children('option').length;
+                                 
+                                 $this.addClass('select-hidden');
+                                 $this.wrap('<div class="select"></div>');
+                                 $this.after('<div class="select-styled"></div>');
+                                 
+                                 var $styledSelect = $this.next('div.select-styled');
+                                 $styledSelect.text($this.children('option').eq(0).text());
+                                 
+                                 var $list = $('<ul />', {
+                                               'class': 'select-options'
+                                               }).insertAfter($styledSelect);
+                                 
+                                 for (var i = 0; i < numberOfOptions; i++) {
+                                 $('<li />', {
+                                   text: $this.children('option').eq(i).text(),
+                                   rel: $this.children('option').eq(i).val()
+                                   }).appendTo($list);
+                                 }
+                                 
+                                 var $listItems = $list.children('li');
+                                 
+                                 $styledSelect.click(function(e) {
+                                                     e.stopPropagation();
+                                                     $('div.select-styled.active').not(this).each(function(){
+                                                                                                  $(this).removeClass('active').next('ul.select-options').hide();
+                                                                                                  });
+                                                     $(this).toggleClass('active').next('ul.select-options').toggle();
+                                                     });
+                                 
+                                 $listItems.click(function(e) {
+                                                  e.stopPropagation();
+                                                  $styledSelect.text($(this).text()).removeClass('active');
+                                                  $this.val($(this).attr('rel'));
+                                                  $list.hide();
+                                                  //console.log($this.val());
+                                                  });
+                                 
+                                 $(document).click(function() {
+                                                   $styledSelect.removeClass('active');
+                                                   $list.hide();
+                                                   });
+                                 
+                                 });
+                
+                
+                
                 if(document.URL.indexOf("signup.html") != -1){
                 
                 $('#r_err_message').hide();
@@ -175,30 +224,91 @@ function handleUserAuth(db){
                                                                                 
                                                                                 cellClick:function(e, cell){
                                                                                 console.log("whowowhi");
+                                                                            
                                                                                 
+                                                                                
+                                                                                //Create Date Editor
+                                                                                var dateEditor = function(cell, onRendered, success, cancel){
+                                                                                //cell - the cell component for the editable cell
+                                                                                //onRendered - function to call when the editor has been rendered
+                                                                                //success - function to call to pass the successfuly updated value to Tabulator
+                                                                                //cancel - function to call to abort the edit and return to a normal cell
+                                                                                
+                                                                                //create and style input
+                                                                                var cellValue = moment(cell.getValue(), "DD/MM/YYYY").format("YYYY-MM-DD"),
+                                                                                input = document.createElement("input");
+                                                                                
+                                                                                input.setAttribute("type", "date");
+                                                                                
+                                                                                input.style.padding = "4px";
+                                                                                input.style.width = "100%";
+                                                                                input.style.boxSizing = "border-box";
+                                                                                
+                                                                                input.value = cellValue;
+                                                                                
+                                                                                onRendered(function(){
+                                                                                           input.focus();
+                                                                                           input.style.height = "100%";
+                                                                                           });
+                                                                                
+                                                                                function onChange(){
+                                                                                if(input.value != cellValue){
+                                                                                success(moment(input.value, "YYYY-MM-DD").format("DD/MM/YYYY"));
+                                                                                }else{
+                                                                                cancel();
+                                                                                }
+                                                                                }
+                                                                                
+                                                                                //submit new value on blur or change
+                                                                                input.addEventListener("blur", onChange);
+                                                                                
+                                                                                //submit new value on enter
+                                                                                input.addEventListener("keydown", function(e){
+                                                                                                       if(e.keyCode == 13){
+                                                                                                       onChange();
+                                                                                                       }
+                                                                                                       
+                                                                                                       if(e.keyCode == 27){
+                                                                                                       cancel();
+                                                                                                       }
+                                                                                                       });
+                                                                                
+                                                                                return input;
+                                                                                };
+
                                                                                 
                                                                                 var tabledata = [
                                                                                                  {id:1, name:"Pasta", salesprice:10, cost:4, profit:2 },
-                                                                                                 {id:2, name:"Pasta", salesprice:10, cost:4, profit:2 },
-                                                                                                 {id:3, name:"Pasta", salesprice:10, cost:4, profit:2 },
-                                                                                                 {id:4, name:"Pasta", salesprice:10, cost:4, profit:2 },
-                                                                                                 {id:5, name:"Pasta", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:2, name:"Pizza", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:3, name:"Paneer", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:4, name:"Dal", salesprice:10, cost:4, profit:2 },
+                                                                                                 {id:5, name:"Bhindi", salesprice:10, cost:4, profit:2 },
                                                                                                  ];
                                                                                 
                                                                                 //Build Tabulator
                                                                                 var table = new Tabulator("#example-table", {
                                                                                                           height:"800spx",
                                                                                                           layout:"fitColumns",
+                                                                                                          addRowPos:"bottom",
                                                                                                           reactiveData:true, //turn on data reactivity
                                                                                                           data:tabledata, //load data into table
                                                                                                           columns:[
-                                                                                                                   {title:"Item Name", field:"name", sorter:"string"},
-                                                                                                                     {title:"Sales Price", field:"salesprice", sorter:"number"},
-                                                                                                                   {title:"Cost of Ingredients", field:"cost", sorter:"number"},
-                                                                                                                        {title:"Profit", field:"profit", sorter:"number"},
-                                                                                                               
+                                                                                                                   {formatter:"buttonCross", width:40, align:"center", cellClick:function(e, cell){
+                                                                                                                   cell.getRow().delete();
+                                                                                                                   }},
+                                                                                                                   {title:"Item Name", field:"name", sorter:"string", editor:"input"},
+                                                                                                                     {title:"Sales Price", field:"salesprice", sorter:"number", editor:"input"},
+                                                                                                                   {title:"Cost of Ingredients", field:"cost", sorter:"number", editor:"input"},
+                                                                                                                        {title:"Profit", field:"profit", sorter:"number", editor:"input"},
                                                                                                                    ],
                                                                                                           });
+                                     
+                                                                                $("#add-row").click(function(){
+                                                                                                    $("#example-table").tabulator("addRow", {});
+                                                                                                    });
+
+                                                                                
+
                                                                                 
                                                                                 var tabledatatwo = [
                                                                                                  {id:1, payroll:50, overhead:40, ccf:0.3, ccp:0.02 },
@@ -211,25 +321,13 @@ function handleUserAuth(db){
                                                                                                           reactiveData:true, //turn on data reactivity
                                                                                                           data:tabledatatwo, //load data into table
                                                                                                           columns:[
-                                                                                                                   {title:"Hourly Payroll", field:"payroll", sorter:"string"},
-                                                                                                                   {title:"Hourly Overhead Costs", field:"overhead", sorter:"number"},
-                                                                                                                   {title:"Credit Card Fixed Fee", field:"ccf", sorter:"number"},
-                                                                                                                   {title:"Credit Card Percentage Fee", field:"ccp", sorter:"number"},
+                                                                                                                   {title:"Hourly Payroll", field:"payroll", sorter:"string", editor:"input"},
+                                                                                                                   {title:"Hourly Overhead Costs", field:"overhead", sorter:"number", editor:"input"},
+                                                                                                                   {title:"Credit Card Fixed Fee", field:"ccf", sorter:"number", editor:"input"},
+                                                                                                                   {title:"Credit Card Percentage Fee", field:"ccp", sorter:"number", editor:"input"},
                                                                                                                    
                                                                                                                    ],
                                                                                                           });
-                                                                               
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
-                                                                                
                                                                                 
                                                                                 }
                                                                                 },
