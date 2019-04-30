@@ -4,7 +4,6 @@ import 'firebase/firestore';
 var Tabulator = require('tabulator-tables');
 
 export default (function () {
-<<<<<<< HEAD
 
   // Initialize Firebase
 
@@ -514,62 +513,6 @@ console.log("render");
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
-=======
-                
-                // Initialize Firebase
-                
-                var config = {
-                apiKey: "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
-                authDomain: "daydesign-a277f.firebaseapp.com",
-                databaseURL: "https://daydesign-a277f.firebaseio.com",
-                projectId: "daydesign-a277f",
-                storageBucket: "daydesign-a277f.appspot.com",
-                messagingSenderId: "758132951647"
-                };
-                firebase.initializeApp(config);
-                
-                var db = firebase.firestore();
-                
-                console.log("app scripts :)");
-                
-               
-                
-                
-                
-                if(document.URL.indexOf("signup.html") != -1){
-                
-                $('#r_err_message').hide();
-                $('#r_succ_message').hide();
-                $('#r_loading').hide();
-                
-                $('#r_name').keypress(function() {
-                                      $('#r_err_message').hide();
-                                      $(this).focus();
-                                      });
-                $('#r_email').keypress(function() {
-                                       $('#r_err_message').hide();
-                                       $(this).focus();
-                                       });
-                $('#trofi_code').keypress(function() {
-                                          $('#r_err_message').hide();
-                                          $(this).focus();
-                                          });
-                $('#r_password').keypress(function() {
-                                          $('#r_err_message').hide();
-                                          $(this).focus();
-                                          });
-                $('#r_confirm_password').keypress(function() {
-                                                  $('#r_err_message').hide();
-                                                  $(this).focus();
-                                                  });
-                
-                
-                $('#register_user').on('click', e => {
-                                       registerUser(db);
-                                       e.preventDefault();
-                                       });
-                
->>>>>>> e2e3bf9ad0c0042360498204b34d3c0ae00bfb83
                 }
                 
                 if(document.URL.indexOf("signin.html") != -1){
