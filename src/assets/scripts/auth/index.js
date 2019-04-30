@@ -128,18 +128,38 @@ console.log("render");
     onRendered(function(){
       console.log('set active');
       console.log(cell.getValue());
-       $("#slider_" + cell.getRow().getData().sort_id).prop('checked', cell.getValue());
+      $("#slider_" + cell.getRow().getData().sort_id).prop('checked', cell.getValue());
     });
 
-      return "<label class=\"switch\"><input id=\"slider_" + cell.getRow().getData().sort_id + "\" type=\"checkbox\"><span class=\"slider round\"></span></label>"
+      return "<label class=\"switch\"><input class=\"abby\" id=\"slider_" + cell.getRow().getData().sort_id + "\" type=\"checkbox\"><span id=\"coolor_" + cell.getRow().getData().sort_id + "\" class=\"slider round\"></span></label>";
     // }
 
 
 },cellClick:function(e, cell){
     //e - the click event object
     //cell - cell component
+
+
+
+    if($("#slider_" + cell.getRow().getData().sort_id).checked == true){
+      $("#coolor_" + cell.getRow().getData().sort_id).css("background-color", "#ccc");
+    }
+    else{
+      $("#coolor_" + cell.getRow().getData().sort_id).css("background-color", "#2196F3");
+        $("#coolor_" + cell.getRow().getData().sort_id).css("transform", "translateX(26px)");
+    }
+
+
+
+
+
+
+
+
+
     console.log("click time active");
     console.log(cell.getRow().getData().sort_id);
+
     var timeRef = db.collection("restaurants").doc(user.uid).collection("hours").doc(cell.getRow().getData().sort_id);
 
     timeRef.update({
@@ -186,6 +206,12 @@ console.log("render");
        $('#all_slider_message').hide();
        $('#s_all_active').hide();
 
+       $('.abby').each(function() {
+         $(this).click(function() {
+            console.log("clicked abby");
+          });
+});
+
       $('#s_all_active').change(function() {
                 console.log("all slider");
                 console.log(this);
@@ -230,59 +256,124 @@ console.log("render");
             console.log(opening);
             console.log(closing);
 
+            $('#s_all_active').prop("checked", doc.data().all_discounts_active);
+            if(doc.data().all_discounts_active == true) {
+                      //Do stuff
+                        // console.log("checked!");
+                      $('#all_slider_message').text("Discounts Live").show();
+                      }
+            else{
+                      $('#all_slider_message').text("Discounts Disabled").show();
+                 }
+
             var query = hoursRef.where("start_id", ">=", opening).where("start_id", "<", closing)
 
-            query.get()
-    .then(function(querySnapshot) {
-                  console.log("got em");
-               querySnapshot.forEach(function(doc) {
+            query.onSnapshot(function(querySnapshot) {
 
-                 console.log(doc.id, " => ", doc.data());
+      querySnapshot.docChanges().forEach(function(change) {
 
-                 var startingDisc = 0;
-                 for(var i = 0; i < doc.data().discounts.length; i++){
+          if (change.type === "added") {
 
-                     if(doc.data().discounts[i].is_active == true){
-                       startingDisc = doc.data().discounts[i].percent_discount;
-                       break;
-                     }
-                 }
-               //  console.log(startingDisc);
-                 var timeId = 0;
-                 if(doc.id < 10){
-                   timeId = tConvert("0" + doc.id + ":00");
-                 }
-                 else{
-                   timeId = tConvert(doc.id + ":00");
-                 }
+              console.log("New city: ", change.doc.data());
 
-                 var hour = {
-                   sort_id: doc.id,
-                   id: timeId,
-                   edit_details: "Edit Details",
-                   starting_discount: startingDisc,
-                   active: doc.data().hour_is_active,
-                 }
+              console.log(change.doc.id, " => ", change.doc.data());
 
+              var startingDisc = 0;
+              for(var i = 0; i < change.doc.data().discounts.length; i++){
 
-                   manageData.push(hour);
+                  if(change.doc.data().discounts[i].is_active == true){
+                    startingDisc = change.doc.data().discounts[i].percent_discount;
+                    break;
+                  }
+              }
+            //  console.log(startingDisc);
+              var timeId = 0;
+              if(change.doc.id < 10){
+                timeId = tConvert("0" + change.doc.id + ":00");
+              }
+              else{
+                timeId = tConvert(change.doc.id + ":00");
+              }
 
-
-               });
+              var hour = {
+                sort_id: change.doc.id,
+                id: timeId,
+                edit_details: "Edit Details",
+                starting_discount: startingDisc,
+                active: change.doc.data().hour_is_active,
+              }
 
 
+                manageData.push(hour);
 
-                     tableManage.setSort("sort_id", "asc");
-                      $('#m_loading').hide();
-                      $('#s_all_active').prop("checked", doc.data().all_discounts_active);
-                              if(doc.data().all_discounts_active == true) {
-                                     //Do stuff
-                                     // console.log("checked!");
-                                     $('#all_slider_message').text("Discounts Live").show();
-                               }
-                               else{
-                                 $('#all_slider_message').text("Discounts Disabled").show();
-                               }
+
+                tableManage.setSort("sort_id", "asc");
+                    $('#m_loading').hide();
+
+
+
+          }
+          if (change.type === "modified") {
+              console.log("Modified city: ", change.doc.data());
+
+
+              var startingDisc = 0;
+              for(var i = 0; i < change.doc.data().discounts.length; i++){
+
+                  if(change.doc.data().discounts[i].is_active == true){
+                    startingDisc = change.doc.data().discounts[i].percent_discount;
+                    break;
+                  }
+              }
+            //  console.log(startingDisc);
+              var timeId = 0;
+              if(change.doc.id < 10){
+                timeId = tConvert("0" + change.doc.id + ":00");
+              }
+              else{
+                timeId = tConvert(change.doc.id + ":00");
+              }
+
+              var hour = {
+                sort_id: change.doc.id,
+                id: timeId,
+                edit_details: "Edit Details",
+                starting_discount: startingDisc,
+                active: change.doc.data().hour_is_active,
+              }
+
+
+              for(var i = 0; i < manageData.length; i++){
+                if(manageData[i].sort_id == hour.sort_id){
+                  console.log("updating data");
+                   // manageData.splice(i, 1, hour);
+                  setTimeout( function() {
+                    // code that must be executed after pause
+                      manageData.splice(i, 1, hour);
+
+                      //tableManage.updateOrAddRow(i, hour);
+                  }, 2000);
+
+                  //  console.log(manageData[i]);
+                    break;
+                }
+              }
+
+          }
+          if (change.type === "removed") {
+              console.log("Removed city: ", change.doc.data());
+          }
+      });
+
+
+               //    console.log("got em");
+               // querySnapshot.forEach(function(doc) {
+               //
+               //
+               // });
+
+
+
 
            });
 
