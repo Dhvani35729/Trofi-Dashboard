@@ -4,7 +4,7 @@
 TODO: Host on Google Cloud Platform or Heroku
 
 #### Steps
-[Optional] [Set up a virtualenv and activate](http://python-guide-pt-br.readthedocs.io/en/latest/dev/virtualenvs/) 
+[Optional] [Set up a virtualenv and activate]
 
 ##### Install requirements 
     pip install -r requirements.txt
