@@ -1,7 +1,7 @@
 # Trofi Dashboard
 
 ## Live: 
-TODO: Host on Google Cloud Platform or Heroku
+GCP: http://35.227.34.159/
 
 #### Steps
 [Optional] [Set up a virtualenv and activate]
