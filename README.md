@@ -1,26 +1,32 @@
 # Trofi Dashboard
 
 ## Live: 
-https://daydesign-a277f.firebaseapp.com/
+TODO: Host on Google Cloud Platform or Heroku
 
-## To run:
+#### Steps
+[Optional] [Set up a virtualenv and activate](http://python-guide-pt-br.readthedocs.io/en/latest/dev/virtualenvs/) 
 
-`npm install`
+##### Install requirements 
+    pip install -r requirements.txt
 
-## Dev Env:
-`npm run dev`
+##### Run the code
+    cd gentelella
+    python manage.py runserver 
+    
+##### Behold!
+Go to http://localhost:8000/
 
-## Production Env:
-`npm run build`
-
-### Template Credit: Adminator
+### Template Credit: Gentelella
 Author: Colorlib
-https://github.com/puikinsh/Adminator-admin-dashboard
+https://github.com/puikinsh/gentelella
+
+### Template transfer to Django credit: 
+###### Contributors 
+[@GiriB](https://github.com/GiriB)  
+[@johnnycakes79](https://github.com/johnnycakes79)
 
 ### Libraries Added:
 Firebase 
-
-Tabulator
 
 ---
 
