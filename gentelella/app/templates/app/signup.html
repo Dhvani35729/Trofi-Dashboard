@@ -1,0 +1,89 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Login {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <!-- Animate.css -->
+  <link href="/static/vendors/animate.css/animate.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body_class %}login{% endblock body_class %}
+
+{% block body %}
+
+  <div>
+
+    <div class="login_wrapper">
+      <div class="animate form login_form">
+          <section class="login_content">
+              <form action="/signup/" method="post">
+              {% csrf_token %}
+                <h1>Create Account</h1>
+                <div>
+                    {% if fname %}
+                    <input type="text" class="form-control" name="fname" placeholder="Full Name" value="{{fname}}" required="" />     
+                    {% else %}
+                  <input type="text" class="form-control" name="fname" placeholder="Full Name" required="" />
+                  {% endif %}    
+                </div>
+                <div>                  
+                  {% if email %}
+                  <input type="email" name="email" class="form-control" placeholder="Email" value="{{email}}" required="" />
+                  {% else %}
+                  <input type="email" name="email" class="form-control" placeholder="Email" required="" />
+                 {% endif %}     
+                </div>
+                <div>
+                    {% if trofi_code %}
+                    <input type="text" class="form-control" name="trofi_code" placeholder="Vendor Trofi Code" value="{{trofi_code}}" required="" />
+                    {% else %}
+                  <input type="text" class="form-control" name="trofi_code" placeholder="Vendor Trofi Code" required="" />
+                  {% endif %}  
+                </div>
+                <div>
+                    {% if passw %}
+                    <input type="password" name="password" class="form-control" placeholder="Password" value="{{passw}}"  required="" />   
+                    {% else %}
+                      <input type="password" name="password" class="form-control" placeholder="Password" required="" />   
+                    {% endif %}  
+                </div>
+                <div>
+                    <input type="submit" value="Submit" class="btn btn-default submit" style="
+                    float: none;
+                    margin-left: 0;
+                "/>
+                  <!-- <a class="btn btn-default submit">Submit</a> -->
+                </div>
+    
+                <div class="clearfix"></div>
+                {% if messg %}
+                <div class="alert alert-danger fade in" role="alert" style="
+                margin-top: 5px;
+                text-shadow: 0 0px 0 #fff;
+            ">
+                    <strong>Error:</strong> {{ messg }}
+                  </div>
+                  {% endif %}
+    
+                <div class="separator">
+                  <p class="change_link">Already a member ?
+                    <a href="{% url 'signIn' %}" class="to_register"> Log in </a>
+                  </p>
+    
+                  <div class="clearfix"></div>
+                  <br />
+    
+                  <div>
+                    <h1><i class="fa"></i> Vibe</h1>
+                    <p>© 2019 All Rights Reserved. WBC & LETAP.</p>
+                    <p>Privacy and Terms</p>
+                  </div>
+                </div>
+              </form>
+            </section>
+      </div>
+    </div>
+  </div>
+{% endblock body %}
+

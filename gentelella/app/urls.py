@@ -10,5 +10,6 @@ urlpatterns = [
     # The home page
     path('', views.index, name='index'),
     path('login/', views.signIn, name='signIn'),
+    path('signup/', views.signUp, name='signUp'),
     path('logout/', views.logout, name='logout'),
 ]

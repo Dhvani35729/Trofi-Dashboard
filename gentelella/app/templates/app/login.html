@@ -13,8 +13,6 @@
 {% block body %}
 
   <div>
-    <a class="hiddenanchor" id="signup"></a>
-    <a class="hiddenanchor" id="signin"></a>
 
     <div class="login_wrapper">
       <div class="animate form login_form">
@@ -24,9 +22,9 @@
             <h1>Dashboard Login</h1>
             <div>
                 {% if email %}
-                  <input type="text" name="email" class="form-control" placeholder="Email" value="{{email}}" required="" />
+                  <input type="email" name="email" class="form-control" placeholder="Email" value="{{email}}" required="" />
                 {% else %}
-                  <input type="text" name="email" class="form-control" placeholder="Email" required="" />
+                  <input type="email" name="email" class="form-control" placeholder="Email" required="" />
                 {% endif %}              
             </div>
             <div>
@@ -53,7 +51,7 @@
 
             <div class="separator">
               <p class="change_link">New to site?
-                <a href="#signup" class="to_register"> Create Account </a>
+                <a href="{% url 'signUp' %}" class="to_register"> Create Account </a>
               </p>
 
               <div class="clearfix"></div>
@@ -69,45 +67,6 @@
         </section>
       </div>
 
-      <div id="register" class="animate form registration_form">
-        <section class="login_content">
-          <form>
-            <h1>Create Account</h1>
-            <div>
-              <input type="text" class="form-control" placeholder="Full Name" required="" />
-            </div>
-            <div>
-              <input type="email" class="form-control" placeholder="Email" required="" />
-            </div>
-            <div>
-              <input type="text" class="form-control" placeholder="Vendor Trofi Code" required="" />
-            </div>
-            <div>
-              <input type="password" class="form-control" placeholder="Password" required="" />
-            </div>
-            <div>
-              <a class="btn btn-default submit" href="#">Submit</a>
-            </div>
-
-            <div class="clearfix"></div>
-
-            <div class="separator">
-              <p class="change_link">Already a member ?
-                <a href="#signin" class="to_register"> Log in </a>
-              </p>
-
-              <div class="clearfix"></div>
-              <br />
-
-              <div>
-                <h1><i class="fa"></i> Vibe</h1>
-                <p>© 2019 All Rights Reserved. WBC & LETAP.</p>
-                <p>Privacy and Terms</p>
-              </div>
-            </div>
-          </form>
-        </section>
-      </div>
     </div>
   </div>
 {% endblock body %}
