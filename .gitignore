@@ -29,5 +29,7 @@ package-lock.json
 # Project Folders
 # ----------------------------
 
-build/
 venv/
+
+# Sensitive
+gentelella/serviceAccount.json
