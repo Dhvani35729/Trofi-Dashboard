@@ -154,7 +154,7 @@ def index(request):
     print(request.session['uid'])
 
     context = {}
-    template = loader.get_template('app/index.html')
+    template = loader.get_template('app/incoming.html')
     return HttpResponse(template.render(context, request))
 
 def gentella_html(request):
