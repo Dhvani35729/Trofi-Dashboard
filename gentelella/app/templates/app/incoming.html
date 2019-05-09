@@ -41,75 +41,30 @@
                       <th>Order Number:</th>
                       <th>Order Active Between:</th>
                       <th>Order Placed At:</th>
-                      <th>Current Price:</th>
-                      <th>Order Details:</th>
+                      <th>Current Price:</th>                      
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                      <td> </td>
-                      <td>
-                          <input type="checkbox" id="check-all" class="flat">
-                              </td>
-                    <td>4323</td>
-                    <td>12:00 AM - 12:59 AM</td>
-                    <td>11:39 AM</td>
-                    <td>$9.80</td>
-                    <td>testing responsive shit, testing responsive shit, testing responsive shit, testing responsive shit, testing responsive shit ,testing responsive shit, testing responsive shit</td>
-                
-                  </tr>
-                  <tr>
-                      <td> </td>
 
-                      <td>
-                          <input type="checkbox" id="check-all" class="flat">
-                              </td>
-                      <td>4323</td>
-                      <td>12:00 AM - 12:59 AM</td>
-                      <td>11:39 AM</td>
-                      <td>$9.80</td>
-                      <td>burgers</td>
-                      
-                  </tr>
-                  <tr>
-                      <td> </td>
 
+                    {% for order in incoming_orders %}
+                    <tr>
+                      <td>Items here</td>                      
+                      {% if order.status %}
+                        <td>
+                            <input type="checkbox" id="check-all" class="flat" checked>
+                        </td>
+                      {% else %}
                       <td>
                           <input type="checkbox" id="check-all" class="flat">
-                              </td>
-                      <td>4323</td>
-                      <td>12:00 AM - 12:59 AM</td>
-                      <td>11:39 AM</td>
-                      <td>$6.80</td>
-                      <td>testing responsive shit, testing responsive shit, testing responsive shit, testing responsive shit, testing responsive shit ,testing responsive shit, testing responsive shit</td>
-                      
-                  </tr>
-                  <tr>
-                      <td> </td>
-
-                      <td>
-                          <input type="checkbox" id="check-all" class="flat">
-                              </td>
-                      <td>4323</td>
-                      <td>12:00 AM - 12:59 AM</td>
-                      <td>11:39 AM</td>
-                      <td>$9.80</td>
-                      <td>testing responsive shit, testing responsive shit, testing responsive shit, testing responsive shit, testing responsive shit ,testing responsive shit, testing responsive shit</td>
-                      
-                  </tr>
-                  <tr>
-                      <td> </td>
-
-                      <td>
-                          <input type="checkbox" id="check-all" class="flat">
-                              </td>
-                      <td>4323</td>
-                      <td>12:00 AM - 12:59 AM</td>
-                      <td>11:39 AM</td>
-                      <td>$9.80</td>
-                      <td>testing</td>
-                      
-                  </tr>
+                      </td>
+                      {% endif %}
+                      <td>{{order.id}}</td>
+                      <td>{{ order.active_between }}</td>
+                      <td>{{ order.placed_at }}</td>
+                      <td>{{ order.current_price }}</td>
+                    </tr>
+                    {% endfor %}                  
                   
                 </tbody>
               </table>
