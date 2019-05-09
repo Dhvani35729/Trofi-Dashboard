@@ -239,6 +239,17 @@ def incoming(request):
     template = loader.get_template('app/incoming.html')
     return HttpResponse(template.render(context, request))
 
+def manage(request):
+    context = {}
+    template = loader.get_template('app/manage.html')
+    return HttpResponse(template.render(context, request))
+
+def history(request):
+    context = {}
+    template = loader.get_template('app/history.html')
+    return HttpResponse(template.render(context, request))
+
+
 def gentella_html(request):
     context = {}
     # The template to be loaded as per gentelella.
