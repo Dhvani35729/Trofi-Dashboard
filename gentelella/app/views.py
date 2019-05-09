@@ -5,6 +5,10 @@ from django.contrib import auth
 import pyrebase
 import json
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
 config = {
   "apiKey": "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
   "authDomain": "daydesign-a277f.firebaseapp.com",
@@ -13,9 +17,15 @@ config = {
 }
 
 firebase = pyrebase.initialize_app(config)
-
 # Get a reference to the auth service
 authe = firebase.auth()
+
+# firestore config
+# Use a service account
+cred = credentials.Certificate('serviceAccount.json')
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 def logout(request):
     auth.logout(request)
@@ -40,29 +50,44 @@ def signUp(request):
         template = loader.get_template('app/signup.html')
         return HttpResponse(template.render(context, request))
 
-    
+    # Check if valid trofi code
+    codeRef = db.collection(u'general').document(u'trofi-verification')
 
-
-
-    # Sign the user up
     try:
-        user = authe.create_user_with_email_and_password(email, passw)
+        doc = codeRef.get()
+        # print(u'Document data: {}'.format(doc.to_dict()))
+        if trofi_code in doc.to_dict()["accepted_codes"]:            
+            # Sign the user up
+            try:
+                user = authe.create_user_with_email_and_password(email, passw)
+                ## TODO: create user entry in database and auto setup
+            except Exception as e:
+                error_json = e.args[1]        
+                error = json.loads(error_json)['error']        
+                message=error['message']
+                context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
+                # response = redirect('signIn',context=context)
+                # return response
+                template = loader.get_template('app/signup.html')        
+                return HttpResponse(template.render(context, request))
+
+            # print(user)
+            # print("debug")
+            session_id=user['idToken']
+            request.session['uid']=str(session_id)
+            response = redirect('index')
+            return response
+        else:
+            message="Invalid Trofi Code!"
+            context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
+            template = loader.get_template('app/signup.html')        
+            return HttpResponse(template.render(context, request))
     except Exception as e:
-        error_json = e.args[1]        
-        error = json.loads(error_json)['error']        
-        message=error['message']
+        # print(u'No such document!')
+        message="Problem with database. Contact software.wbc@gmail.com"
         context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
-        # response = redirect('signIn',context=context)
-        # return response
         template = loader.get_template('app/signup.html')        
         return HttpResponse(template.render(context, request))
-
-    # print(user)
-    # print("debug")
-    session_id=user['idToken']
-    request.session['uid']=str(session_id)
-    response = redirect('index')
-    return response
 
 def signIn(request):
     try:
@@ -93,12 +118,32 @@ def signIn(request):
         template = loader.get_template('app/login.html')        
         return HttpResponse(template.render(context, request))
 
-    # print(user)
-    # print("debug")
-    session_id=user['idToken']
-    request.session['uid']=str(session_id)
-    response = redirect('index')
-    return response
+    # print(user['localId'])
+    uid = user['localId']
+    resRef = db.collection(u'restaurants').document(uid)
+    resPrivateRef = resRef.collection(u'private').document(uid)
+
+    try:
+        doc = resPrivateRef.get()
+        data = doc.to_dict()
+        # print(u'Document data: {}'.format(doc.to_dict()))
+        if data["allow_in"]:
+                session_id=user['idToken']
+                request.session['uid']=str(session_id)
+                response = redirect('index')
+                return response
+        else:
+            message="Vibe has not setup your account yet. Please wait to receive an email."
+            context = {"messg":message, "email": email, "passw": passw}
+            template = loader.get_template('app/login.html')        
+            return HttpResponse(template.render(context, request))
+
+    except Exception as e:
+        # print(u'No such document!')
+        message="Problem with database. Contact software.wbc@gmail.com"
+        context = {"messg":message, "email": email, "passw": passw}
+        template = loader.get_template('app/login.html')        
+        return HttpResponse(template.render(context, request))
 
 def index(request):
     try:
