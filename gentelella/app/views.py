@@ -28,6 +28,22 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
+def status(request, order_id, checked):
+    if not logged_in(request):
+        response = redirect('signIn')
+        return response  
+
+    order_ref = db.collection(u'orders').document("wbc_transc_" + order_id)
+
+    if checked == 0:
+        order_ref.update({u'status_ready': False})
+    else:
+        order_ref.update({u'status_ready': True})
+
+    # print(order_id)
+    response = redirect('incoming')
+    return response
+
 def logout(request):
     auth.logout(request)
     response = redirect('signIn')

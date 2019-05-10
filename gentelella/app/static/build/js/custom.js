@@ -52,7 +52,7 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     $RIGHT_COL = $('.right_col'),
     $NAV_MENU = $('.nav_menu'),
     $FOOTER = $('footer');
-    
+
 /* Get the documentElement (<html>) to display the page in fullscreen */
 var elem = document.documentElement;
 
@@ -256,7 +256,7 @@ $('.bulk_action input').on('ifUnchecked', function() {
     countChecked();
 });
 $('.bulk_action input#check-all').on('ifChecked', function() {
-    checkState = 'all';
+    checkState = 'all';    
     countChecked();
 });
 $('.bulk_action input#check-all').on('ifUnchecked', function() {
@@ -5098,8 +5098,35 @@ function init_echarts() {
 }
 
 
+function init_incoming(){
+    console.log('init incoming');
+
+    $('table input').on('ifChecked', function() {
+        
+        // console.log(this)        
+
+        if(this.id.substring(10, 18).localeCompare("incoming") == 0){
+            id = this.id.substring(19)
+            // console.log("checked")
+            location.href="/status/"+id+"/1"
+        }
+
+    });
+
+    $('table input').on('ifUnchecked', function() {
+        if(this.id.substring(10, 18).localeCompare("incoming") == 0){
+            id = this.id.substring(19)
+            // console.log("unchecked")
+            location.href="/status/"+id+"/0"
+        }
+    });
+
+}
+
+
 $(document).ready(function() {
 
+    init_incoming();
     init_sparklines();
     init_flot_chart();
     init_sidebar();

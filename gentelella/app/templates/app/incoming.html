@@ -84,16 +84,19 @@
                             
 
 
-                      </td>                      
+                      </td>      
+                                     
                       {% if order.status %}
-                        <td>
-                            <input type="checkbox" id="check-all" class="flat" checked>
-                        </td>
-                      {% else %}
-                      <td>
-                          <input type="checkbox" id="check-all" class="flat">
+                          <td>
+                            <input type="checkbox" id="check-all incoming {{order.id}}" class="flat" checked>     
+                          </td>
+                      {% else %}                      
+                      <td>    
+                       <input type="checkbox" id="check-all incoming {{order.id}}" onclick="food_ready(this);" class="flat">          
+                          
                       </td>
                       {% endif %}
+                      
                       <td>{{order.id}}</td>
                       <td>{{ order.active_between }}</td>
                       <td>{{ order.placed_at }}</td>
