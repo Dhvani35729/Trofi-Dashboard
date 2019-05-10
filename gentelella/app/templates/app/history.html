@@ -43,8 +43,8 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                
-                                                
+
+                                                 {% for order in all_orders %}
                                                 <tr>
                                                     <td>
                                                         
@@ -65,6 +65,7 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
+                                                                        {% for food in order.items %}
                                                                         <tr>
                                                                             <th>{{food.name}}</th>
                                                                             <th>{{food.quantity}}</th>
@@ -72,6 +73,7 @@
                                                                             <th>{{food.toppings}}</th>
                                                                             <th>{{food.comments}}</th>
                                                                         </tr>
+                                                                        {% endfor %}
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -82,9 +84,9 @@
                                                     </td>
                                                     <td>{{order.id}}</td>
                                                     <td>{{ order.active_between }}</td>
-                                                    <td>${{ order.current_price }}</td>
+                                                    <td>${{ order.final_price }}</td>
                                                 </tr>
-
+                                                {% endfor %}
                                             </tbody>
                                         </table>
                                         

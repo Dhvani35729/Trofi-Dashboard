@@ -271,7 +271,47 @@ def manage(request):
     return HttpResponse(template.render(context, request))
 
 def history(request):
-    context = {}
+    if not logged_in(request):
+        response = redirect('signIn')
+        return response 
+
+    # print(request.session['uid'])
+    uid = request.session['admin_uid']
+    uname = request.session['uname']
+
+    # load data
+    all_orders_data = []
+
+    # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
+    all_orders_ref = db.collection(u'restaurants').document(uid).collection(u'private').document(uid).collection("orders")
+        
+    all_orders_docs = all_orders_ref.get()
+    #incoming_orders_data.clear()
+    for doc in all_orders_docs:
+        print(u'{} => {}'.format(doc.id, doc.to_dict()))   
+        order_ref = db.collection(u'orders').document(doc.id)
+        try:
+            order = order_ref.get()
+            order_data = order.to_dict()
+            # print(u'Document data: {}'.format(order_data))                       
+            active_hours = order_data["hours_order"][0:2] + ":00" + " - " + order_data["hours_order"][3:5] + ":00"
+            
+            an_order = {
+                "id": order_data["order_id"],                
+                "active_between": active_hours,
+                "final_price": float(order_data["total_price"]) * (100.0 - order_data["final_discount"])/100.0,
+                "items": order_data["foods"],                
+            }
+
+            all_orders_data.append(an_order)                    
+        except Exception as e:
+            # TODO: add error message to show to user
+            pass
+
+    # Watch the document
+    # orders_count_watch = orders_count_ref.on_snapshot(on_orders_count_snapshot)
+    print(all_orders_data)
+    context = {"all_orders": all_orders_data, "name": uname}
     template = loader.get_template('app/history.html')
     return HttpResponse(template.render(context, request))
 
