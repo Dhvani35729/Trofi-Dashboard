@@ -5,6 +5,7 @@ GCP: http://35.227.34.159/
 
 #### Steps
 [Optional] [Set up a virtualenv and activate]
+virtualenv venv -p python3
 
 ##### Files needed
 	    serviceAccount.json (speak to Dhvani)
