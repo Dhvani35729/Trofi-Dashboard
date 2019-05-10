@@ -8,13 +8,13 @@ urlpatterns = [
     # re_path(r'^.*\.html', views.gentella_html, name='gentella'),
 
     # The home page
+    path('', views.lost, name='lost'),
     path('incoming/', views.incoming, name='incoming'),
     path('login/', views.signIn, name='signIn'),
     path('signup/', views.signUp, name='signUp'),
     path('logout/', views.logout, name='logout'),
     path('manage/', views.manage, name='manage'),
     path('history/', views.history, name='history'),
-
 
 
 ]

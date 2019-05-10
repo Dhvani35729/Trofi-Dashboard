@@ -52,7 +52,22 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     $RIGHT_COL = $('.right_col'),
     $NAV_MENU = $('.nav_menu'),
     $FOOTER = $('footer');
+    
+/* Get the documentElement (<html>) to display the page in fullscreen */
+var elem = document.documentElement;
 
+/* View in fullscreen */
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) { /* Firefox */
+    elem.mozRequestFullScreen();
+  } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE/Edge */
+    elem.msRequestFullscreen();
+  }
+}
 
 // Sidebar
 function init_sidebar() {

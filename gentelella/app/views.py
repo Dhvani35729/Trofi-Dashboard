@@ -35,7 +35,7 @@ def logout(request):
 
 def signUp(request):
     if logged_in(request):
-        response = redirect('index')
+        response = redirect('incoming')
         return response  
 
     email = request.POST.get("email")
@@ -73,7 +73,7 @@ def signUp(request):
             # print("debug")
             session_id=user['idToken']
             request.session['uid']=str(session_id)
-            response = redirect('index')
+            response = redirect('incoming')
             return response
         else:
             message="Invalid Trofi Code!"
@@ -89,7 +89,7 @@ def signUp(request):
 
 def signIn(request):
     if logged_in(request):
-        response = redirect('index')
+        response = redirect('incoming')
         return response   
 
     email = request.POST.get("email")
@@ -126,7 +126,8 @@ def signIn(request):
                 session_id=user['idToken']
                 request.session['uid']=str(session_id)
                 request.session['admin_uid']=str(uid)
-                response = redirect('index')
+                request.session['uname']=data["name"]
+                response = redirect('incoming')
                 return response
         else:
             message="Vibe has not setup your account yet. Please wait to receive an email."
@@ -141,6 +142,14 @@ def signIn(request):
         template = loader.get_template('app/login.html')        
         return HttpResponse(template.render(context, request))
 
+def lost(request):
+    if logged_in(request):
+        response = redirect('incoming')
+        return response 
+    else:
+        response = redirect('signIn')
+        return response 
+
 def logged_in(request):
     try:
         return request.session['uid']
@@ -153,6 +162,7 @@ def incoming(request):
         return response 
     # print(request.session['uid'])
     uid = request.session['admin_uid']
+    uname = request.session['uname']
 
     # load data
     incoming_orders_data = []
@@ -195,7 +205,7 @@ def incoming(request):
             print("render")
             print(incoming_orders_data)
             # context = {"incoming_orders": incoming_orders_data}
-            # template = loader.get_template('app/index.html')
+            # template = loader.get_template('app/incoming.html')
             # return HttpResponse(template.render(context, request))
 
     orders_count_ref = db.collection(u'restaurants').document(uid).collection(u'private').document(uid)
@@ -233,7 +243,7 @@ def incoming(request):
     # Watch the document
     # orders_count_watch = orders_count_ref.on_snapshot(on_orders_count_snapshot)
 
-    context = {"incoming_orders": incoming_orders_data}
+    context = {"incoming_orders": incoming_orders_data, "name": uname}
     print('render outside')
     print(context)
     template = loader.get_template('app/incoming.html')
