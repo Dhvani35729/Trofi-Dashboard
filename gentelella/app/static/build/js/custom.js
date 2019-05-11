@@ -2619,7 +2619,10 @@ function init_DataTables() {
         keys: true
     });
 
-    $('#datatable-responsive').DataTable();
+    var $manage = $('#datatable-responsive').DataTable();
+    $manage.order( [ 1, 'desc' ] ).draw();
+    console.log("hello")
+
 
     $('#datatable-scroller').DataTable({
         ajax: "js/datatables/json/scroller-demo.json",

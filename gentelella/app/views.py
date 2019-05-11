@@ -10,6 +10,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+from datetime import datetime
+
 config = {
   "apiKey": "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
   "authDomain": "daydesign-a277f.firebaseapp.com",
@@ -27,6 +29,9 @@ cred = credentials.Certificate('serviceAccount.json')
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+
+def time_display(time_24):
+    return datetime.strptime(time_24, "%H:%M").strftime("%I:%M %p")
 
 def status(request, order_id, checked):
     if not logged_in(request):
@@ -266,7 +271,64 @@ def incoming(request):
     return HttpResponse(template.render(context, request))
 
 def manage(request):
-    context = {}
+    if not logged_in(request):
+        response = redirect('signIn')
+        return response 
+    # print(request.session['uid'])
+    # TODO: implement, public_id = request.session['public_uid']
+    uid = request.session['admin_uid']
+    uname = request.session['uname']
+
+    # load data    
+    hours_data = []
+
+    res_ref = db.collection(u'restaurants').document(uid)
+    
+    try:
+        res_public_data = res_ref.get().to_dict()            
+        hours_ref = db.collection(u'restaurants').document(uid).collection("hours")
+        open_hours = res_public_data["op_hours"]
+        opening = int(open_hours[0:2])
+        closing = int(open_hours[3:5])
+
+        hours_query = hours_ref.where("start_id", ">=", opening).where("start_id", "<", closing)
+        hours_docs = hours_query.get()
+        for hour in hours_docs:
+            # print(u'{} => {}'.format(hour.id, hour.to_dict()))   
+            all_hours_data = hour.to_dict()
+            starting_discount = 0
+            for discount in all_hours_data["discounts"]:
+                if discount["is_active"]:
+                    starting_discount = discount["percent_discount"]
+                    break 
+
+            # TODO: Convert to 24 hour
+            display_id = ""
+            if int(hour.id) < 10:
+                display_id = time_display("0" + hour.id + ":00")
+            else:
+                display_id = time_display(hour.id + ":00")            
+
+            an_hour = {
+            "sort_id": int(hour.id),
+            "display_id":  display_id,
+            "starting_discount": starting_discount,
+            "active": all_hours_data["hour_is_active"],
+            "foods_active": all_hours_data["foods_active"],
+            # "overhead_costs": all_hours_data["overhead_cost"],
+            # "payroll": all_hours_data["payroll"],
+            }
+            
+            hours_data.append(an_hour)            
+
+    except Exception as e:
+        # TODO: add error message to show to user
+        print('here')
+        print(e)
+        pass
+    
+
+    context = {"hours_data": hours_data, "name": uname}
     template = loader.get_template('app/manage.html')
     return HttpResponse(template.render(context, request))
 
