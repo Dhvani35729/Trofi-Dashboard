@@ -147,6 +147,8 @@ def signIn(request):
                 request.session['uid']=str(session_id)
                 request.session['admin_uid']=str(uid)
                 request.session['uname']=data["name"]
+                request.session['ccf_percentage']=data["credit_card_percentage"]
+                request.session['ccf_constant']=data["credit_card_constant"]
                 response = redirect('incoming')
                 return response
         else:
@@ -279,6 +281,11 @@ def manage(request):
     uid = request.session['admin_uid']
     uname = request.session['uname']
 
+    other = {
+        "ccf_percentage": request.session['ccf_percentage'],
+        "ccf_constant": request.session['ccf_constant'],
+    }
+
     # load data    
 
     res_ref = db.collection(u'restaurants').document(uid)
@@ -361,7 +368,7 @@ def manage(request):
         pass
     
 
-    context = {"hours_data": hours_data, "menu": menu, "name": uname}
+    context = {"hours_data": hours_data, "menu": menu, "other": other, "name": uname}
     template = loader.get_template('app/manage.html')
     return HttpResponse(template.render(context, request))
 
