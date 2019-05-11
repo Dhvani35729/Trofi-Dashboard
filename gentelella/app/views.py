@@ -292,32 +292,32 @@ def manage(request):
 
     # hours and menu
     hours_data = []  
-    menu = []  
+    menu = []    
     
     try:
         res_public_data = res_ref.get().to_dict()            
         hours_ref = db.collection(u'restaurants').document(uid).collection("hours")
         open_hours = res_public_data["op_hours"]
         opening = int(open_hours[0:2])
-        closing = int(open_hours[3:5])
+        closing = int(open_hours[3:5])        
 
         for food in res_public_data["menu"]:
-            food_ref = db.collection(u'foods').document(food)
+            food_ref = db.collection(u'foods').document(food)            
             try:
                 food_public_data = food_ref.get().to_dict()
-
                 food_private_ref = food_ref.collection("private").document(uid)
                
                 try:
                     food_private_data = food_private_ref.get().to_dict()
-                    food = {
+                    food_item = {
+                    "id": food,
                     "name": food_public_data["name"],
                     "sales_price": food_public_data["sales_price"],
                     "cost_ingredients": food_private_data["cost_ingredients"],
                     "profit_margin": food_private_data["profit_margin"]
-                    }
+                    }                                        
 
-                    menu.append(food)
+                    menu.append(food_item)
                 except Exception as e:
                     # TODO: add error message to show to user
                     print('here')
