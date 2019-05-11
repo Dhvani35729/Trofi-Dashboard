@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
 {{ block.super }}
+<link href="/static/vendors/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet">
 <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
     <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
         <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
@@ -41,7 +42,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Hour</th>
-                                                    <th>Open?</th>
+                                                    <th>Active?</th>
                                                     <th>Starting Discount</th>
                                                     <th>Edit Details</th>
                                                 </tr>
@@ -54,9 +55,9 @@
                                                         <td>{{hour.display_id}}</td>
                                                         <td>
                                                         {% if hour.active %}
-                                                        <input type="checkbox" class="flat" checked>
+                                                        <input type="checkbox" id="{{hour.sort_id}}" class="flat trofi-hour-status" checked>
                                                         {% else %}
-                                                        <input type="checkbox" class="flat">
+                                                        <input type="checkbox" id="{{hour.sort_id}}" class="flat trofi-hour-status">
                                                         {% endif %}
                                                     </td>
                                                         <td>
@@ -101,7 +102,7 @@
 
                                                                                     {% if food.id in hour.foods_active %}                                                                                    
                                                                                     <th><input type="checkbox" class="flat" checked></th>
-                                                                                    {% else %}                                                                                                                                                                                                                                                   
+                                                                                    {% else %}                                                                                                                                                                                                                                                      
                                                                                     <th><input type="checkbox" class="flat"></th>
                                                                                     {% endif %}                                                                                    
                                                                                 </tr>
@@ -198,6 +199,10 @@
                     
                     {% block javascripts %}
                     {{ block.super }}
+                      <!-- PNotify -->
+                    <script src="/static/vendors/pnotify/dist/iife/PNotify.js"></script>
+                    <script src="/static/vendors/pnotify/dist/dist/iife/PNotifyButtons.js"></script>
+                    <!-- <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script> -->
                     <!-- Datatables -->
                     <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
                     <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>

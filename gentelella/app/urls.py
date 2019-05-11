@@ -9,8 +9,8 @@ urlpatterns = [
 
     # The home page
     path('', views.lost, name='lost'),
-    path('incoming/', views.incoming, name='incoming'),
-    path('status/<order_id>/<int:checked>/', views.status, name='status'),
+    path('incoming/', views.incoming, name='incoming'),    
+    path('api/<coming_from>/<id>/<value_ref>/<value_data>/', views.api, name='api'),
     path('login/', views.signIn, name='signIn'),
     path('signup/', views.signUp, name='signUp'),
     path('logout/', views.logout, name='logout'),

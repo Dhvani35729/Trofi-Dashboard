@@ -1896,28 +1896,32 @@ function init_PNotify() {
         return;
     }
     console.log('init_PNotify');
+    PNotify.defaults.styling = 'bootstrap3'; // Bootstrap version 3
+    PNotify.defaults.icons = 'bootstrap3'; // glyphicons
+    // or
+    PNotify.defaults.styling = 'bootstrap4'; // Bootstrap version 4
+    
+    // new PNotify({
+    //     title: "PNotify",
+    //     type: "info",
+    //     text: "Welcome. Try hovering over me. You can click things behind me, because I'm non-blocking.",
+    //     nonblock: {
+    //         nonblock: true
+    //     },
+    //     addclass: 'dark',
+    //     styling: 'bootstrap3',
+    //     hide: false,
+    //     before_close: function(PNotify) {
+    //         PNotify.update({
+    //             title: PNotify.options.title + " - Enjoy your Stay",
+    //             before_close: null
+    //         });
 
-    new PNotify({
-        title: "PNotify",
-        type: "info",
-        text: "Welcome. Try hovering over me. You can click things behind me, because I'm non-blocking.",
-        nonblock: {
-            nonblock: true
-        },
-        addclass: 'dark',
-        styling: 'bootstrap3',
-        hide: false,
-        before_close: function(PNotify) {
-            PNotify.update({
-                title: PNotify.options.title + " - Enjoy your Stay",
-                before_close: null
-            });
+    //         PNotify.queueRemove();
 
-            PNotify.queueRemove();
-
-            return false;
-        }
-    });
+    //         return false;
+    //     }
+    // });
 
 };
 
@@ -5106,36 +5110,134 @@ function init_echarts() {
 
 }
 
+function sucess_database(){
+    var notice = PNotify.success({
+        title: 'Database Updated!',
+        text: 'Click me anywhere to dismiss me.',
+        modules: {
+          Buttons: {
+            closer: false,
+            sticker: false
+          }
+        }
+      });
+      notice.on('click', function() {
+        notice.close();
+      });
+}
+
+function show_loading(){
+    return PNotify.info({
+        text: 'Please Wait',
+        icon: 'fa fa-spinner fa-pulse',
+        hide: false,
+        shadow: false,
+        width: '200px',
+        modules: {
+          Buttons: {
+            closer: false,
+            sticker: false
+          }
+        }
+      });
+}
+
+function hide_loading(loader){
+    loader.close();
+}
 
 function init_incoming(){
     console.log('init incoming');
 
-    $('table input').on('ifChecked', function() {
-        
-        // console.log(this)        
 
-        if(this.id.substring(10, 18).localeCompare("incoming") == 0){
-            id = this.id.substring(19)
-            // console.log("checked")
-            location.href="/status/"+id+"/1"
-        }
+
+    $('.trofi-incoming-status').on('ifChecked', function() {
+        id = this.id.substring(10)
+    
+        loader = show_loading();
+        fetch('/api/incoming/food-status-ready/'+id+'/1')        
+        .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
 
     });
 
-    $('table input').on('ifUnchecked', function() {
-        if(this.id.substring(10, 18).localeCompare("incoming") == 0){
-            id = this.id.substring(19)
-            // console.log("unchecked")
-            location.href="/status/"+id+"/0"
-        }
+    $('.trofi-incoming-status').on('ifUnchecked', function() {
+        id = this.id.substring(10)
+
+        loader = show_loading();
+        fetch('/api/incoming/food-status-ready/'+id+'/0')        
+        .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
+    });
+
+    $('.trofi-hour-status').on('ifChecked', async function() {
+        id = this.id
+
+        loader = show_loading();
+        fetch('/api/manage/hour-status-active/'+id+'/1')        
+        .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });  
+    });
+
+    $('.trofi-hour-status').on('ifUnchecked', async function() {
+        id = this.id
+        
+        loader = show_loading();
+        fetch('/api/manage/hour-status-active/'+id+'/0')        
+        .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });  
+                 
     });
 
 }
 
 
 $(document).ready(function() {
-
-    init_incoming();
+    
     init_sparklines();
     init_flot_chart();
     init_sidebar();
@@ -5170,5 +5272,6 @@ $(document).ready(function() {
     init_CustomNotification();
     init_autosize();
     init_autocomplete();
+    init_incoming();
 
 });

@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
   {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet">
   <link href="/static/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
   <link href="/static/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css" rel="stylesheet">
   <link href="/static/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css" rel="stylesheet">
@@ -88,11 +89,11 @@
                                      
                       {% if order.status %}
                           <td>
-                            <input type="checkbox" id="check-all incoming {{order.id}}" class="flat" checked>     
+                            <input type="checkbox" id="check-all {{order.id}}" class="flat trofi-incoming-status" checked>     
                           </td>
                       {% else %}                      
                       <td>    
-                       <input type="checkbox" id="check-all incoming {{order.id}}" onclick="food_ready(this);" class="flat">          
+                       <input type="checkbox" id="check-all {{order.id}}" class="flat trofi-incoming-status">          
                           
                       </td>
                       {% endif %}
@@ -117,6 +118,10 @@
 
 {% block javascripts %}
   {{ block.super }}
+  <!-- PNotify -->
+  <script src="/static/vendors/pnotify/dist/iife/PNotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/dist/iife/PNotifyButtons.js"></script>
+  <!-- <script src="/static/vendors/pnotify/dist/pnotify.nonblock.js"></script> -->
   <!-- Datatables -->
   <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
   <script src="/static/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>

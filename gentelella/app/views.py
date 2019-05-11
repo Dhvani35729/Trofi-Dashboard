@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import auth
 import pyrebase
 import json
 import datetime
+
 
 import firebase_admin
 from firebase_admin import credentials
@@ -32,21 +33,51 @@ def time_display(time_24):
     from datetime import datetime
     return datetime.strptime(time_24, "%H:%M").strftime("%I:%M %p")
 
-def status(request, order_id, checked):
+def api(request, coming_from, id, value_ref, value_data):
     if not logged_in(request):
         response = redirect('signIn')
         return response  
 
-    order_ref = db.collection(u'orders').document("wbc_transc_" + order_id)
+    # TODO: implement, public_id = request.session['public_uid']
+    uid = request.session['admin_uid']
+    
+    if id == "food-status-ready":        
+        order_ref = db.collection(u'orders').document("wbc_transc_" + value_ref)
 
-    if checked == 0:
-        order_ref.update({u'status_ready': False})
-    else:
-        order_ref.update({u'status_ready': True})
+        if int(value_data) == 0:
+            order_ref.update({u'status_ready': False})
+        else:            
+            order_ref.update({u'status_ready': True})  
 
-    # print(order_id)
-    response = redirect('incoming')
-    return response
+    elif id == "hour-status-active":        
+        hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(value_ref)
+
+        if int(value_data) == 0:
+            hour_ref.update({u'hour_is_active': False})
+        else:            
+            hour_ref.update({u'hour_is_active': True})  
+
+    # response = redirect(coming_from)
+    response = {
+        "message": "Success!"
+    }
+    return JsonResponse(response)
+
+# def status(request, order_id, checked):
+#     if not logged_in(request):
+#         response = redirect('signIn')
+#         return response  
+
+#     order_ref = db.collection(u'orders').document("wbc_transc_" + order_id)
+
+#     if checked == 0:
+#         order_ref.update({u'status_ready': False})
+#     else:
+#         order_ref.update({u'status_ready': True})
+
+#     # print(order_id)
+#     response = redirect('incoming')
+#     return response
 
 def logout(request):
     auth.logout(request)
