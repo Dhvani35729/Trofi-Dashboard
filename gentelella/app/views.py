@@ -10,8 +10,6 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-from datetime import datetime
-
 config = {
   "apiKey": "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
   "authDomain": "daydesign-a277f.firebaseapp.com",
@@ -31,6 +29,7 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def time_display(time_24):
+    from datetime import datetime
     return datetime.strptime(time_24, "%H:%M").strftime("%I:%M %p")
 
 def status(request, order_id, checked):
@@ -259,6 +258,7 @@ def incoming(request):
             incoming_orders_data.append(an_order)                    
         except Exception as e:
             # TODO: add error message to show to user
+            print(e)
             pass
 
     # Watch the document
@@ -280,9 +280,12 @@ def manage(request):
     uname = request.session['uname']
 
     # load data    
-    hours_data = []
 
     res_ref = db.collection(u'restaurants').document(uid)
+
+    # hours and menu
+    hours_data = []  
+    menu = []  
     
     try:
         res_public_data = res_ref.get().to_dict()            
@@ -290,6 +293,36 @@ def manage(request):
         open_hours = res_public_data["op_hours"]
         opening = int(open_hours[0:2])
         closing = int(open_hours[3:5])
+
+        for food in res_public_data["menu"]:
+            food_ref = db.collection(u'foods').document(food)
+            try:
+                food_public_data = food_ref.get().to_dict()
+
+                food_private_ref = food_ref.collection("private").document(uid)
+               
+                try:
+                    food_private_data = food_private_ref.get().to_dict()
+                    food = {
+                    "name": food_public_data["name"],
+                    "sales_price": food_public_data["sales_price"],
+                    "cost_ingredients": food_private_data["cost_ingredients"],
+                    "profit_margin": food_private_data["profit_margin"]
+                    }
+
+                    menu.append(food)
+                except Exception as e:
+                    # TODO: add error message to show to user
+                    print('here')
+                    print(e)
+                    pass    
+
+            except Exception as e:
+                # TODO: add error message to show to user
+                print('here')
+                print(e)
+                pass
+
 
         hours_query = hours_ref.where("start_id", ">=", opening).where("start_id", "<", closing)
         hours_docs = hours_query.get()
@@ -319,7 +352,7 @@ def manage(request):
             # "payroll": all_hours_data["payroll"],
             }
             
-            hours_data.append(an_hour)            
+            hours_data.append(an_hour)          
 
     except Exception as e:
         # TODO: add error message to show to user
@@ -328,7 +361,7 @@ def manage(request):
         pass
     
 
-    context = {"hours_data": hours_data, "name": uname}
+    context = {"hours_data": hours_data, "menu": menu, "name": uname}
     template = loader.get_template('app/manage.html')
     return HttpResponse(template.render(context, request))
 

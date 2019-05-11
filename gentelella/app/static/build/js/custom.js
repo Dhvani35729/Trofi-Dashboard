@@ -2619,11 +2619,17 @@ function init_DataTables() {
         keys: true
     });
 
-    var $manage = $('#datatable-responsive').DataTable();
-    $manage.order( [ 1, 'desc' ] ).draw();
-    console.log("hello")
+    var manage_table = $('#datatable-responsive-manage').DataTable({        
+        paging: false,
+        ordering: false,   
+    });    
 
+    for(var i = 1; i <= manage_table.data().length; i++){
+        $('#datatable-responsive-' + parseInt(i)).DataTable();
+    }
 
+    $('#datatable-responsive').DataTable();
+        
     $('#datatable-scroller').DataTable({
         ajax: "js/datatables/json/scroller-demo.json",
         deferRender: true,
