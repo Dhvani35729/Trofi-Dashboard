@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.contrib import auth
+from django.views.decorators.csrf import csrf_exempt
+
 import pyrebase
 import json
 import datetime
@@ -10,6 +12,9 @@ import datetime
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+
+from google.cloud.firestore_v1 import ArrayUnion, ArrayRemove
+
 
 config = {
   "apiKey": "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
@@ -33,51 +38,98 @@ def time_display(time_24):
     from datetime import datetime
     return datetime.strptime(time_24, "%H:%M").strftime("%I:%M %p")
 
-def api(request, coming_from, id, value_ref, value_data):
-    if not logged_in(request):
-        response = redirect('signIn')
-        return response  
-
+@csrf_exempt
+def api_hours(request, hour_id = -1):
+    # TODO: ADD AUTHENTICATION
     # TODO: implement, public_id = request.session['public_uid']
     uid = request.session['admin_uid']
+
+    # GET
+    # TODO: RETURN ALL HOURS DATA
+
+    if request.method == "GET":
+        if hour_id == -1:
+            response = {
+            "message": "Returning all hours..."
+            }
+            return JsonResponse(response) 
+
+    # PUT
+    if request.method == "PUT":
+        body = json.loads(str(request.body, encoding='utf-8'))
+        # print(body)
+        if body["id"] == "food-status-active":
+            hour_id = body["hour_id"]
+            food_id = body["food_id"]
+            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)
+
+            if body["food_active"] == True:
+                try:
+                    hour_ref.update({u'foods_active': ArrayUnion([food_id])})                            
+                except Exception as e:
+                    print(e)                    
+            else:            
+                try:
+                    hour_ref.update({u'foods_active': ArrayRemove([food_id])})
+                except Exception as e:
+                    print(e) 
+        elif body["id"] == "hour-status-active":
+            hour_id = body["hour_id"]            
+            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)
+
+            if body["hour_active"] == True:
+                try:
+                    hour_ref.update({u'hour_is_active': True})                         
+                except Exception as e:
+                    print(e)                    
+            else:            
+                try:
+                    hour_ref.update({u'hour_is_active': False})
+                except Exception as e:
+                    print(e) 
     
-    if id == "food-status-ready":        
-        order_ref = db.collection(u'orders').document("wbc_transc_" + value_ref)
+    response = {
+        "message": "Success!"
+    }
+    return JsonResponse(response) 
 
-        if int(value_data) == 0:
-            order_ref.update({u'status_ready': False})
-        else:            
-            order_ref.update({u'status_ready': True})  
+@csrf_exempt
+def api_orders(request, order_id = -1):
+    # TODO: ADD AUTHENTICATION
+    # TODO: implement, public_id = request.session['public_uid']
+    uid = request.session['admin_uid']
 
-    elif id == "hour-status-active":        
-        hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(value_ref)
+    # GET
+    if request.method == "GET":
+        if order_id == -1:
+            response = {
+            "message": "Returning all orders..."
+            }
+            return JsonResponse(response) 
 
-        if int(value_data) == 0:
-            hour_ref.update({u'hour_is_active': False})
-        else:            
-            hour_ref.update({u'hour_is_active': True})  
+    if request.method == "PUT":
+        body = json.loads(str(request.body, encoding='utf-8'))
+        # print(body)
 
-    # response = redirect(coming_from)
+        if body["id"] == "food-status-ready":
+            order_id = body["order_id"]
+            order_ref = db.collection(u'orders').document("wbc_transc_" + order_id)
+
+            if body["order_ready"] == True:
+                try:
+                    order_ref.update({u'status_ready': True})                       
+                except Exception as e:
+                    print(e)                    
+            else:            
+                try:
+                    order_ref.update({u'status_ready': False})
+                except Exception as e:
+                    print(e) 
+
     response = {
         "message": "Success!"
     }
     return JsonResponse(response)
-
-# def status(request, order_id, checked):
-#     if not logged_in(request):
-#         response = redirect('signIn')
-#         return response  
-
-#     order_ref = db.collection(u'orders').document("wbc_transc_" + order_id)
-
-#     if checked == 0:
-#         order_ref.update({u'status_ready': False})
-#     else:
-#         order_ref.update({u'status_ready': True})
-
-#     # print(order_id)
-#     response = redirect('incoming')
-#     return response
 
 def logout(request):
     auth.logout(request)

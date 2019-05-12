@@ -5146,17 +5146,197 @@ function hide_loading(loader){
     loader.close();
 }
 
+function init_manage(){
+    console.log('init manage');
+
+    $('.trofi-hour-status').on('ifChecked', function() {        
+        loader = show_loading();
+
+        id = this.id
+        hour_id = id        
+
+        var url = '/api/hours/'
+        var data = {id: "hour-status-active", hour_id: hour_id, hour_active: true}       
+
+        fetch(url, {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
+    
+    });
+
+    $('.trofi-hour-status').on('ifUnchecked', function() {        
+        loader = show_loading();
+
+        id = this.id
+        hour_id = id        
+
+        var url = '/api/hours/'
+        var data = {id: "hour-status-active", hour_id: hour_id, hour_active: false}       
+
+        fetch(url, {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
+    
+    });
+    
+    $('.trofi-hour-food-status').on('ifChecked', function() {        
+        loader = show_loading();
+
+        id = this.id
+        separator = this.id.indexOf('-') 
+        hour_id = id.substr(0, separator)
+        food_id = id.substr(separator+1)
+
+        var url = '/api/hours/'
+        var data = {id: "food-status-active", hour_id: hour_id, food_id: food_id, food_active: true}       
+
+        fetch(url, {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
+    
+    });
+
+    $('.trofi-hour-food-status').on('ifUnchecked', function() {        
+        loader = show_loading();
+
+        id = this.id
+        separator = this.id.indexOf('-') 
+        hour_id = id.substr(0, separator)
+        food_id = id.substr(separator+1)
+
+        var url = '/api/hours/'
+        var data = {id: "food-status-active", hour_id: hour_id, food_id: food_id, food_active: false}       
+
+        fetch(url, {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
+    
+    });
+
+
+
+}
+
 function init_incoming(){
     console.log('init incoming');
 
+    $('.trofi-incoming-status').on('ifChecked', function() {        
+        loader = show_loading();
 
+        id = this.id
+        order_id = this.id.substring(10)
 
-    $('.trofi-incoming-status').on('ifChecked', function() {
-        id = this.id.substring(10)
+        var url = '/api/orders/'
+        var data = {id: "food-status-ready", order_id: order_id, order_ready: true}       
+
+        fetch(url, {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            response.json();
+            if(response.status == 200){
+                // Show success message   
+                hide_loading(loader);         
+                sucess_database()
+            } 
+        })
+        .catch(error => console.error('Error:', error))
+        .then(response => {            
+            // console.log('Success:', JSON.stringify(response));
+
+        });
     
+    });
+
+    $('.trofi-incoming-status').on('ifUnchecked', function() {        
         loader = show_loading();
-        fetch('/api/incoming/food-status-ready/'+id+'/1')        
-        .then(response => {
+
+        id = this.id
+        order_id = this.id.substring(10)
+
+        var url = '/api/orders/'
+        var data = {id: "food-status-ready", order_id: order_id, order_ready: false}       
+
+        fetch(url, {
+            method: 'PUT', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
             response.json();
             if(response.status == 200){
                 // Show success message   
@@ -5169,68 +5349,7 @@ function init_incoming(){
             // console.log('Success:', JSON.stringify(response));
 
         });
-
-    });
-
-    $('.trofi-incoming-status').on('ifUnchecked', function() {
-        id = this.id.substring(10)
-
-        loader = show_loading();
-        fetch('/api/incoming/food-status-ready/'+id+'/0')        
-        .then(response => {
-            response.json();
-            if(response.status == 200){
-                // Show success message   
-                hide_loading(loader);         
-                sucess_database()
-            } 
-        })
-        .catch(error => console.error('Error:', error))
-        .then(response => {            
-            // console.log('Success:', JSON.stringify(response));
-
-        });
-    });
-
-    $('.trofi-hour-status').on('ifChecked', async function() {
-        id = this.id
-
-        loader = show_loading();
-        fetch('/api/manage/hour-status-active/'+id+'/1')        
-        .then(response => {
-            response.json();
-            if(response.status == 200){
-                // Show success message   
-                hide_loading(loader);         
-                sucess_database()
-            } 
-        })
-        .catch(error => console.error('Error:', error))
-        .then(response => {            
-            // console.log('Success:', JSON.stringify(response));
-
-        });  
-    });
-
-    $('.trofi-hour-status').on('ifUnchecked', async function() {
-        id = this.id
-        
-        loader = show_loading();
-        fetch('/api/manage/hour-status-active/'+id+'/0')        
-        .then(response => {
-            response.json();
-            if(response.status == 200){
-                // Show success message   
-                hide_loading(loader);         
-                sucess_database()
-            } 
-        })
-        .catch(error => console.error('Error:', error))
-        .then(response => {            
-            // console.log('Success:', JSON.stringify(response));
-
-        });  
-                 
+    
     });
 
 }
@@ -5273,5 +5392,6 @@ $(document).ready(function() {
     init_autosize();
     init_autocomplete();
     init_incoming();
+    init_manage();
 
 });

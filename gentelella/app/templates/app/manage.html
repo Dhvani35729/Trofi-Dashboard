@@ -28,7 +28,8 @@
                             
                             <div class="clearfix"></div>      
                             
-                            <div class="row">                            
+                            <div class="row">    
+                            
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="x_panel">
                                     
@@ -101,9 +102,9 @@
                                                                                     <th>{{food.name}}</th>
 
                                                                                     {% if food.id in hour.foods_active %}                                                                                    
-                                                                                    <th><input type="checkbox" class="flat" checked></th>
+                                                                                    <th><input type="checkbox" id="{{hour.sort_id}}-{{food.id}}" class="flat trofi-hour-food-status" checked></th>
                                                                                     {% else %}                                                                                                                                                                                                                                                      
-                                                                                    <th><input type="checkbox" class="flat"></th>
+                                                                                    <th><input type="checkbox" id="{{hour.sort_id}}-{{food.id}}" class="flat trofi-hour-food-status"></th>
                                                                                     {% endif %}                                                                                    
                                                                                 </tr>
                                                                                     {% endfor %}                                                                                                                                                                  

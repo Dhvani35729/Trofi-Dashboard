@@ -10,7 +10,10 @@ urlpatterns = [
     # The home page
     path('', views.lost, name='lost'),
     path('incoming/', views.incoming, name='incoming'),    
-    path('api/<coming_from>/<id>/<value_ref>/<value_data>/', views.api, name='api'),
+    re_path(r'api/hours/$', views.api_hours, name='apiHours'),
+    re_path(r'api/hours/(?P<hour_id>\w+)/$', views.api_hours, name='apiHours'),
+    re_path(r'api/orders/$', views.api_orders, name='apiOrders'),
+    re_path(r'api/orders/(?P<order_id>\w+)/$', views.api_orders, name='apiOrders'),     
     path('login/', views.signIn, name='signIn'),
     path('signup/', views.signUp, name='signUp'),
     path('logout/', views.logout, name='logout'),
