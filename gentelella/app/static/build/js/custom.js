@@ -2630,6 +2630,7 @@ function init_DataTables() {
 
     for(var i = 1; i <= manage_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();
+        $('#update-discount-' + parseInt(i)).hide();
     }
 
     $('#datatable-responsive').DataTable();
@@ -5146,8 +5147,103 @@ function hide_loading(loader){
     loader.close();
 }
 
+function is_num(to_check){
+    return /^\d+$/.test(to_check);
+}
+
 function init_manage(){
     console.log('init manage');
+
+      $('.trofi-manage-discount').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)
+        table_id = this.id.substr(18)
+        if(this.value == ""){
+            $('#update-discount-' + table_id).hide()
+        }
+        else{
+            $('#update-discount-' + table_id).show()
+        }                
+      });
+
+      $('.trofi-update-discount').click(function() {
+        // console.log("clicked me")
+        // console.log(this)
+        table_id = this.id.substr(16)
+        // console.log(table_id)
+        new_discount = $('#starting-discount-' + table_id).val()
+
+        var failed_test = false
+
+        if(is_num(new_discount)){
+            new_discount_num = parseInt(new_discount)
+            if(new_discount_num >= 0 && new_discount_num <= 100){
+               // console.log(new_discount_num)
+            
+               loader = show_loading();
+        
+               hour_id = this.classList[3]
+       
+               var url = '/api/hours/'
+               var data = {id: "percent-discount-update", hour_id: hour_id, starting_discount: new_discount_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-discount-' + table_id).hide()
+                       $('#starting-discount-' + table_id).val('')
+                       $('#starting-discount-' + table_id).attr("placeholder", "Currently: " + new_discount_num + "%");
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+
+
+
+
+
+            }
+            else{
+                failed_test = true;
+            }
+        }
+        else{
+            failed_test = true;
+        }
+
+        if(failed_test){
+            // show error
+            var notice = PNotify.error({
+                title: 'Error: The starting discount \'' + new_discount +  '\' is not valid!',
+                text: 'Click me anywhere to dismiss me.',
+                modules: {
+                  Buttons: {
+                    closer: false,
+                    sticker: false
+                  }
+                }
+              });
+              notice.on('click', function() {
+                notice.close();
+              });
+        }
+        
+
+      });
 
     $('.trofi-hour-status').on('ifChecked', function() {        
         loader = show_loading();

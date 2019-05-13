@@ -62,7 +62,13 @@
                                                         {% endif %}
                                                     </td>
                                                         <td>
-                                                                <input type="text" class="form-control" placeholder="Currently: {{ hour.starting_discount }}%">
+                                                                <div class="input-group">
+                                                                        <input type="number" id="starting-discount-{{forloop.counter}}" class="form-control trofi-manage-discount" placeholder="Currently: {{ hour.starting_discount }}%">
+                                                                        <span class="input-group-btn">
+                                                                               <button type="button" id="update-discount-{{forloop.counter}}" class="btn btn-warning trofi-update-discount {{hour.sort_id}}">Update!</button>
+                                                                        </span>
+                                                                      </div>
+                                                               
                                                         </td>
                                                       
                                                         <td>

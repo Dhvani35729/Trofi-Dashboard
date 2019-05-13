@@ -87,6 +87,29 @@ def api_hours(request, hour_id = -1):
                     hour_ref.update({u'hour_is_active': False})
                 except Exception as e:
                     print(e) 
+        elif body["id"] == "percent-discount-update":
+            hour_id = body["hour_id"]        
+            new_discount = body["starting_discount"]            
+            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)  
+ 
+            try:
+                hour_data = hour_ref.get().to_dict()
+                print()
+                # print(hour_data.discounts[0])                
+                initial_discount = {
+                    "is_active": hour_data["discounts"][0]["is_active"],
+                    "needed_contribution": 0,
+                    "percent_discount": new_discount,
+                }      
+                print(initial_discount) 
+                try:
+                    hour_ref.update({u'discounts': ArrayRemove([hour_data["discounts"][0]])})    
+                    hour_ref.update({u'discounts': ArrayUnion([initial_discount])})         
+                except Exception as e:
+                    print(e) 
+                
+            except Exception as e:
+                print(u'No such document!')
     
     response = {
         "message": "Success!"
