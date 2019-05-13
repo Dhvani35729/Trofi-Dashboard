@@ -110,6 +110,27 @@ def api_hours(request, hour_id = -1):
                 
             except Exception as e:
                 print(u'No such document!')
+        elif body["id"] == "payroll-update":
+            hour_id = body["hour_id"]        
+            new_payroll = body["payroll"]            
+            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)  
+     
+            try:
+                hour_ref.update({u'payroll': float(new_payroll)})                         
+            except Exception as e:
+                print(e)  
+        elif body["id"] == "overhead-cost-update":
+            hour_id = body["hour_id"]        
+            new_operating = body["overhead_cost"]            
+            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)  
+     
+            try:
+                hour_ref.update({u'overhead_cost': float(new_operating)})                         
+            except Exception as e:
+                print(e)                                    
+
+
+                
     
     response = {
         "message": "Success!"
@@ -372,7 +393,7 @@ def incoming(request):
     # Watch the document
     # orders_count_watch = orders_count_ref.on_snapshot(on_orders_count_snapshot)
 
-    context = {"incoming_orders": incoming_orders_data, "name": uname}
+    context = {"incoming_orders": incoming_orders_data,"admin_uid": uid, "name": uname}
     print('render outside')
     print(context)
     template = loader.get_template('app/incoming.html')

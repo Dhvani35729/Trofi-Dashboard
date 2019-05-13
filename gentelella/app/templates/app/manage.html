@@ -12,6 +12,8 @@
                 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
                     {% endblock stylesheets %}
                     
+                    {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+                    
                     {% block content %}
                     <div class="right_col" role="main">
                         <div class="">
@@ -74,8 +76,10 @@
                                                         <td>
                                                         
                                                                 <a class="panel-heading" role="tab" id="heading{{forloop.counter}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
-                                                                    <button type="button" class="btn btn-round btn-primary">Edit</button>
+                                                                    <button type="button" class="btn btn-round btn-primary">Edit</button>                                                                   
                                                                 </a>
+                                                                <button type="button" id="update-payroll-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-payroll {{hour.sort_id}}">Update Payroll!</button>
+                                                                <button type="button" id="update-overhead-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-overhead {{hour.sort_id}}">Update Overhead Cost!</button>
                                                                 
                                                                 <div id="collapse{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
                                                                     <div class="panel-body">
@@ -88,8 +92,8 @@
                                                                             </thead>
                                                                             <tbody>
                                                                                 <tr>
-                                                                                    <th><input type="text" class="form-control" placeholder="Enter Payroll"></th>
-                                                                                    <th><input type="text" class="form-control" placeholder="Enter Overhead Cost"></th>
+                                                                                        <th><input type="number" id="payroll-{{forloop.counter}}" class="form-control trofi-manage-payroll" placeholder="Enter Payroll"></th>
+                                                                                        <th><input type="number" id="overhead-{{forloop.counter}}" class="form-control trofi-manage-overhead" placeholder="Enter Overhead Cost"></th>                                                                                                
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>

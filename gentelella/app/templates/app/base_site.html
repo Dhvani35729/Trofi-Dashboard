@@ -61,9 +61,10 @@
             </footer>
           {% endblock footer %}
         </div>
-      </div>
+      </div>  
 
       {% block javascripts %}
+     
         <!-- jQuery -->
         <script src="/static/vendors/jquery/dist/jquery.min.js"></script>
         <!-- Bootstrap -->
@@ -100,6 +101,29 @@
       {% endblock %}
       <!-- Custom Theme Scripts -->
       <script src="/static/build/js/custom.js"></script>
+
+      <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-firestore.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
+    authDomain: "daydesign-a277f.firebaseapp.com",
+    databaseURL: "https://daydesign-a277f.firebaseio.com",
+    projectId: "daydesign-a277f",
+    storageBucket: "daydesign-a277f.appspot.com",
+    messagingSenderId: "758132951647",
+    appId: "1:758132951647:web:886bd87dee19fee5"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
     {% endblock body %}
   </body>
 </html>

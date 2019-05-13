@@ -12,8 +12,11 @@
   <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
 {% endblock stylesheets %}
 
+{% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
+
 {% block content %}
-  <div class="right_col" role="main">
+<input type="hidden" id="uid" name="admin_uid" value="{{ admin_uid }}"> 
+<div class="right_col" role="main">
     <div class="">
       <div class="page-title">
         <div class="title_left">

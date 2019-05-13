@@ -2631,6 +2631,8 @@ function init_DataTables() {
     for(var i = 1; i <= manage_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();
         $('#update-discount-' + parseInt(i)).hide();
+        $('#update-payroll-' + parseInt(i)).hide();
+        $('#update-overhead-' + parseInt(i)).hide();
     }
 
     $('#datatable-responsive').DataTable();
@@ -5151,6 +5153,22 @@ function is_num(to_check){
     return /^\d+$/.test(to_check);
 }
 
+function show_error_msg(msg){
+    var notice = PNotify.error({
+        title: msg,
+        text: 'Click me anywhere to dismiss me.',
+        modules: {
+          Buttons: {
+            closer: false,
+            sticker: false
+          }
+        }
+      });
+      notice.on('click', function() {
+        notice.close();
+      });
+}
+
 function init_manage(){
     console.log('init manage');
 
@@ -5166,20 +5184,130 @@ function init_manage(){
         }                
       });
 
+      $('.trofi-manage-payroll').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)
+        table_id = this.id.substr(8)
+        if(this.value == ""){
+            $('#update-payroll-' + table_id).hide()
+        }
+        else{
+            $('#update-payroll-' + table_id).show()
+        }                
+      });
+
+      $('.trofi-manage-overhead').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)
+        table_id = this.id.substr(9)
+        if(this.value == ""){
+            $('#update-overhead-' + table_id).hide()
+        }
+        else{
+            $('#update-overhead-' + table_id).show()
+        }                
+      });
+
+      $('.trofi-update-payroll').click(function() {
+
+        table_id = this.id.substr(15)
+        new_payroll = $('#payroll-' + table_id).val()
+
+        new_payroll_num = parseFloat(new_payroll);
+        
+        if(!isNaN(new_payroll_num) && new_payroll_num > 0.0){
+
+                loader = show_loading();
+        
+               hour_id = this.classList[4]
+       
+               var url = '/api/hours/'
+               var data = {id: "payroll-update", hour_id: hour_id, payroll: new_payroll_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-payroll-' + table_id).hide()                                              
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+        }
+        else{
+            show_error_msg('Error: The payroll amount \'' + new_payroll +  '\' is not valid!',)
+        }
+
+      });
+
+      $('.trofi-update-overhead').click(function() {
+
+        table_id = this.id.substr(16)
+        new_overhead = $('#overhead-' + table_id).val()
+
+        new_overhead_num = parseFloat(new_overhead);
+        
+        if(!isNaN(new_overhead_num) && new_overhead_num > 0.0){
+
+             loader = show_loading();
+        
+               hour_id = this.classList[4]
+       
+               var url = '/api/hours/'
+               var data = {id: "overhead-cost-update", hour_id: hour_id, overhead_cost: new_overhead_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-overhead-' + table_id).hide()                                              
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+        }
+        else{
+            show_error_msg('Error: The overhead cost \'' + new_overhead +  '\' is not valid!',)
+        }
+
+      });
+
       $('.trofi-update-discount').click(function() {
         // console.log("clicked me")
         // console.log(this)
-        table_id = this.id.substr(16)
-        // console.log(table_id)
+        table_id = this.id.substr(16)        
         new_discount = $('#starting-discount-' + table_id).val()
 
-        var failed_test = false
+        new_discount_num = parseInt(new_discount)
 
-        if(is_num(new_discount)){
-            new_discount_num = parseInt(new_discount)
-            if(new_discount_num >= 0 && new_discount_num <= 100){
-               // console.log(new_discount_num)
-            
+        if(!isNaN(new_discount_num) && new_discount_num >= 0 && new_discount_num <= 100){
+                
                loader = show_loading();
         
                hour_id = this.classList[3]
@@ -5211,37 +5339,10 @@ function init_manage(){
        
                });
 
-
-
-
-
-
-            }
-            else{
-                failed_test = true;
-            }
-        }
+            }                
         else{
-            failed_test = true;
-        }
-
-        if(failed_test){
-            // show error
-            var notice = PNotify.error({
-                title: 'Error: The starting discount \'' + new_discount +  '\' is not valid!',
-                text: 'Click me anywhere to dismiss me.',
-                modules: {
-                  Buttons: {
-                    closer: false,
-                    sticker: false
-                  }
-                }
-              });
-              notice.on('click', function() {
-                notice.close();
-              });
-        }
-        
+            show_error_msg('Error: The starting discount \'' + new_discount +  '\' is not valid!')          
+        }        
 
       });
 
@@ -5383,6 +5484,30 @@ function init_manage(){
 
 function init_incoming(){
     console.log('init incoming');
+
+    var uid = $('#uid').val()
+    
+
+    var db = firebase.firestore();
+
+    uid = "z8SkXjWQ16S9tmqvQeiBiTyy2i42"
+
+    db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders").where("incoming", "==", true)
+    .onSnapshot(function(snapshot) {
+        snapshot.docChanges().forEach(function(change) {
+            if (change.type === "added") {
+                // change.doc.id
+                console.log("New city: ", change.doc.data());
+            }
+            if (change.type === "modified") {
+
+                console.log("Modified city: ", change.doc.data());
+            }
+            if (change.type === "removed") {
+                console.log("Removed city: ", change.doc.data());
+            }
+        });
+    });
 
     $('.trofi-incoming-status').on('ifChecked', function() {        
         loader = show_loading();
