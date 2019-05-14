@@ -5482,22 +5482,123 @@ function init_manage(){
 
 }
 
-function init_incoming(){
-    console.log('init incoming');
+function update_database_message(msg){
+    var notice = PNotify.notice({
+        title: msg,
+        text: 'Click me anywhere to dismiss me.',
+        modules: {
+          Buttons: {
+            closer: false,
+            sticker: false
+          }
+        }
+      });
+      notice.on('click', function() {
+        notice.close();
+      });
+}
 
-    var uid = $('#uid').val()
-    
+function init_incoming_listener(){
 
     var db = firebase.firestore();
 
-    uid = "z8SkXjWQ16S9tmqvQeiBiTyy2i42"
-
+    var uid = $('#uid').val()
+    var first = true;
+    var incoming_table = $('#datatable-responsive-incoming').DataTable();
+    var wait = 0;
     db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders").where("incoming", "==", true)
     .onSnapshot(function(snapshot) {
         snapshot.docChanges().forEach(function(change) {
             if (change.type === "added") {
                 // change.doc.id
-                console.log("New city: ", change.doc.data());
+                
+                // TODO: deal with first time call
+
+                if(wait < incoming_table.data().length){
+                    wait += 1
+                }
+                else{
+
+                    // console.log("New city: ", change.doc.data());
+
+                    update_database_message("Update: New order " +  change.doc.id.substr(11) + " added!")
+                    
+                    var order_id = change.doc.id.substr(11);                    
+                    var incoming_order_ref = db.collection('orders').doc(change.doc.id)
+
+                    incoming_order_ref.get().then(function(doc) {
+                        if (doc.exists) {
+                            console.log("Document data:", doc.data());
+                            var order_data = doc.data();
+                            var placed_at = parseInt(order_data.placed_at.toDate().getHours()) +  ':' + parseInt(order_data.placed_at.toDate().getMinutes())                                                            
+                            var active_hours = order_data.hours_order.substr(0, 2) + ":00" + " - " + order_data.hours_order.substr(3, 5) + ":00"
+                            
+                            // var an_order = {
+                            //     "id": order_data.order_id,
+                            //     "placed_at": placed_at,
+                            //     "active_between": active_hours,
+                            //     "current_price": order_data.total_price,
+                            //     "items": order_data.foods,
+                            //     "status": order_data.status_ready,
+                            // }
+
+                            
+                            var status_ready = ""
+                            if(order_data.status_ready){
+                                status_ready = "<input type=\"checkbox\" id=\"check-all " + order_data.order_id + "\" class=\"flat trofi-incoming-status\" checked>";
+                            }
+                            else{
+                                status_ready = "<input type=\"checkbox\" id=\"check-all " + order_data.order_id + "\"  class=\"flat trofi-incoming-status\">";
+                            }
+
+                            
+                            var count = incoming_table.data().length
+                            count += 1
+
+                            var items_begin = "<td> <a class=\"panel-heading\" role=\"tab\" id=\"heading" + count + "\" data-toggle=\"collapse\" data-parent=\"#accordion\" href=\"#collapse" + count + "\" aria-expanded=\"true\" aria-controls=\"collapse" + count + "\"> <button type=\"button\" class=\"btn btn-round btn-primary\">View Items</button> </a> <div id=\"collapse" + count + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"heading" + count + "\"> <div class=\"panel-body\"> <table id=\"datatable-responsive\" class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\"> <thead><tr> <th>Food Name</th> <th>Quantity</th> <th>Price</th> <th>Toppings</th> <th>Comments</th> </tr> </thead> <tbody>"
+                            var items_body = ""
+                            order_data.foods.forEach(function(item) {
+                                console.log(item);
+                                items_body += " <tr> <th>" + item.name + "</th> <th>" + item.quantity + "</th> <th>$" + item.initial_price + "</th> <th>" + item.toppings + "</th> <th>" + item.comments + "</th> </tr>"
+                            });                            
+                            var items_end = " </tbody> </table> </div> </div> </td> "
+                            
+                            var items = items_begin + items_body + items_end
+                            
+                            incoming_table.row.add( [                   
+                                items,
+                                status_ready,
+                                order_data.order_id,
+                                active_hours,
+                                placed_at,
+                                "$" + order_data.total_price,
+                            ] ).draw( false );
+        
+                            
+                            $('input.flat').iCheck({
+                                checkboxClass: 'icheckbox_flat-green',
+                                radioClass: 'iradio_flat-green'
+                            });
+
+                            $('#datatable-responsive').DataTable();
+
+                            init_incoming_table();
+
+
+
+
+                        } else {
+                            // doc.data() will be undefined in this case
+                            console.log("No such document!");
+                            show_error_msg("Error: Problem with database. Contact software.wbc@gmail.com if error persists")
+                        }
+                    }).catch(function(error) {
+                        console.log("Error getting document:", error);
+                        show_error_msg("Error: Problem with database. Contact software.wbc@gmail.com if error persists")
+                    });
+
+                }
+
             }
             if (change.type === "modified") {
 
@@ -5509,6 +5610,12 @@ function init_incoming(){
         });
     });
 
+}
+
+function init_incoming_table(){
+    console.log('init incoming');
+                        
+   
     $('.trofi-incoming-status').on('ifChecked', function() {        
         loader = show_loading();
 
@@ -5577,7 +5684,22 @@ function init_incoming(){
 
 
 $(document).ready(function() {
-    
+
+    init_DataTables();
+    init_PNotify();
+
+    if ( location.href.includes("incoming") ) {
+        //Code here
+        init_incoming_table();
+        init_incoming_listener();
+    }
+
+    if ( location.href.includes("manage") ) {
+        //Code here
+        init_manage();
+    }
+
+
     init_sparklines();
     init_flot_chart();
     init_sidebar();
@@ -5602,17 +5724,13 @@ $(document).ready(function() {
     init_skycons();
     init_select2();
     init_validator();
-    init_DataTables();
     init_chart_doughnut();
-    init_gauge();
-    init_PNotify();
+    init_gauge();    
     init_starrr();
     init_calendar();
     init_compose();
     init_CustomNotification();
     init_autosize();
     init_autocomplete();
-    init_incoming();
-    init_manage();
 
 });

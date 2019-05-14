@@ -316,47 +316,6 @@ def incoming(request):
     # load data
     incoming_orders_data = []
 
-    # Create a callback on_snapshot function to capture changes
-    def on_orders_count_snapshot(doc_snapshot, changes, read_time):
-        for doc in doc_snapshot:
-            # print(u'Received document data: {}'.format(doc.to_dict()))
-            # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
-            all_orders_ref = db.collection(u'restaurants').document(uid).collection(u'private').document(uid).collection("orders")
-            all_incoming_orders_query = all_orders_ref.where(u'incoming', u'==', True)
-            all_incoming_orders_docs = all_incoming_orders_query.get()
-            #incoming_orders_data.clear()
-            for doc in all_incoming_orders_docs:
-                print(u'{} => {}'.format(doc.id, doc.to_dict()))   
-                incoming_order_ref = db.collection(u'orders').document(doc.id)
-                try:
-                    incoming_order = incoming_order_ref.get()
-                    order_data = incoming_order.to_dict()
-                    # print(u'Document data: {}'.format(order_data))                       
-                    order_hours = order_data["placed_at"] - datetime.timedelta(hours=4)                                        
-                    placed_at = str(order_hours.time())[:5]
-                    active_hours = order_data["hours_order"][0:2] + ":00" + " - " + order_data["hours_order"][3:5] + ":00"
-                    
-                    an_order = {
-                        "id": order_data["order_id"],
-                        "placed_at": placed_at,
-                        "active_between": active_hours,
-                        "current_price": order_data["total_price"],
-                        "items": order_data["foods"],
-                        "status": order_data["status_ready"],
-                    }
-
-                    incoming_orders_data.append(an_order)                    
-
-                except Exception as e:
-                    # TODO: add error message to show to user
-                    pass
-            
-            print("render")
-            print(incoming_orders_data)
-            # context = {"incoming_orders": incoming_orders_data}
-            # template = loader.get_template('app/incoming.html')
-            # return HttpResponse(template.render(context, request))
-
     orders_count_ref = db.collection(u'restaurants').document(uid).collection(u'private').document(uid)
 
     # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
