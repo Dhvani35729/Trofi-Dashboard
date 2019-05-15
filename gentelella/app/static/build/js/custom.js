@@ -2623,6 +2623,20 @@ function init_DataTables() {
         keys: true
     });
 
+
+
+    var incoming_table = $('#datatable-responsive-incoming').DataTable();
+
+    for(var i = 1; i <= incoming_table.data().length; i++){
+        $('#datatable-responsive-' + parseInt(i)).DataTable();
+    }
+
+    var history_table = $('#datatable-responsive-history').DataTable();
+
+    for(var i = 1; i <= history_table.data().length; i++){
+        $('#datatable-responsive-' + parseInt(i)).DataTable();
+    }
+
     var manage_table = $('#datatable-responsive-manage').DataTable({        
         paging: false,
         ordering: false,   
@@ -5429,16 +5443,23 @@ function init_manage(){
             }
           })
           .then(response => {
-            response.json();
-            if(response.status == 200){
-                // Show success message   
-                hide_loading(loader);         
-                sucess_database()
-            } 
+            response.json().then(data => {
+                // code that can access both here
+                console.log(data)
+                if(data.status == 200){
+                    // Show success message   
+                    hide_loading(loader);         
+                    sucess_database()
+                }
+                else if(data.status == 404){
+                    hide_loading(loader);                 
+                    show_error_msg(data.message)
+                }
+            })                        
         })
         .catch(error => console.error('Error:', error))
         .then(response => {            
-            // console.log('Success:', JSON.stringify(response));
+            console.log('Success:', JSON.stringify(response));
 
         });
     
@@ -5483,27 +5504,71 @@ function init_manage(){
 }
 
 function update_database_message(msg){
-    var notice = PNotify.notice({
-        title: msg,
-        text: 'Click me anywhere to dismiss me.',
-        modules: {
-          Buttons: {
-            closer: false,
-            sticker: false
-          }
-        }
+   var notice = PNotify.info({
+        title: 'Database Updated!',
+        text: 'Refreshing page in 2 seconds...',
+        addClass: 'nonblock',
       });
-      notice.on('click', function() {
-        notice.close();
-      });
+      setTimeout(function () {
+        location.reload();
+    }, 2000);
+      
+    //   notice.on('click', function() {
+    //     notice.close();
+    //   });
 }
 
-function init_incoming_listener(){
+function init_history_listener(db, uid){
 
-    var db = firebase.firestore();
+    var incoming_table = $('#datatable-responsive-history').DataTable();
+    var wait = 0;
+    db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders")
+    .onSnapshot(function(snapshot) {
+        snapshot.docChanges().forEach(function(change) {
+            if (change.type === "added") {
+                // change.doc.id
+                
+                // TODO: deal with first time call
 
-    var uid = $('#uid').val()
-    var first = true;
+                if(wait < incoming_table.data().length){
+                    wait += 1
+                }
+                else{
+
+                    // console.log("New city: ", change.doc.data());
+
+                    update_database_message("Update: New order " +  change.doc.id.substr(11) + " added! Refreshing page in 2 seconds...")                    
+                   
+
+                        } 
+                
+                }
+                     
+            if (change.type === "modified") {
+
+                console.log("Modified city: ", change.doc.data());
+
+                update_database_message("Update: New order " +  change.doc.id.substr(11) + " added! Refreshing page in 2 seconds...")
+            }
+            if (change.type === "removed") {
+                console.log("Removed city: ", change.doc.data());
+
+                update_database_message("Update: New order " +  change.doc.id.substr(11) + " added! Refreshing page in 2 seconds...")
+            }
+        });
+    });
+
+}
+
+function init_manage_listener(db, uid){
+    
+    // none as of now
+
+}
+
+
+function init_incoming_listener(db, uid){
+
     var incoming_table = $('#datatable-responsive-incoming').DataTable();
     var wait = 0;
     db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders").where("incoming", "==", true)
@@ -5521,91 +5586,23 @@ function init_incoming_listener(){
 
                     // console.log("New city: ", change.doc.data());
 
-                    update_database_message("Update: New order " +  change.doc.id.substr(11) + " added!")
-                    
-                    var order_id = change.doc.id.substr(11);                    
-                    var incoming_order_ref = db.collection('orders').doc(change.doc.id)
+                    update_database_message("Update: New order " +  change.doc.id.substr(11) + " added! Refreshing page in 2 seconds...")                    
+                   
 
-                    incoming_order_ref.get().then(function(doc) {
-                        if (doc.exists) {
-                            console.log("Document data:", doc.data());
-                            var order_data = doc.data();
-                            var placed_at = parseInt(order_data.placed_at.toDate().getHours()) +  ':' + parseInt(order_data.placed_at.toDate().getMinutes())                                                            
-                            var active_hours = order_data.hours_order.substr(0, 2) + ":00" + " - " + order_data.hours_order.substr(3, 5) + ":00"
-                            
-                            // var an_order = {
-                            //     "id": order_data.order_id,
-                            //     "placed_at": placed_at,
-                            //     "active_between": active_hours,
-                            //     "current_price": order_data.total_price,
-                            //     "items": order_data.foods,
-                            //     "status": order_data.status_ready,
-                            // }
-
-                            
-                            var status_ready = ""
-                            if(order_data.status_ready){
-                                status_ready = "<input type=\"checkbox\" id=\"check-all " + order_data.order_id + "\" class=\"flat trofi-incoming-status\" checked>";
-                            }
-                            else{
-                                status_ready = "<input type=\"checkbox\" id=\"check-all " + order_data.order_id + "\"  class=\"flat trofi-incoming-status\">";
-                            }
-
-                            
-                            var count = incoming_table.data().length
-                            count += 1
-
-                            var items_begin = "<td> <a class=\"panel-heading\" role=\"tab\" id=\"heading" + count + "\" data-toggle=\"collapse\" data-parent=\"#accordion\" href=\"#collapse" + count + "\" aria-expanded=\"true\" aria-controls=\"collapse" + count + "\"> <button type=\"button\" class=\"btn btn-round btn-primary\">View Items</button> </a> <div id=\"collapse" + count + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"heading" + count + "\"> <div class=\"panel-body\"> <table id=\"datatable-responsive\" class=\"table table-striped table-bordered dt-responsive nowrap\" cellspacing=\"0\"> <thead><tr> <th>Food Name</th> <th>Quantity</th> <th>Price</th> <th>Toppings</th> <th>Comments</th> </tr> </thead> <tbody>"
-                            var items_body = ""
-                            order_data.foods.forEach(function(item) {
-                                console.log(item);
-                                items_body += " <tr> <th>" + item.name + "</th> <th>" + item.quantity + "</th> <th>$" + item.initial_price + "</th> <th>" + item.toppings + "</th> <th>" + item.comments + "</th> </tr>"
-                            });                            
-                            var items_end = " </tbody> </table> </div> </div> </td> "
-                            
-                            var items = items_begin + items_body + items_end
-                            
-                            incoming_table.row.add( [                   
-                                items,
-                                status_ready,
-                                order_data.order_id,
-                                active_hours,
-                                placed_at,
-                                "$" + order_data.total_price,
-                            ] ).draw( false );
-        
-                            
-                            $('input.flat').iCheck({
-                                checkboxClass: 'icheckbox_flat-green',
-                                radioClass: 'iradio_flat-green'
-                            });
-
-                            $('#datatable-responsive').DataTable();
-
-                            init_incoming_table();
-
-
-
-
-                        } else {
-                            // doc.data() will be undefined in this case
-                            console.log("No such document!");
-                            show_error_msg("Error: Problem with database. Contact software.wbc@gmail.com if error persists")
-                        }
-                    }).catch(function(error) {
-                        console.log("Error getting document:", error);
-                        show_error_msg("Error: Problem with database. Contact software.wbc@gmail.com if error persists")
-                    });
-
+                        } 
+                
                 }
-
-            }
+                     
             if (change.type === "modified") {
 
                 console.log("Modified city: ", change.doc.data());
+
+                update_database_message("Update: New order " +  change.doc.id.substr(11) + " added! Refreshing page in 2 seconds...")
             }
             if (change.type === "removed") {
                 console.log("Removed city: ", change.doc.data());
+
+                update_database_message("Update: New order " +  change.doc.id.substr(11) + " added! Refreshing page in 2 seconds...")
             }
         });
     });
@@ -5688,15 +5685,24 @@ $(document).ready(function() {
     init_DataTables();
     init_PNotify();
 
+    var db = firebase.firestore();
+    var uid = $('#uid').val()
+
     if ( location.href.includes("incoming") ) {
         //Code here
         init_incoming_table();
-        init_incoming_listener();
+        init_incoming_listener(db, uid);
     }
 
     if ( location.href.includes("manage") ) {
         //Code here
         init_manage();
+        init_manage_listener(db, uid);
+    }
+
+    if ( location.href.includes("history") ) {
+        //Code here
+        init_history_listener(db, uid);
     }
 
 

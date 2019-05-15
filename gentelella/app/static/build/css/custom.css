@@ -5,6 +5,7 @@ html , body{
 
 }
 
+/* added to remove the arrow icons that appear with table input="number" */
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 

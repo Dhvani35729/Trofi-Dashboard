@@ -1,189 +1,49 @@
 from django.shortcuts import render, redirect
 from django.template import loader
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.contrib import auth
-from django.views.decorators.csrf import csrf_exempt
 
-import pyrebase
 import json
 import datetime
 
+from .utils import (
+    time_display,
+    error_message,
+    get_message_from_exception,
+    )
+from .config import authe, db
+from .api.base import api_hours, api_orders
+from .constants import HOME_PAGE, DATABASE_ERROR_MSG
 
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+from .auth.base import (    
+    create_account,    
+    log_in,
+    )
 
-from google.cloud.firestore_v1 import ArrayUnion, ArrayRemove
+from .auth.utils import (
+    logged_in,
+    is_valid_trofi_code,
+    should_allow_user_in
+    )
 
-
-config = {
-  "apiKey": "AIzaSyCwgogOI0rJDijj-r97dbWjEinKkrBH1Ok",
-  "authDomain": "daydesign-a277f.firebaseapp.com",
-  "databaseURL": "https://daydesign-a277f.firebaseio.com",
-  "storageBucket": "daydesign-a277f.appspot.com"
-}
-
-firebase = pyrebase.initialize_app(config)
-# Get a reference to the auth service
-authe = firebase.auth()
-
-# firestore config
-# Use a service account
-cred = credentials.Certificate('serviceAccount.json')
-firebase_admin.initialize_app(cred)
-
-db = firestore.client()
-
-def time_display(time_24):
-    from datetime import datetime
-    return datetime.strptime(time_24, "%H:%M").strftime("%I:%M %p")
-
-@csrf_exempt
-def api_hours(request, hour_id = -1):
-    # TODO: ADD AUTHENTICATION
-    # TODO: implement, public_id = request.session['public_uid']
-    uid = request.session['admin_uid']
-
-    # GET
-    # TODO: RETURN ALL HOURS DATA
-
-    if request.method == "GET":
-        if hour_id == -1:
-            response = {
-            "message": "Returning all hours..."
-            }
-            return JsonResponse(response) 
-
-    # PUT
-    if request.method == "PUT":
-        body = json.loads(str(request.body, encoding='utf-8'))
-        # print(body)
-        if body["id"] == "food-status-active":
-            hour_id = body["hour_id"]
-            food_id = body["food_id"]
-            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)
-
-            if body["food_active"] == True:
-                try:
-                    hour_ref.update({u'foods_active': ArrayUnion([food_id])})                            
-                except Exception as e:
-                    print(e)                    
-            else:            
-                try:
-                    hour_ref.update({u'foods_active': ArrayRemove([food_id])})
-                except Exception as e:
-                    print(e) 
-        elif body["id"] == "hour-status-active":
-            hour_id = body["hour_id"]            
-            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)
-
-            if body["hour_active"] == True:
-                try:
-                    hour_ref.update({u'hour_is_active': True})                         
-                except Exception as e:
-                    print(e)                    
-            else:            
-                try:
-                    hour_ref.update({u'hour_is_active': False})
-                except Exception as e:
-                    print(e) 
-        elif body["id"] == "percent-discount-update":
-            hour_id = body["hour_id"]        
-            new_discount = body["starting_discount"]            
-            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)  
- 
-            try:
-                hour_data = hour_ref.get().to_dict()
-                print()
-                # print(hour_data.discounts[0])                
-                initial_discount = {
-                    "is_active": hour_data["discounts"][0]["is_active"],
-                    "needed_contribution": 0,
-                    "percent_discount": new_discount,
-                }      
-                print(initial_discount) 
-                try:
-                    hour_ref.update({u'discounts': ArrayRemove([hour_data["discounts"][0]])})    
-                    hour_ref.update({u'discounts': ArrayUnion([initial_discount])})         
-                except Exception as e:
-                    print(e) 
-                
-            except Exception as e:
-                print(u'No such document!')
-        elif body["id"] == "payroll-update":
-            hour_id = body["hour_id"]        
-            new_payroll = body["payroll"]            
-            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)  
-     
-            try:
-                hour_ref.update({u'payroll': float(new_payroll)})                         
-            except Exception as e:
-                print(e)  
-        elif body["id"] == "overhead-cost-update":
-            hour_id = body["hour_id"]        
-            new_operating = body["overhead_cost"]            
-            hour_ref = db.collection(u'restaurants').document(uid).collection(u'hours').document(hour_id)  
-     
-            try:
-                hour_ref.update({u'overhead_cost': float(new_operating)})                         
-            except Exception as e:
-                print(e)                                    
-
-
-                
-    
-    response = {
-        "message": "Success!"
-    }
-    return JsonResponse(response) 
-
-@csrf_exempt
-def api_orders(request, order_id = -1):
-    # TODO: ADD AUTHENTICATION
-    # TODO: implement, public_id = request.session['public_uid']
-    uid = request.session['admin_uid']
-
-    # GET
-    if request.method == "GET":
-        if order_id == -1:
-            response = {
-            "message": "Returning all orders..."
-            }
-            return JsonResponse(response) 
-
-    if request.method == "PUT":
-        body = json.loads(str(request.body, encoding='utf-8'))
-        # print(body)
-
-        if body["id"] == "food-status-ready":
-            order_id = body["order_id"]
-            order_ref = db.collection(u'orders').document("wbc_transc_" + order_id)
-
-            if body["order_ready"] == True:
-                try:
-                    order_ref.update({u'status_ready': True})                       
-                except Exception as e:
-                    print(e)                    
-            else:            
-                try:
-                    order_ref.update({u'status_ready': False})
-                except Exception as e:
-                    print(e) 
-
-    response = {
-        "message": "Success!"
-    }
-    return JsonResponse(response)
+def index(request):
+    if logged_in(request):
+        response = redirect(HOME_PAGE)
+    else:
+        response = redirect('signIn')
+    return response
 
 def logout(request):
     auth.logout(request)
     response = redirect('signIn')
     return response
 
-def signUp(request):
+def sign_up(request):
     if logged_in(request):
-        response = redirect('incoming')
+        response = redirect(HOME_PAGE)
         return response  
+
+    template_name = 'app/signup.html' 
 
     email = request.POST.get("email")
     passw = request.POST.get("password")
@@ -196,48 +56,34 @@ def signUp(request):
         return HttpResponse(template.render(context, request))
 
     # Check if valid trofi code
-    codeRef = db.collection(u'general').document(u'trofi-verification')
+    is_valid = is_valid_trofi_code(trofi_code)
 
-    try:
-        doc = codeRef.get()
-        # print(u'Document data: {}'.format(doc.to_dict()))
-        if trofi_code in doc.to_dict()["accepted_codes"]:            
-            # Sign the user up
-            try:
-                user = authe.create_user_with_email_and_password(email, passw)
-                ## TODO: create user entry in database and auto setup
-            except Exception as e:
-                error_json = e.args[1]        
-                error = json.loads(error_json)['error']        
-                message=error['message']
-                context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
-                # response = redirect('signIn',context=context)
-                # return response
-                template = loader.get_template('app/signup.html')        
-                return HttpResponse(template.render(context, request))
+    if is_valid is None:
+        message=DATABASE_ERROR_MSG
+        context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}                   
+        return error_message(request, message, context, template_name)            
 
-            # print(user)
-            # print("debug")
-            session_id=user['idToken']
-            request.session['uid']=str(session_id)
-            response = redirect('incoming')
+    if not is_valid:
+        message="Invalid Trofi Code!"
+        context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}        
+        return error_message(request, message, context, template_name)
+    else:
+        user, e = create_account(email, passw)
+        if user:
+            response = redirect('logout')
             return response
-        else:
-            message="Invalid Trofi Code!"
+        else:  
+            message = get_message_from_exception(e)
             context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
-            template = loader.get_template('app/signup.html')        
-            return HttpResponse(template.render(context, request))
-    except Exception as e:
-        # print(u'No such document!')
-        message="Problem with database. Contact software.wbc@gmail.com"
-        context = {"messg":message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
-        template = loader.get_template('app/signup.html')        
-        return HttpResponse(template.render(context, request))
+            return error_message(request, message, context, template_name)      
 
-def signIn(request):
+
+def sign_in(request):
     if logged_in(request):
-        response = redirect('incoming')
+        response = redirect(HOME_PAGE)
         return response   
+
+    template_name = 'app/login.html' 
 
     email = request.POST.get("email")
     passw = request.POST.get("password")
@@ -247,63 +93,35 @@ def signIn(request):
         template = loader.get_template('app/login.html')
         return HttpResponse(template.render(context, request))
 
-    # Log the user in
-    try:
-        user = authe.sign_in_with_email_and_password(email, passw)
-    except Exception as e:
-        error_json = e.args[1]        
-        error = json.loads(error_json)['error']        
-        message=error['message']
-        context = {"messg":message, "email": email, "passw": passw}
-        # response = redirect('signIn',context=context)
-        # return response
-        template = loader.get_template('app/login.html')        
-        return HttpResponse(template.render(context, request))
+    user, e = log_in(email, passw)
+    if user:        
+        uid = user['localId']
 
-    # print(user['localId'])
-    uid = user['localId']
-    resRef = db.collection(u'restaurants').document(uid)
-    resPrivateRef = resRef.collection(u'private').document(uid)
+        allow_user_in, data = should_allow_user_in(uid)
+        
+        if allow_user_in is None:
+            message = DATABASE_ERROR_MSG
+            context = {"messg":message, "email": email, "passw": passw}               
+            return error_message(request, message, context, template_name)
+        
+        if allow_user_in:
+            session_id=user['idToken']
+            request.session['uid']=str(session_id)
+            request.session['admin_uid']=str(uid)
+            request.session['uname']=data["name"]
+            request.session['ccf_percentage']=data["credit_card_percentage"]
+            request.session['ccf_constant']=data["credit_card_constant"]
+            response = redirect(HOME_PAGE)
+            return response
 
-    try:
-        doc = resPrivateRef.get()
-        data = doc.to_dict()
-        # print(u'Document data: {}'.format(doc.to_dict()))
-        if data["allow_in"]:
-                session_id=user['idToken']
-                request.session['uid']=str(session_id)
-                request.session['admin_uid']=str(uid)
-                request.session['uname']=data["name"]
-                request.session['ccf_percentage']=data["credit_card_percentage"]
-                request.session['ccf_constant']=data["credit_card_constant"]
-                response = redirect('incoming')
-                return response
         else:
             message="Vibe has not setup your account yet. Please wait to receive an email."
-            context = {"messg":message, "email": email, "passw": passw}
-            template = loader.get_template('app/login.html')        
-            return HttpResponse(template.render(context, request))
-
-    except Exception as e:
-        # print(u'No such document!')
-        message="Problem with database. Contact software.wbc@gmail.com"
-        context = {"messg":message, "email": email, "passw": passw}
-        template = loader.get_template('app/login.html')        
-        return HttpResponse(template.render(context, request))
-
-def lost(request):
-    if logged_in(request):
-        response = redirect('incoming')
-        return response 
-    else:
-        response = redirect('signIn')
-        return response 
-
-def logged_in(request):
-    try:
-        return request.session['uid']
-    except KeyError:
-        return None
+            context = {"messg":message, "email": email, "passw": passw}               
+            return error_message(request, message, context, template_name)
+    else:      
+        message = get_message_from_exception(e)
+        context = {"messg":message, "email": email, "passw": passw}             
+        return error_message(request, message, context, template_name)
 
 def incoming(request):
     if not logged_in(request):
@@ -499,18 +317,8 @@ def history(request):
     # Watch the document
     # orders_count_watch = orders_count_ref.on_snapshot(on_orders_count_snapshot)
     print(all_orders_data)
-    context = {"all_orders": all_orders_data, "name": uname}
+    context = {"all_orders": all_orders_data, "admin_uid": uid, "name": uname}
     template = loader.get_template('app/history.html')
     return HttpResponse(template.render(context, request))
 
-
-def gentella_html(request):
-    context = {}
-    # The template to be loaded as per gentelella.
-    # All resource paths for gentelella end in .html.
-
-    # Pick out the html file name from the url. And load that template.
-    load_template = request.path.split('/')[-1]
-    template = loader.get_template('app/' + load_template)
-    return HttpResponse(template.render(context, request))
 
