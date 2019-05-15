@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from ..config import db
-from .common import api_error
+from ..utils import error_500
 
 from .hours.update import (
     update_food_status_active,
@@ -43,7 +43,7 @@ def api_hours(request, hour_id = -1):
         elif body["id"] == "overhead-cost-update":
             return update_overhead_cost(db, uid, body)
     
-    return api_error(request) 
+    return error_500(request) 
 
 # TODO: add CSRF support
 @csrf_exempt
@@ -61,4 +61,4 @@ def api_orders(request, order_id = -1):
         if body["id"] == "food-status-ready":
             return update_food_status_ready(db, uid, body)
 
-    return api_error(request)
+    return error_500(request)

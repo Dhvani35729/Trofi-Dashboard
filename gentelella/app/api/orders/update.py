@@ -1,4 +1,4 @@
-from ..common import api_success, db_error
+from ..common import api_success, api_db_error
 
 def update_food_status_ready(db, uid, body):
     order_id = body["order_id"]
@@ -8,11 +8,11 @@ def update_food_status_ready(db, uid, body):
         try:
             order_ref.update({u'status_ready': True})                       
         except Exception as e:
-            return db_error()                    
+            return api_db_error()                    
     else:            
         try:
             order_ref.update({u'status_ready': False})
         except Exception as e:
-            return db_error() 
+            return api_db_error() 
     
     return api_success() 

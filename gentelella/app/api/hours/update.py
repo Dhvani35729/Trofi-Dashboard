@@ -1,6 +1,6 @@
 from google.cloud.firestore_v1 import ArrayUnion, ArrayRemove
 
-from ..common import api_success, db_error
+from ..common import api_success, api_db_error
 
 def update_food_status_active(db, uid, body):
     hour_id = body["hour_id"]
@@ -11,12 +11,12 @@ def update_food_status_active(db, uid, body):
         try:
             hour_ref.update({u'foods_active': ArrayUnion([food_id])})                                
         except Exception as e:            
-            return db_error()
+            return api_db_error()
     else:            
         try:
             hour_ref.update({u'foods_active': ArrayRemove([food_id])})            
         except Exception as e:
-            return db_error()
+            return api_db_error()
     
     return api_success()
 
@@ -28,12 +28,12 @@ def update_hour_status(db, uid, body):
         try:
             hour_ref.update({u'hour_is_active': True})                         
         except Exception as e:
-            return db_error()
+            return api_db_error()
     else:            
         try:
             hour_ref.update({u'hour_is_active': False})
         except Exception as e:
-            return db_error()
+            return api_db_error()
     
     return api_success()
 
@@ -55,9 +55,9 @@ def update_percent_discount(db, uid, body):
             hour_ref.update({u'discounts': ArrayRemove([hour_data["discounts"][0]])})    
             hour_ref.update({u'discounts': ArrayUnion([initial_discount])})         
         except Exception as e:
-            return db_error()     
+            return api_db_error()     
     except Exception as e:
-        return db_error()
+        return api_db_error()
     
     return api_success()
 
@@ -69,7 +69,7 @@ def update_payroll(db, uid, body):
     try:
         hour_ref.update({u'payroll': float(new_payroll)})                         
     except Exception as e:
-        return db_error() 
+        return api_db_error() 
 
     return api_success() 
 
@@ -81,6 +81,6 @@ def update_overhead_cost(db, uid, body):
     try:
         hour_ref.update({u'overhead_cost': float(new_operating)})                         
     except Exception as e:
-        return db_error() 
+        return api_db_error() 
     
     return api_success()
