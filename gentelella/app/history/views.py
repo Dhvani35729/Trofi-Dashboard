@@ -16,7 +16,7 @@ def history(request):
     # print(request.session['uid'])
     uid = request.session['admin_uid']
     uname = request.session['uname']
-    
+
     template_name = 'app/history.html'
 
     # load data
@@ -35,16 +35,16 @@ def history(request):
             active_hours = time_display(order_data["hours_order"][0:2] + ":00") + " - " + time_display(order_data["hours_order"][3:5] + ":00")
 
             an_order = {
-                "id": order_data["order_id"],                
+                "id": order_data["order_id"],
                 "active_between": active_hours,
                 "final_price": money_display(order_data["total_price"] * (100.0 - order_data["final_discount"])/100.0),
-                "items": order_data["foods"],                
+                "items": order_data["foods"],
             }
 
             all_orders_data.append(an_order)
         except Exception as e:
             # TODO: add error message to show to user
-            return error_500(request)
+            return error_500(request, e)
 
     context = {"all_orders": all_orders_data, "admin_uid": uid, "name": uname}
     template = loader.get_template(template_name)

@@ -52,7 +52,7 @@ def sign_up(request):
     if is_valid is None:
         message = DATABASE_ERROR_MSG
         context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
-        return error_message(request, message, context, template_name)            
+        return error_message(request, message, context, template_name)
 
     if not is_valid:
         message = "Invalid Trofi Code!"
@@ -63,7 +63,7 @@ def sign_up(request):
         if user:
             response = redirect('logout')
             return response
-        else:  
+        else:
             message = get_message_from_exception(e)
             context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
             return error_message(request, message, context, template_name)
@@ -85,16 +85,16 @@ def sign_in(request):
         return HttpResponse(template.render(context, request))
 
     user, e = log_in(email, passw)
-    if user:        
+    if user:
         uid = user['localId']
 
         allow_user_in, data = should_allow_user_in(uid)
-        
+
         if allow_user_in is None:
             message = DATABASE_ERROR_MSG
             context = {"messg": message, "email": email, "passw": passw}
             return error_message(request, message, context, template_name)
-        
+
         if allow_user_in:
             session_id = user['idToken']
             request.session['uid'] = str(session_id)
@@ -109,7 +109,7 @@ def sign_in(request):
             message = "Vibe has not setup your account yet. Please wait to receive an email."
             context = {"messg": message, "email": email, "passw": passw}
             return error_message(request, message, context, template_name)
-    else:      
+    else:
         message = get_message_from_exception(e)
         context = {"messg": message, "email": email, "passw": passw}
         return error_message(request, message, context, template_name)

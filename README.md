@@ -24,7 +24,8 @@ serviceAccount.json (speak to Dhvani)
 Go to http://localhost:8000/
 
 ##### Styling guide
-Follow flake8
+Python: follow flake8
+Javascript: follow eslint
 
 ### Template Credit: Gentelella
 Author: Colorlib

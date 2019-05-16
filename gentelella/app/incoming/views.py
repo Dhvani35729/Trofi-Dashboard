@@ -18,7 +18,7 @@ def incoming(request):
     # print(request.session['uid'])
     uid = request.session['admin_uid']
     uname = request.session['uname']
-    
+
     template_name = 'app/incoming.html'
 
     # load data
@@ -37,7 +37,7 @@ def incoming(request):
             order_hours = order_data["placed_at"] - datetime.timedelta(hours=4)
             placed_at = time_display(str(order_hours.time())[:5])
             active_hours = time_display(order_data["hours_order"][0:2] + ":00") + " - " + time_display(order_data["hours_order"][3:5] + ":00")
-            
+
             an_order = {
                 "id": order_data["order_id"],
                 "placed_at": placed_at,
@@ -50,7 +50,7 @@ def incoming(request):
             incoming_orders_data.append(an_order)
         except Exception as e:
             # TODO: add error message to show to user
-            return error_500(request)
+            return error_500(request, e)
 
     context = {"incoming_orders": incoming_orders_data, "admin_uid": uid, "name": uname}
     template = loader.get_template(template_name)

@@ -12,7 +12,7 @@ def manage(request):
     if not logged_in(request):
         response = redirect(HOME_PAGE_LOGGED_OUT)
         return response
-    
+
     # TODO: implement: public_id = request.session['public_uid']
     uid = request.session['admin_uid']
     uname = request.session['uname']
@@ -57,11 +57,11 @@ def manage(request):
                     menu.append(food_item)
                 except Exception as e:
                     # TODO: add error message to show to user
-                    return error_500(request)
+                    return error_500(request, e)
 
             except Exception as e:
                 # TODO: add error message to show to user
-                return error_500(request)
+                return error_500(request, e)
 
         hours_query = hours_ref.where("start_id", ">=", opening).where("start_id", "<", closing)
         hours_docs = hours_query.get()
@@ -93,7 +93,7 @@ def manage(request):
 
     except Exception as e:
         # TODO: add error message to show to user
-        return error_500(request)
+        return error_500(request, e)
 
     context = {"hours_data": hours_data, "menu": menu, "other": other, "name": uname}
     template = loader.get_template(template_name)

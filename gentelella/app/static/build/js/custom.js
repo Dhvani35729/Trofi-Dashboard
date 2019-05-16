@@ -256,7 +256,7 @@ $('.bulk_action input').on('ifUnchecked', function() {
     countChecked();
 });
 $('.bulk_action input#check-all').on('ifChecked', function() {
-    checkState = 'all';    
+    checkState = 'all';
     countChecked();
 });
 $('.bulk_action input#check-all').on('ifUnchecked', function() {
@@ -1900,7 +1900,7 @@ function init_PNotify() {
     PNotify.defaults.icons = 'bootstrap3'; // glyphicons
     // or
     PNotify.defaults.styling = 'bootstrap4'; // Bootstrap version 4
-    
+
     // new PNotify({
     //     title: "PNotify",
     //     type: "info",
@@ -2624,7 +2624,7 @@ function init_DataTables() {
     });
 
     $('#datatable-responsive').DataTable();
-        
+
     $('#datatable-scroller').DataTable({
         ajax: "js/datatables/json/scroller-demo.json",
         deferRender: true,
@@ -5130,7 +5130,7 @@ $(document).ready(function() {
     init_select2();
     init_validator();
     init_chart_doughnut();
-    init_gauge();    
+    init_gauge();
     init_starrr();
     init_calendar();
     init_compose();

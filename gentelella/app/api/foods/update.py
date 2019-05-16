@@ -9,7 +9,7 @@ def update_food_sales_price(db, uid, body):
     try:
         food_ref.update({u'sales_price': new_sales_price})
     except Exception as e:
-        return api_db_error()
+        return api_db_error(e)
 
     return api_success()
 
@@ -22,7 +22,7 @@ def update_food_profit_margin(db, uid, body):
     try:
         food_private_ref.update({u'profit_margin': new_profit_margin})
     except Exception as e:
-        return api_db_error()
+        return api_db_error(e)
 
     return api_success()
 
@@ -35,6 +35,6 @@ def update_food_ingredients_cost(db, uid, body):
     try:
         food_private_ref.update({u'ingredients_cost': new_ingredients_cost})
     except Exception as e:
-        return api_db_error()
+        return api_db_error(e)
 
     return api_success()

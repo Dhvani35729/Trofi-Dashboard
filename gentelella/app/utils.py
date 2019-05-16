@@ -27,5 +27,9 @@ def get_message_from_exception(e):
     return error['message']
 
 
-def error_500(request):
+def error_500(request, e):
+    if e is not None:
+        print(e)
+        if len(e.args) > 1:
+            print(get_message_from_exception(e))
     return TemplateResponse(request, "app/page_500.html", status=500)
