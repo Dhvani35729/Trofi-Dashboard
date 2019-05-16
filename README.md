@@ -23,6 +23,9 @@ serviceAccount.json (speak to Dhvani)
 ##### Behold!
 Go to http://localhost:8000/
 
+##### Styling guide
+Follow flake8
+
 ### Template Credit: Gentelella
 Author: Colorlib
 https://github.com/puikinsh/gentelella

@@ -50,7 +50,7 @@ def manage(request):
                         "id": food,
                         "name": food_public_data["name"],
                         "sales_price": food_public_data["sales_price"],
-                        "cost_ingredients": food_private_data["cost_ingredients"],
+                        "ingredients_cost": food_private_data["ingredients_cost"],
                         "profit_margin": food_private_data["profit_margin"]
                     }
 

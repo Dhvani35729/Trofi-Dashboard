@@ -4,7 +4,12 @@ from .constants import HOME_PAGE, HOME_PAGE_LOGGED_OUT
 from .auth.utils import logged_in
 
 # API Views
-from .api.base import api_hours, api_orders
+from .api.base import (
+    api_hours,
+    api_orders,
+    api_foods,
+    api_others
+    )
 
 # Page Views
 from .auth.views import sign_up, sign_in, logout

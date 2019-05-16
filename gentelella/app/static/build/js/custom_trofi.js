@@ -157,37 +157,214 @@ function init_incoming_listener(db, uid){
 
 }
 
-function init_manage(){
-    console.log('init manage');
+function init_menu(){
 
-    var manage_table = $('#datatable-responsive-manage').DataTable({        
-        paging: false,
-        ordering: false,   
-    });    
+    var menu_table = $('#datatable-responsive-menu').DataTable();  
 
-    $('#datatable-responsive-menu').DataTable();  
+    for(var i = 1; i <= menu_table.data().length; i++){        
+        $('#update-sales-price-' + parseInt(i)).hide();
+        $('#update-profit-margin-' + parseInt(i)).hide();
+        $('#update-ingredients-cost-' + parseInt(i)).hide();
+    }
 
-    $('#datatable-responsive-other').DataTable({        
-        paging: false,
-        ordering: false,   
-    });  
+
+    $('.trofi-manage-sales-price').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)
+        table_id = this.id.substr(12)
+        if(this.value == ""){
+            $('#update-sales-price-' + table_id).hide()
+        }
+        else{
+            $('#update-sales-price-' + table_id).show()
+        }                
+      });
+
+      $('.trofi-manage-profit-margin').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)
+        table_id = this.id.substr(13)
+        if(this.value == ""){
+            $('#update-profit-margin' + table_id).hide()
+        }
+        else{
+            $('#update-profit-margin' + table_id).show()
+        }                
+      });
+
+      $('.trofi-manage-ingredients-cost').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)
+        table_id = this.id.substr(16)
+        if(this.value == ""){
+            $('#update-ingredients-cost' + table_id).hide()
+        }
+        else{
+            $('#update-ingredients-cost' + table_id).show()
+        }                
+      });
+
+      $('.trofi-update-sales-price').click(function() {
+        // console.log("clicked me")
+        // console.log(this)
+        table_id = this.id.substr(19)        
+        new_sales_price = $('#sales-price-' + table_id).val()
+
+        new_sales_price_num = parseFloat(new_sales_price)
+
+        if(!isNaN(new_sales_price_num) && new_sales_price_num >= 0){
+                
+               loader = show_loading();
+        
+               food_id = this.classList[3]
+       
+               var url = '/api/foods/'
+               var data = {id: "sales-price-update", food_id: food_id, sales_price: new_sales_price_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-sales-price-' + table_id).hide()
+                       $('#sales-price-' + table_id).val('')
+                       $('#sales-price-' + table_id).attr("placeholder", "$" + new_sales_price_num);
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+            }                
+        else{
+            show_error_msg('Error: The sales price \'' + new_sales_price +  '\' is not valid!')          
+        }        
+
+      });
+
+      $('.trofi-update-profit-margin').click(function() {
+        // console.log("clicked me")
+        // console.log(this)
+        table_id = this.id.substr(21)        
+        new_profit_margin = $('#profit-margin-' + table_id).val()
+
+        new_profit_margin_num = parseFloat(new_profit_margin)
+
+        if(!isNaN(new_profit_margin_num) && new_profit_margin_num >= 0){
+                
+               loader = show_loading();
+        
+               food_id = this.classList[3]
+       
+               var url = '/api/foods/'
+               var data = {id: "profit-margin-update", food_id: food_id, profit_margin: new_profit_margin_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-profit-margin-' + table_id).hide()
+                       $('#profit-margin-' + table_id).val('')
+                       $('#profit-margin-' + table_id).attr("placeholder", "$" + new_profit_margin_num);
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+            }                
+        else{
+            show_error_msg('Error: The profit margin \'' + new_profit_margin +  '\' is not valid!')          
+        }        
+
+      });
+
+      $('.trofi-update-ingredients-cost').click(function() {
+        // console.log("clicked me")
+        // console.log(this)
+        table_id = this.id.substr(24)        
+        new_ingredients_cost = $('#ingredients-cost-' + table_id).val()
+
+        new_ingredients_cost_num = parseFloat(new_ingredients_cost)
+
+        if(!isNaN(new_ingredients_cost_num) && new_ingredients_cost_num >= 0){
+                
+               loader = show_loading();
+        
+               food_id = this.classList[3]
+       
+               var url = '/api/foods/'
+               var data = {id: "ingredients-cost-update", food_id: food_id, ingredients_cost: new_ingredients_cost_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-ingredients-cost-' + table_id).hide()
+                       $('#ingredients-cost-' + table_id).val('')
+                       $('#ingredients-cost-' + table_id).attr("placeholder", "$" + new_ingredients_cost_num);
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+            }                
+        else{
+            show_error_msg('Error: The ingredients cost \'' + new_ingredients_cost +  '\' is not valid!')          
+        }        
+
+      });
     
+}
 
+function init_hours(){
 
-    for(var i = 1; i <= manage_table.data().length; i++){
+    var hours_table = $('#datatable-responsive-manage').DataTable({        
+        paging: false,
+        ordering: false,   
+    });
+
+    for(var i = 1; i <= hours_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();
         $('#update-discount-' + parseInt(i)).hide();
         $('#update-payroll-' + parseInt(i)).hide();
         $('#update-overhead-' + parseInt(i)).hide();
     }
 
-    $('#datatable-responsive-manage').show()
-    $('#datatable-responsive-menu').show()
-    $('#datatable-responsive-other').show()
-
-    
-
-      $('.trofi-manage-discount').keyup(function() {
+    $('.trofi-manage-discount').keyup(function() {
         // console.log("focused me")
         //console.log(this)
         table_id = this.id.substr(18)
@@ -221,7 +398,8 @@ function init_manage(){
         else{
             $('#update-overhead-' + table_id).show()
         }                
-      });
+      });    
+
 
       $('.trofi-update-payroll').click(function() {
 
@@ -501,6 +679,144 @@ function init_manage(){
     });
 
 
+
+}
+
+function init_other(){
+
+    // $('#datatable-responsive-other').DataTable({        
+    //     paging: false,
+    //     ordering: false,   
+    // });  
+
+    $('#update-ccf-percentage').hide()
+    $('#update-ccf-constant').hide()
+
+    $('#ccf-percentage').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)        
+        if(this.value == ""){
+            $('#update-ccf-percentage').hide()
+        }
+        else{
+            $('#update-ccf-percentage').show()
+        }                
+      }); 
+      
+    $('#ccf-constant').keyup(function() {
+        // console.log("focused me")
+        //console.log(this)        
+        if(this.value == ""){
+            $('#update-ccf-constant').hide()
+        }
+        else{
+            $('#update-ccf-constant').show()
+        }                
+      });
+
+      $('#update-ccf-percentage').click(function() {
+
+        new_ccf_percentage = $('#ccf-percentage').val()
+
+        new_ccf_percentage_num = parseFloat(new_ccf_percentage);
+        
+        if(!isNaN(new_ccf_percentage_num) && new_ccf_percentage_num >= 0.0 && new_ccf_percentage_num <= 100.0){
+
+             loader = show_loading();               
+       
+               var url = '/api/other/'
+               var data = {id: "ccf-percentage-update", ccf_percentage: new_ccf_percentage_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-ccf-percentage').hide()        
+                       $('#ccf-percentage').val('')
+                       $('#ccf-percentage').attr("placeholder", new_ccf_percentage_num + "%");                                    
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+        }
+        else{
+            show_error_msg('Error: The credit card fee percentage \'' + new_ccf_percentage +  '\' is not valid!',)
+        }
+
+      });
+
+
+      $('#update-ccf-constant').click(function() {
+
+        new_ccf_constant = $('#ccf-constant').val()
+
+        new_ccf_constant_num = parseFloat(new_ccf_constant);
+        
+        if(!isNaN(new_ccf_constant_num) && new_ccf_constant_num >= 0.0){
+
+             loader = show_loading();               
+       
+               var url = '/api/other/'
+               var data = {id: "ccf-constant-update", ccf_constant: new_ccf_constant_num}       
+       
+               fetch(url, {
+                   method: 'PUT', // or 'PUT'
+                   body: JSON.stringify(data), // data can be `string` or {object}!
+                   headers:{
+                     'Content-Type': 'application/json'
+                   }
+                 })
+                 .then(response => {
+                   response.json();
+                   if(response.status == 200){
+                       // Show success message   
+                       hide_loading(loader);         
+                       sucess_database()                       
+                       $('#update-ccf-constant').hide()        
+                       $('#ccf-constant').val('')
+                       $('#ccf-constant').attr("placeholder", new_ccf_constant_num + "%");                                    
+                   } 
+               })
+               .catch(error => console.error('Error:', error))
+               .then(response => {            
+                   // console.log('Success:', JSON.stringify(response));
+       
+               });
+
+        }
+        else{
+            show_error_msg('Error: The credit card fee constant \'' + new_ccf_constant +  '\' is not valid!',)
+        }
+
+      });
+
+}
+
+function init_manage(){
+    console.log('init manage');
+
+    init_hours();
+    init_menu();
+    init_other();
+
+    $('#datatable-responsive-manage').show()
+    $('#datatable-responsive-menu').show()
+    $('#datatable-responsive-other').show()
+
+    
 
 }
 
