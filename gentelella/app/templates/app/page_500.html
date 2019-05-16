@@ -1,6 +1,6 @@
 {% extends "app/base_site.html" %}
 
-{% block title %} Page 500 {% endblock title %}
+{% block title %} Error 500 {% endblock title %}
 
 {% block stylesheets %}
   {{ block.super }}
@@ -17,7 +17,11 @@
         <h1 class="error-number">500</h1>
         <h2>Internal Server Error</h2>
         <p>We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing. <a href="mailto:software.wbc@gmail.com">Report this?</a></p>
-        <button type="submit" onclick="window.history.back();" class="btn btn-success">Go Home</button>
+        <button type="submit" onclick="window.history.back();" class="btn btn-primary">Go Back</button>
+        <button type="submit" onclick="location.href = '/'" class="btn btn-default">Go Home</button>
+        <p></p>
+        <p>Vibe Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
+        <p><a href="#">Terms of Service</a></p>
       </div>
     </div>
   </div>
