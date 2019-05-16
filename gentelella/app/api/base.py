@@ -32,9 +32,9 @@ from .other.update import (
 @csrf_exempt
 def api_hours(request, hour_id=-1):
     # TODO: ADD AUTHENTICATION
-    # TODO: implement: public_id = request.session['public_uid']
     try:
         uid = request.session['admin_uid']
+        public_id = request.session['public_id']
     except Exception as e:
         return error_500(request, e)
 
@@ -45,15 +45,15 @@ def api_hours(request, hour_id=-1):
         body = json.loads(str(request.body, encoding='utf-8'))
 
         if body["id"] == "food-status-active":
-            return update_food_status_active(db, uid, body)
+            return update_food_status_active(db, public_id, uid, body)
         elif body["id"] == "hour-status-active":
-            return update_hour_status(db, uid, body)
+            return update_hour_status(db, public_id, uid, body)
         elif body["id"] == "percent-discount-update":
-            return update_percent_discount(db, uid, body)
+            return update_percent_discount(db, public_id, uid, body)
         elif body["id"] == "payroll-update":
-            return update_payroll(db, uid, body)
+            return update_payroll(db, public_id, uid, body)
         elif body["id"] == "overhead-cost-update":
-            return update_overhead_cost(db, uid, body)
+            return update_overhead_cost(db, public_id, uid, body)
 
     return error_500(request, None)
 
@@ -61,9 +61,9 @@ def api_hours(request, hour_id=-1):
 @csrf_exempt
 def api_orders(request, order_id=-1):
     # TODO: ADD AUTHENTICATION
-    # TODO: implement: public_id = request.session['public_uid']
     try:
         uid = request.session['admin_uid']
+        # public_id = request.session['public_id']
     except Exception as e:
         return error_500(request, e)
 
@@ -81,9 +81,9 @@ def api_orders(request, order_id=-1):
 @csrf_exempt
 def api_foods(request, food_id=-1):
     # TODO: ADD AUTHENTICATION
-    # TODO: implement: public_id = request.session['public_uid']
     try:
         uid = request.session['admin_uid']
+        # public_id = request.session['public_id']
     except Exception as e:
         return error_500(request, e)
 
@@ -105,9 +105,9 @@ def api_foods(request, food_id=-1):
 @csrf_exempt
 def api_others(request):
     # TODO: ADD AUTHENTICATION
-    # TODO: implement: public_id = request.session['public_uid']
     try:
         uid = request.session['admin_uid']
+        public_id = request.session['public_id']
     except Exception as e:
         return error_500(request, e)
 
@@ -115,8 +115,8 @@ def api_others(request):
         body = json.loads(str(request.body, encoding='utf-8'))
 
         if body["id"] == "ccf-percentage-update":
-            return update_ccf_percentage(db, uid, body)
+            return update_ccf_percentage(db, public_id, uid, body)
         elif body["id"] == "ccf-constant-update":
-            return update_ccf_constant(db, uid, body)
+            return update_ccf_constant(db, public_id, uid, body)
 
     return error_500(request, None)

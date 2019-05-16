@@ -13,19 +13,26 @@ def manage(request):
         response = redirect(HOME_PAGE_LOGGED_OUT)
         return response
 
-    # TODO: implement: public_id = request.session['public_uid']
     uid = request.session['admin_uid']
+    public_id = request.session['public_id']
     uname = request.session['uname']
 
     template_name = 'app/manage.html'
 
-    other = {
-        "ccf_percentage": request.session['ccf_percentage'],
-        "ccf_constant": request.session['ccf_constant'],
-    }
-
     # load data
-    res_ref = db.collection(u'restaurants').document(uid)
+    res_ref = db.collection(u'restaurants').document(public_id)
+    res_private_ref = res_ref.collection(u'private').document(uid)
+
+    # other
+    try:
+        res_private_data = res_private_ref.get().to_dict()
+        other = {
+            "ccf_percentage": res_private_data["credit_card_percentage"],
+            "ccf_constant": res_private_data["credit_card_constant"],
+            }
+    except Exception as e:
+        # TODO: add error message to show to user
+        return error_500(request, e)
 
     # hours and menu
     hours_data = []
@@ -85,8 +92,8 @@ def manage(request):
                 "starting_discount": starting_discount,
                 "active": all_hours_data["hour_is_active"],
                 "foods_active": all_hours_data["foods_active"],
-                # "overhead_costs": all_hours_data["overhead_cost"],
-                # "payroll": all_hours_data["payroll"],
+                "overhead_cost": all_hours_data["overhead_cost"],
+                "payroll": all_hours_data["payroll"],
             }
 
             hours_data.append(an_hour)

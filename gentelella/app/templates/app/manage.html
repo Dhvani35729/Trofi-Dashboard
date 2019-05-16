@@ -11,9 +11,9 @@
             <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
                 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
                     {% endblock stylesheets %}
-                    
+
                     {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
-                    
+
                     {% block content %}
                     <div class="right_col" role="main">
                         <div class="">
@@ -21,28 +21,28 @@
                                 <div class="title_left">
                                     <h3>Manage Discounts</h3>
                                 </div>
-                                                                            
+
                                 <div class="title_right">
                                     <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="clearfix"></div>      
-                            
-                            <div class="row">    
-                            
+
+                            <div class="clearfix"></div>
+
+                            <div class="row">
+
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="x_panel">
-                                                            
+
                                         <div class="x_title">
                                                 <h3>Hours</h3>
-                                                <ul class="nav navbar-right panel_toolbox">                                                                                                       
-                                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>                                                        
+                                                <ul class="nav navbar-right panel_toolbox">
+                                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                                                 </ul>
                                                 <div class="clearfix"></div>
                                         </div>
-                                        
+
                                         <div class="x_content">
                                         <table id="datatable-responsive-manage" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" hidden>
                                             <thead>
@@ -73,50 +73,48 @@
                                                                                <button type="button" id="update-discount-{{forloop.counter}}" class="btn btn-warning trofi-update-discount {{hour.sort_id}}">Update!</button>
                                                                         </span>
                                                                       </div>
-                                                               
+
                                                         </td>
-                                                      
+
                                                         <td>
-                                                        
+
                                                                 <a class="panel-heading" role="tab" id="heading{{forloop.counter}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
-                                                                    <button type="button" class="btn btn-round btn-primary">Edit Menu</button>                                                                   
-                                                                </a>                                                               
-                                                                
+                                                                    <button type="button" class="btn btn-round btn-primary">Edit Menu</button>
+                                                                </a>
+
                                                                 <div id="collapse{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
                                                                     <div class="panel-body">
-                                                                                                                                                
+
                                                                         <table id="datatable-responsive-{{forloop.counter}}" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th>Menu Item</th>
-                                                                                    <th>Available?</th>                                                                                   
+                                                                                    <th>Available?</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                
+
                                                                                     {% for food in menu %}
                                                                                     <tr>
                                                                                     <th>{{food.name}}</th>
 
-                                                                                    {% if food.id in hour.foods_active %}                                                                                    
+                                                                                    {% if food.id in hour.foods_active %}
                                                                                     <th><input type="checkbox" id="{{hour.sort_id}}-{{food.id}}" class="flat trofi-hour-food-status" checked></th>
-                                                                                    {% else %}                                                                                                                                                                                                                                                      
+                                                                                    {% else %}
                                                                                     <th><input type="checkbox" id="{{hour.sort_id}}-{{food.id}}" class="flat trofi-hour-food-status"></th>
-                                                                                    {% endif %}                                                                                    
+                                                                                    {% endif %}
                                                                                 </tr>
-                                                                                    {% endfor %}                                                                                                                                                                  
-                                                                                
+                                                                                    {% endfor %}
+
                                                                             </tbody>
                                                                         </table>
-                                                                        
+
                                                                     </div>
                                                                 </div>
 
                                                         <a class="panel-heading" role="tab" id="heading-in{{forloop.counter}}" data-toggle="collapse" data-parent="#accordion" href="#collapse-in{{forloop.counter}}" aria-expanded="true" aria-controls="collapse-in{{forloop.counter}}">
-                                                                <button type="button" class="btn btn-round btn-primary">Edit Other</button>                                                                   
+                                                                <button type="button" class="btn btn-round btn-primary">Edit Other</button>
                                                              </a>
-                                                             <button type="button" id="update-payroll-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-payroll {{hour.sort_id}}">Update Payroll!</button>
-                                                             <button type="button" id="update-overhead-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-overhead {{hour.sort_id}}">Update Overhead Cost!</button>
 
                                                         <div id="collapse-in{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-in{{forloop.counter}}">
                                                                 <div class="panel-body">
@@ -129,37 +127,51 @@
                                                                     </thead>
                                                                     <tbody>
                                                                         <tr>
-                                                                                <th><input type="number" id="payroll-{{forloop.counter}}" class="form-control trofi-manage-payroll" placeholder="Enter Payroll"></th>
-                                                                                <th><input type="number" id="overhead-{{forloop.counter}}" class="form-control trofi-manage-overhead" placeholder="Enter Overhead Cost"></th>                                                                                                
+                                                                                <th>
+                                                                                        <div class="input-group">
+                                                                                                <input type="number" id="payroll-{{forloop.counter}}" class="form-control trofi-manage-payroll" placeholder="${{hour.payroll}}">
+                                                                                                <span class="input-group-btn">
+                                                                                                        <button type="button" id="update-payroll-{{forloop.counter}}" class="btn btn-warning trofi-update-payroll {{hour.sort_id}}">Update!</button>
+                                                                                                </span>
+                                                                                              </div>
+                                                                                </th>
+                                                                                <th>
+                                                                                        <div class="input-group">
+                                                                                                <input type="number" id="overhead-{{forloop.counter}}" class="form-control trofi-manage-overhead" placeholder="${{hour.overhead_cost}}">
+                                                                                                <span class="input-group-btn">
+                                                                                                        <button type="button" id="update-overhead-{{forloop.counter}}" class="btn btn-warning trofi-update-overhead {{hour.sort_id}}">Update!</button>
+                                                                                                </span>
+                                                                                              </div>
+                                                                                </th>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
 
                                                             </div>
                                                         </div>
-                                                                
-        
+
+
                                                             </td>
                                                     </tr>
 
 
                                                 {% endfor %}
-                                                                      
-                                                
+
+
                                             </tbody>
                                         </table>
                                     </div>
-                                        
+
                                     </div>
                                 </div>
 
                                 <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <div class="x_panel">                                         
-                                        
+                                        <div class="x_panel">
+
                                         <div class="x_title">
                                                 <h3>Menu</h3>
-                                                <ul class="nav navbar-right panel_toolbox">                                                                                                       
-                                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>                                                        
+                                                <ul class="nav navbar-right panel_toolbox">
+                                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                                                 </ul>
                                                 <div class="clearfix"></div>
                                         </div>
@@ -181,47 +193,47 @@
                                                             <th>{{food.name}}</th>
                                                             <th>
                                                                     <div class="input-group">
-                                                                            <input type="number" id="sales-price-{{forloop.counter}}" class="form-control trofi-manage-sales-price" placeholder="${{food.sales_price}}">                                                                           
+                                                                            <input type="number" id="sales-price-{{forloop.counter}}" class="form-control trofi-manage-sales-price" placeholder="${{food.sales_price}}">
                                                                             <span class="input-group-btn">
                                                                                    <button type="button" id="update-sales-price-{{forloop.counter}}" class="btn btn-warning trofi-update-sales-price {{food.id}}">Update!</button>
                                                                             </span>
-                                                                          </div>                                                                
+                                                                          </div>
                                                             </th>
                                                             <th>
                                                                     <div class="input-group">
-                                                                            <input type="number" id="profit-margin-{{forloop.counter}}" class="form-control trofi-manage-profit-margin" placeholder="${{food.profit_margin}}">                                                                                                                                                
+                                                                            <input type="number" id="profit-margin-{{forloop.counter}}" class="form-control trofi-manage-profit-margin" placeholder="${{food.profit_margin}}">
                                                                             <span class="input-group-btn">
                                                                                    <button type="button" id="update-profit-margin-{{forloop.counter}}" class="btn btn-warning trofi-update-profit-margin {{food.id}}">Update!</button>
                                                                             </span>
-                                                                          </div>                                                                 
+                                                                          </div>
                                                             </th>
                                                             <th>
                                                                     <div class="input-group">
-                                                                            <input type="number" id="ingredients-cost-{{forloop.counter}}" class="form-control trofi-manage-ingredients-cost" placeholder="${{food.ingredients_cost}}">                                                                                                                                                                                                                        
+                                                                            <input type="number" id="ingredients-cost-{{forloop.counter}}" class="form-control trofi-manage-ingredients-cost" placeholder="${{food.ingredients_cost}}">
                                                                             <span class="input-group-btn">
                                                                                    <button type="button" id="update-ingredients-cost-{{forloop.counter}}" class="btn btn-warning trofi-update-ingredients-cost {{food.id}}">Update!</button>
                                                                             </span>
-                                                                          </div>                                                                       
+                                                                          </div>
                                                             </th>
                                                         </tr>
                                                         {% endfor %}
-                                                    </tbody>                                                                        
+                                                    </tbody>
                                                 </table>
 
-    
+
                                             </div>
                                          </div>
-                                </div>   
+                                </div>
 
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                         <div class="x_panel">
-                                            
-                                            
-    
+
+
+
                                         <div class="x_title">
                                                 <h3>Other</h3>
-                                                <ul class="nav navbar-right panel_toolbox">                                                                                                       
-                                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>                                                        
+                                                <ul class="nav navbar-right panel_toolbox">
+                                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                                                 </ul>
                                                 <div class="clearfix"></div>
                                         </div>
@@ -235,38 +247,38 @@
                                                             <th>Credit Card Fee Constant</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody> 
+                                                    <tbody>
                                                         <tr>
                                                             <th>
                                                                     <div class="input-group">
-                                                                            <input type="number" id="ccf-percentage" class="form-control" placeholder="{{other.ccf_percentage}}%">                                                                           
+                                                                            <input type="number" id="ccf-percentage" class="form-control" placeholder="{{other.ccf_percentage}}%">
                                                                             <span class="input-group-btn">
                                                                                    <button type="button" id="update-ccf-percentage" class="btn btn-warning">Update!</button>
                                                                             </span>
-                                                                          </div>   
-                                                               
+                                                                          </div>
+
                                                             </th>
                                                             <th>
                                                                     <div class="input-group">
-                                                                            <input type="number" id="ccf-constant" class="form-control" placeholder="{{other.ccf_constant}}">                                                                           
+                                                                            <input type="number" id="ccf-constant" class="form-control" placeholder="{{other.ccf_constant}}">
                                                                             <span class="input-group-btn">
                                                                                    <button type="button" id="update-ccf-constant" class="btn btn-warning">Update!</button>
                                                                             </span>
-                                                                          </div>                                                                  
+                                                                          </div>
                                                             </th>
-                                                        </tr>                                                        
-                                                    </tbody>                                                                        
+                                                        </tr>
+                                                    </tbody>
                                                 </table>
 
-    
+
                                             </div>
                                          </div>
-                                </div> 
-                            </div>                             
+                                </div>
                             </div>
-                        </div>        
+                            </div>
+                        </div>
                     {% endblock content %}
-                    
+
                     {% block javascripts %}
                     {{ block.super }}
                       <!-- PNotify -->

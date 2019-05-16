@@ -15,6 +15,7 @@ def history(request):
 
     # print(request.session['uid'])
     uid = request.session['admin_uid']
+    public_id = request.session['public_id']
     uname = request.session['uname']
 
     template_name = 'app/history.html'
@@ -23,7 +24,7 @@ def history(request):
     all_orders_data = []
 
     # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
-    all_orders_ref = db.collection(u'restaurants').document(uid).collection(u'private').document(uid).collection("orders")
+    all_orders_ref = db.collection(u'restaurants').document(public_id).collection(u'private').document(uid).collection("orders")
 
     all_orders_docs = all_orders_ref.get()
 

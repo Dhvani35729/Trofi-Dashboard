@@ -17,6 +17,7 @@ def incoming(request):
 
     # print(request.session['uid'])
     uid = request.session['admin_uid']
+    public_id = request.session['public_id']
     uname = request.session['uname']
 
     template_name = 'app/incoming.html'
@@ -25,7 +26,7 @@ def incoming(request):
     incoming_orders_data = []
 
     # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
-    all_orders_ref = db.collection(u'restaurants').document(uid).collection(u'private').document(uid).collection("orders")
+    all_orders_ref = db.collection(u'restaurants').document(public_id).collection(u'private').document(uid).collection("orders")
     all_incoming_orders_query = all_orders_ref.where(u'incoming', u'==', True)
     all_incoming_orders_docs = all_incoming_orders_query.get()
 

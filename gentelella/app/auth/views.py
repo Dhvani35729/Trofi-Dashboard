@@ -18,6 +18,7 @@ from .base import (
 
 from .utils import (
     logged_in,
+    get_res_public_id,
     is_valid_trofi_code,
     should_allow_user_in
     )
@@ -59,11 +60,12 @@ def sign_up(request):
         context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
         return error_message(request, message, context, template_name)
     else:
-        user, e = create_account(email, passw)
+        user, e = create_account(email, passw, fname, trofi_code)
         if user:
             response = redirect('logout')
             return response
         else:
+            print(e)
             message = get_message_from_exception(e)
             context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
             return error_message(request, message, context, template_name)
@@ -87,26 +89,29 @@ def sign_in(request):
     user, e = log_in(email, passw)
     if user:
         uid = user['localId']
+        public_id = get_res_public_id(uid)
+        if public_id:
+            allow_user_in, data = should_allow_user_in(public_id, uid)
 
-        allow_user_in, data = should_allow_user_in(uid)
+            if allow_user_in is None:
+                message = DATABASE_ERROR_MSG
+                context = {"messg": message, "email": email, "passw": passw}
+                return error_message(request, message, context, template_name)
 
-        if allow_user_in is None:
-            message = DATABASE_ERROR_MSG
-            context = {"messg": message, "email": email, "passw": passw}
-            return error_message(request, message, context, template_name)
-
-        if allow_user_in:
-            session_id = user['idToken']
-            request.session['uid'] = str(session_id)
-            request.session['admin_uid'] = str(uid)
-            request.session['uname'] = data["name"]
-            request.session['ccf_percentage'] = data["credit_card_percentage"]
-            request.session['ccf_constant'] = data["credit_card_constant"]
-            response = redirect(HOME_PAGE)
-            return response
-
+            if allow_user_in:
+                session_id = user['idToken']
+                request.session['uid'] = str(session_id)
+                request.session['admin_uid'] = str(uid)
+                request.session['public_id'] = str(public_id)
+                request.session['uname'] = data["name"]
+                response = redirect(HOME_PAGE)
+                return response
+            else:
+                message = "Vibe has not setup your account yet. Please wait to receive an email."
+                context = {"messg": message, "email": email, "passw": passw}
+                return error_message(request, message, context, template_name)
         else:
-            message = "Vibe has not setup your account yet. Please wait to receive an email."
+            message = DATABASE_ERROR_MSG
             context = {"messg": message, "email": email, "passw": passw}
             return error_message(request, message, context, template_name)
     else:

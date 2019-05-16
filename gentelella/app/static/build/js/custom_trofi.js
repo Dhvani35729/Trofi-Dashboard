@@ -441,7 +441,7 @@ function init_hours(){
 
                 loader = show_loading();
 
-               hour_id = this.classList[4]
+               hour_id = this.classList[3]
 
                var url = '/api/hours/'
                var data = {id: "payroll-update", hour_id: hour_id, payroll: new_payroll_num}
@@ -462,6 +462,8 @@ function init_hours(){
                             hide_loading(loader);
                             sucess_database()
                             $('#update-payroll-' + table_id).hide()
+                            $('#payroll-' + table_id).val('')
+                            $('#payroll-' + table_id).attr("placeholder", "$" + new_payroll_num);
                         }
                         else if(data.status == 404){
                             hide_loading(loader);
@@ -494,7 +496,7 @@ function init_hours(){
 
              loader = show_loading();
 
-               hour_id = this.classList[4]
+               hour_id = this.classList[3]
 
                var url = '/api/hours/'
                var data = {id: "overhead-cost-update", hour_id: hour_id, overhead_cost: new_overhead_num}
@@ -515,6 +517,8 @@ function init_hours(){
                             hide_loading(loader);
                             sucess_database()
                             $('#update-overhead-' + table_id).hide()
+                            $('#overhead-' + table_id).val('')
+                            $('#overhead-' + table_id).attr("placeholder", "$" + new_overhead_num);
                         }
                         else if(data.status == 404){
                             hide_loading(loader);

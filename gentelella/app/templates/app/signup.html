@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
   {{ block.super }}
+  <link href="/static/vendors/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet">
   <!-- Animate.css -->
   <link href="/static/vendors/animate.css/animate.min.css" rel="stylesheet">
 {% endblock stylesheets %}
@@ -22,31 +23,31 @@
                 <h1>Create Account</h1>
                 <div>
                     {% if fname %}
-                    <input type="text" class="form-control" name="fname" placeholder="Full Name" value="{{fname}}" required="" />     
+                    <input type="text" class="form-control" name="fname" placeholder="Full Name" value="{{fname}}" required="" />
                     {% else %}
                   <input type="text" class="form-control" name="fname" placeholder="Full Name" required="" />
-                  {% endif %}    
+                  {% endif %}
                 </div>
-                <div>                  
+                <div>
                   {% if email %}
                   <input type="email" name="email" class="form-control" placeholder="Email" value="{{email}}" required="" />
                   {% else %}
                   <input type="email" name="email" class="form-control" placeholder="Email" required="" />
-                 {% endif %}     
+                 {% endif %}
                 </div>
                 <div>
                     {% if trofi_code %}
                     <input type="text" class="form-control" name="trofi_code" placeholder="Vendor Vibe Code" value="{{trofi_code}}" required="" />
                     {% else %}
                   <input type="text" class="form-control" name="trofi_code" placeholder="Vendor Vibe Code" required="" />
-                  {% endif %}  
+                  {% endif %}
                 </div>
                 <div>
                     {% if passw %}
-                    <input type="password" name="password" class="form-control" placeholder="Password" value="{{passw}}"  required="" />   
+                    <input type="password" name="password" class="form-control" placeholder="Password" value="{{passw}}"  required="" />
                     {% else %}
-                      <input type="password" name="password" class="form-control" placeholder="Password" required="" />   
-                    {% endif %}  
+                      <input type="password" name="password" class="form-control" placeholder="Password" required="" />
+                    {% endif %}
                 </div>
                 <div>
                     <input type="submit" value="Submit" class="btn btn-default submit" style="
@@ -55,7 +56,7 @@
                 "/>
                   <!-- <a class="btn btn-default submit">Submit</a> -->
                 </div>
-    
+
                 <div class="clearfix"></div>
                 {% if messg %}
                 <div class="alert alert-danger fade in" role="alert" style="
@@ -65,15 +66,15 @@
                     <strong>Error:</strong> {{ messg }}
                   </div>
                   {% endif %}
-    
+
                 <div class="separator">
                   <p class="change_link">Already a member ?
                     <a href="{% url 'signIn' %}" class="to_register"> Log in </a>
                   </p>
-    
+
                   <div class="clearfix"></div>
                   <br />
-    
+
                   <div>
                     <h1><i class="fa"></i> Vibe</h1>
                     <p>Vibe Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
@@ -86,4 +87,8 @@
     </div>
   </div>
 {% endblock body %}
+  <!-- PNotify -->
+  <script src="/static/vendors/pnotify/dist/iife/PNotify.js"></script>
+  <script src="/static/vendors/pnotify/dist/iife/PNotifyButtons.js"></script>
+  <script src="/static/vendors/nonblockjs/NonBlock.es5.js"></script>
 
