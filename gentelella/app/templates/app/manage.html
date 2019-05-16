@@ -41,7 +41,7 @@
                                                 <h3>Hours</h3>
                                         </div>
                                         
-                                        <table id="datatable-responsive-manage" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                                        <table id="datatable-responsive-manage" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" hidden>
                                             <thead>
                                                 <tr>
                                                     <th>Hour</th>
@@ -76,27 +76,11 @@
                                                         <td>
                                                         
                                                                 <a class="panel-heading" role="tab" id="heading{{forloop.counter}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
-                                                                    <button type="button" class="btn btn-round btn-primary">Edit</button>                                                                   
-                                                                </a>
-                                                                <button type="button" id="update-payroll-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-payroll {{hour.sort_id}}">Update Payroll!</button>
-                                                                <button type="button" id="update-overhead-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-overhead {{hour.sort_id}}">Update Overhead Cost!</button>
+                                                                    <button type="button" class="btn btn-round btn-primary">Edit Menu</button>                                                                   
+                                                                </a>                                                               
                                                                 
                                                                 <div id="collapse{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
                                                                     <div class="panel-body">
-                                                                        <table id="datatable-responsive-manage" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Payroll</th>
-                                                                                    <th>Overhead Costs</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                <tr>
-                                                                                        <th><input type="number" id="payroll-{{forloop.counter}}" class="form-control trofi-manage-payroll" placeholder="Enter Payroll"></th>
-                                                                                        <th><input type="number" id="overhead-{{forloop.counter}}" class="form-control trofi-manage-overhead" placeholder="Enter Overhead Cost"></th>                                                                                                
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
                                                                                                                                                 
                                                                         <table id="datatable-responsive-{{forloop.counter}}" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
                                                                             <thead>
@@ -124,6 +108,32 @@
                                                                         
                                                                     </div>
                                                                 </div>
+
+                                                        <a class="panel-heading" role="tab" id="heading-in{{forloop.counter}}" data-toggle="collapse" data-parent="#accordion" href="#collapse-in{{forloop.counter}}" aria-expanded="true" aria-controls="collapse-in{{forloop.counter}}">
+                                                                <button type="button" class="btn btn-round btn-primary">Edit Other</button>                                                                   
+                                                             </a>
+                                                             <button type="button" id="update-payroll-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-payroll {{hour.sort_id}}">Update Payroll!</button>
+                                                             <button type="button" id="update-overhead-{{forloop.counter}}" class="btn btn-round btn-warning trofi-update-overhead {{hour.sort_id}}">Update Overhead Cost!</button>
+                                                             
+                                                        <div id="collapse-in{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-in{{forloop.counter}}">
+                                                                <div class="panel-body">
+                                                                <table id="datatable-responsive-manage" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Payroll</th>
+                                                                            <th>Overhead Costs</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                                <th><input type="number" id="payroll-{{forloop.counter}}" class="form-control trofi-manage-payroll" placeholder="Enter Payroll"></th>
+                                                                                <th><input type="number" id="overhead-{{forloop.counter}}" class="form-control trofi-manage-overhead" placeholder="Enter Overhead Cost"></th>                                                                                                
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+                                                        </div>
                                                                 
         
                                                             </td>
@@ -149,7 +159,7 @@
                                                     <h3>Menu</h3>
                                             </div>
 
-                                            <table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                                            <table id="datatable-responsive-menu" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" hidden>
                                                     <thead>
                                                         <tr>
                                                             <th>Menu Item</th>
@@ -184,7 +194,7 @@
                                                     <h3>Other</h3>
                                             </div>
 
-                                            <table id="datatable-responsive-manage" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                                            <table id="datatable-responsive-other" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" hidden>
                                                     <thead>
                                                         <tr>
                                                             <th>Credit Card Fee Percentage</th>

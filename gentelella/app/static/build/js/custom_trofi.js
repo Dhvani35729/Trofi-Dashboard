@@ -74,7 +74,7 @@ function init_manage_listener(db, uid){
 
 function init_history_listener(db, uid){
 
-    var incoming_table = $('#datatable-responsive-history').DataTable();
+    var history_table = $('#datatable-responsive-history').DataTable();
     var wait = 0;
     db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders")
     .onSnapshot(function(snapshot) {
@@ -84,7 +84,7 @@ function init_history_listener(db, uid){
                 
                 // TODO: deal with first time call
 
-                if(wait < incoming_table.data().length){
+                if(wait < history_table.data().length){
                     wait += 1
                 }
                 else{
@@ -165,12 +165,27 @@ function init_manage(){
         ordering: false,   
     });    
 
+    $('#datatable-responsive-menu').DataTable();  
+
+    $('#datatable-responsive-other').DataTable({        
+        paging: false,
+        ordering: false,   
+    });  
+    
+
+
     for(var i = 1; i <= manage_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();
         $('#update-discount-' + parseInt(i)).hide();
         $('#update-payroll-' + parseInt(i)).hide();
         $('#update-overhead-' + parseInt(i)).hide();
     }
+
+    $('#datatable-responsive-manage').show()
+    $('#datatable-responsive-menu').show()
+    $('#datatable-responsive-other').show()
+
+    
 
       $('.trofi-manage-discount').keyup(function() {
         // console.log("focused me")
@@ -496,7 +511,9 @@ function init_incoming_table(){
 
     for(var i = 1; i <= incoming_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();
-    }                        
+    }
+    
+    $('#datatable-responsive-incoming').show()
    
     $('.trofi-incoming-status').on('ifChecked', function() {        
         loader = show_loading();
@@ -573,6 +590,8 @@ function init_history_table(){
     for(var i = 1; i <= history_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();
     }
+
+    $('#datatable-responsive-history').show()
 
 }
 
