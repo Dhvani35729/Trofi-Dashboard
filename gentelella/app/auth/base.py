@@ -1,6 +1,10 @@
+import datetime
 from google.cloud.firestore_v1 import ArrayUnion, ArrayRemove
 
 from ..config import authe, db
+
+from .utils import get_res_public_id
+
 
 def create_account(email, passw, full_name, trofi_code):
     # Setup initial user account
@@ -54,6 +58,8 @@ def create_account(email, passw, full_name, trofi_code):
             "menu": [],
             })
 
+        now = datetime.datetime.now()
+
         batch.set(res_private_ref, {
             "accepted_code": trofi_code,
             "name": full_name,
@@ -63,6 +69,8 @@ def create_account(email, passw, full_name, trofi_code):
             "credit_card_percentage": 0,
             "credit_card_constant": 0,
             "orders": [],
+            "joined": now,
+            "last_login": now,
             })
 
         batch.set(init_0_hours_ref, {
@@ -389,8 +397,6 @@ def create_account(email, passw, full_name, trofi_code):
             "discounts": [],
             })
 
-        # TODO: Move trofi code to used
-
         general_ref = db.collection(u'general').document("trofi-verification")
         batch.update(general_ref, {u'accepted_codes_unused': ArrayRemove([trofi_code])})
         batch.update(general_ref, {u'accepted_codes_used': ArrayUnion([trofi_code])})
@@ -414,6 +420,16 @@ def log_in(email, passw):
     try:
         user = authe.sign_in_with_email_and_password(email, passw)
         # TODO: update user records
+        uid = user['localId']
+        public_id, e = get_res_public_id(uid)
+
+        if public_id is None:
+            return None, e, None, None
+
+        now = datetime.datetime.now()
+        res_private_ref = db.collection(u'restaurants').document(public_id).collection(u'private').document(uid)
+        res_private_ref.update({u'last_login': now})
+
     except Exception as e:
-        return None, e
-    return user, None
+        return None, e, None, None
+    return user, None, uid, public_id

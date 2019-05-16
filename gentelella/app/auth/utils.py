@@ -13,9 +13,10 @@ def get_res_public_id(uid):
     map_ref = db.collection(u'general').document("trofi-verification").collection(uid).document("map")
     try:
         map_data = map_ref.get().to_dict()
-        return map_data["public_id"]
+        return map_data["public_id"], None
     except Exception as e:
-        return None
+        return None, e
+
 
 def is_valid_trofi_code(code):
     code_ref = db.collection(u'general').document(u'trofi-verification')

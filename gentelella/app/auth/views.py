@@ -18,7 +18,6 @@ from .base import (
 
 from .utils import (
     logged_in,
-    get_res_public_id,
     is_valid_trofi_code,
     should_allow_user_in
     )
@@ -86,35 +85,31 @@ def sign_in(request):
         template = loader.get_template('app/login.html')
         return HttpResponse(template.render(context, request))
 
-    user, e = log_in(email, passw)
+    user, e, uid, public_id = log_in(email, passw)
     if user:
-        uid = user['localId']
-        public_id = get_res_public_id(uid)
-        if public_id:
-            allow_user_in, data = should_allow_user_in(public_id, uid)
+        allow_user_in, data = should_allow_user_in(public_id, uid)
 
-            if allow_user_in is None:
-                message = DATABASE_ERROR_MSG
-                context = {"messg": message, "email": email, "passw": passw}
-                return error_message(request, message, context, template_name)
-
-            if allow_user_in:
-                session_id = user['idToken']
-                request.session['uid'] = str(session_id)
-                request.session['admin_uid'] = str(uid)
-                request.session['public_id'] = str(public_id)
-                request.session['uname'] = data["name"]
-                response = redirect(HOME_PAGE)
-                return response
-            else:
-                message = "Vibe has not setup your account yet. Please wait to receive an email."
-                context = {"messg": message, "email": email, "passw": passw}
-                return error_message(request, message, context, template_name)
-        else:
+        if allow_user_in is None:
             message = DATABASE_ERROR_MSG
             context = {"messg": message, "email": email, "passw": passw}
             return error_message(request, message, context, template_name)
+
+        if allow_user_in:
+            session_id = user['idToken']
+            request.session['uid'] = str(session_id)
+            request.session['admin_uid'] = str(uid)
+            request.session['public_id'] = str(public_id)
+            request.session['uname'] = data["name"]
+            response = redirect(HOME_PAGE)
+            return response
+        else:
+            message = "Vibe has not setup your account yet. Please wait to receive an email."
+            context = {"messg": message, "email": email, "passw": passw}
+            return error_message(request, message, context, template_name)
     else:
-        message = get_message_from_exception(e)
+        if e is not None and e.args and len(e.args) > 1:
+            message = get_message_from_exception(e)
+        else:
+            message = DATABASE_ERROR_MSG
         context = {"messg": message, "email": email, "passw": passw}
         return error_message(request, message, context, template_name)
