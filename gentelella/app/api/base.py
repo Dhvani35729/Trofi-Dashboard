@@ -24,7 +24,10 @@ from .orders.update import (
 def api_hours(request, hour_id = -1):
     # TODO: ADD AUTHENTICATION
     # TODO: implement: public_id = request.session['public_uid']
-    uid = request.session['admin_uid']
+    try:
+        uid = request.session['admin_uid']
+    except KeyError:
+        return error_500(request)
 
     # TODO: Support GET
 
@@ -50,7 +53,10 @@ def api_hours(request, hour_id = -1):
 def api_orders(request, order_id = -1):
     # TODO: ADD AUTHENTICATION
     # TODO: implement: public_id = request.session['public_uid']
-    uid = request.session['admin_uid']
+    try:
+        uid = request.session['admin_uid']
+    except KeyError:
+        return error_500(request)
 
     # TODO: Support GET
 
