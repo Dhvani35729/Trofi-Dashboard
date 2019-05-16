@@ -53,6 +53,6 @@ def incoming(request):
             # TODO: add error message to show to user
             return error_500(request, e)
 
-    context = {"incoming_orders": incoming_orders_data, "admin_uid": uid, "name": uname}
+    context = {"incoming_orders": incoming_orders_data, "public_id": public_id, "admin_uid": uid, "name": uname}
     template = loader.get_template(template_name)
     return HttpResponse(template.render(context, request))

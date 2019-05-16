@@ -11,32 +11,33 @@
             <link href="/static/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css" rel="stylesheet">
                 <link href="/static/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css" rel="stylesheet">
                     {% endblock stylesheets %}
-                    
+
                     {% block sidebar_class %}nav-md menu_fixed{% endblock sidebar_class %}
-                    
+
                     {% block content %}
-                    <input type="hidden" id="uid" name="admin_uid" value="{{ admin_uid }}"> 
+                    <input type="hidden" id="public_id" name="public_Id" value="{{ public_id }}">
+                    <input type="hidden" id="uid" name="admin_uid" value="{{ admin_uid }}">
                     <div class="right_col" role="main">
                         <div class="">
                             <div class="page-title">
                                 <div class="title_left">
                                     <h3>History</h3>
                                 </div>
-                                
+
                                 <div class="title_right">
                                     <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="clearfix"></div>
-                            
-                            
+
+
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="x_panel">
-                                    
+
                                     <div class="x_content">
-                                        
+
                                         <table id="datatable-responsive-history" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" hidden>
                                             <thead>
                                                 <tr>
@@ -51,11 +52,11 @@
                                                  {% for order in all_orders %}
                                                 <tr>
                                                     <td>
-                                                        
+
                                                         <a class="panel-heading" role="tab" id="heading{{forloop.counter}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
                                                             <button type="button" class="btn btn-round btn-primary">View Items</button>
                                                         </a>
-                                                        
+
                                                         <div id="collapse{{forloop.counter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
                                                             <div class="panel-body">
                                                                 <table id="datatable-responsive-{{forloop.counter}}" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0">
@@ -82,9 +83,9 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        
-                                                        
-                                                        
+
+
+
                                                     </td>
                                                     <td>{{order.id}}</td>
                                                     <td>{{ order.active_between }}</td>
@@ -93,20 +94,20 @@
                                                 {% endfor %}
                                             </tbody>
                                         </table>
-                                        
-                                        
+
+
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                     {% endblock content %}
-                    
+
                     {% block javascripts %}
                     {{ block.super }}
                       <!-- PNotify -->
                     <script src="/static/vendors/pnotify/dist/iife/PNotify.js"></script>
-                    <script src="/static/vendors/pnotify/dist/iife/PNotifyButtons.js"></script>  
+                    <script src="/static/vendors/pnotify/dist/iife/PNotifyButtons.js"></script>
                     <script src="/static/vendors/nonblockjs/NonBlock.es5.js"></script>
                     <!-- Datatables -->
                     <script src="/static/vendors/datatables.net/js/jquery.dataTables.min.js"></script>

@@ -47,6 +47,6 @@ def history(request):
             # TODO: add error message to show to user
             return error_500(request, e)
 
-    context = {"all_orders": all_orders_data, "admin_uid": uid, "name": uname}
+    context = {"all_orders": all_orders_data, "public_id": public_id, "admin_uid": uid, "name": uname}
     template = loader.get_template(template_name)
     return HttpResponse(template.render(context, request))

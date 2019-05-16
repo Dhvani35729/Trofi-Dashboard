@@ -66,17 +66,17 @@ function update_database_message(msg){
      //   });
  }
 
-function init_manage_listener(db, uid){
+function init_manage_listener(db, public_id, uid){
 
     // none as of now
 
 }
 
-function init_history_listener(db, uid){
+function init_history_listener(db, public_id, uid){
 
     var history_table = $('#datatable-responsive-history').DataTable();
     var wait = 0;
-    db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders")
+    db.collection("restaurants").doc(public_id).collection("private").doc(uid).collection("orders")
     .onSnapshot(function(snapshot) {
         snapshot.docChanges().forEach(function(change) {
             if (change.type === "added") {
@@ -115,11 +115,11 @@ function init_history_listener(db, uid){
 }
 
 
-function init_incoming_listener(db, uid){
+function init_incoming_listener(db, public_id, uid){
 
     var incoming_table = $('#datatable-responsive-incoming').DataTable();
     var wait = 0;
-    db.collection("restaurants").doc(uid).collection("private").doc(uid).collection("orders").where("incoming", "==", true)
+    db.collection("restaurants").doc(public_id).collection("private").doc(uid).collection("orders").where("incoming", "==", true)
     .onSnapshot(function(snapshot) {
         snapshot.docChanges().forEach(function(change) {
             if (change.type === "added") {
@@ -1035,21 +1035,22 @@ function init_history_table(){
 $(document).ready(function() {
 
     var db = firebase.firestore();
-    var uid = $('#uid').val()
+    const uid = $('#uid').val()
+    const public_id =$('#public_id').val()
 
     if ( location.href.includes("incoming") ) {
         init_incoming_table();
-        init_incoming_listener(db, uid);
+        init_incoming_listener(db, public_id, uid);
     }
 
     if ( location.href.includes("manage") ) {
         init_manage();
-        init_manage_listener(db, uid);
+        init_manage_listener(db, public_id, uid);
     }
 
     if ( location.href.includes("history") ) {
         init_history_table();
-        init_history_listener(db, uid);
+        init_history_listener(db, public_id, uid);
     }
 
 });
