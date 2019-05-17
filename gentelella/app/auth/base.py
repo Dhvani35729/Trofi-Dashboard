@@ -419,7 +419,7 @@ def log_in(email, passw):
     # Log the user in
     try:
         user = authe.sign_in_with_email_and_password(email, passw)
-        # TODO: update user records
+
         uid = user['localId']
         public_id, e = get_res_public_id(uid)
 

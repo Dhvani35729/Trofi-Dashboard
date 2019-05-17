@@ -1,4 +1,8 @@
-from ..config import db
+from ..config import authe, db
+
+
+def forgot_password(email):
+    authe.send_password_reset_email(email)
 
 
 # check if user is logged in
