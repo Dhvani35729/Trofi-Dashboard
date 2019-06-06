@@ -56,6 +56,7 @@ def create_account(email, passw, full_name, trofi_code):
             "restaurant_logo": "",
             "op_hours": "00-00",
             "menu": [],
+            "tags": [],
             })
 
         now = datetime.datetime.now()
@@ -79,11 +80,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_1_hours_ref, {
@@ -92,11 +90,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_2_hours_ref, {
@@ -105,11 +100,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_3_hours_ref, {
@@ -118,11 +110,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_4_hours_ref, {
@@ -131,11 +120,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_5_hours_ref, {
@@ -144,11 +130,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_6_hours_ref, {
@@ -157,11 +140,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_7_hours_ref, {
@@ -170,11 +150,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_8_hours_ref, {
@@ -183,11 +160,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_9_hours_ref, {
@@ -196,11 +170,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_10_hours_ref, {
@@ -209,11 +180,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_11_hours_ref, {
@@ -222,11 +190,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_12_hours_ref, {
@@ -235,11 +200,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_13_hours_ref, {
@@ -248,11 +210,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_14_hours_ref, {
@@ -261,11 +220,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_15_hours_ref, {
@@ -274,11 +230,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_16_hours_ref, {
@@ -287,11 +240,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_17_hours_ref, {
@@ -300,11 +250,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_18_hours_ref, {
@@ -313,11 +260,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_19_hours_ref, {
@@ -326,11 +270,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_20_hours_ref, {
@@ -339,11 +280,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_21_hours_ref, {
@@ -352,11 +290,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_22_hours_ref, {
@@ -365,11 +300,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
         batch.set(init_23_hours_ref, {
@@ -378,11 +310,8 @@ def create_account(email, passw, full_name, trofi_code):
             "overhead_cost": 0,
             "current_contributed": 0,
             "hour_is_active": False,
-            "discounts": [{
-                "is_active": True,
-                "percent_discount": 0,
-                "needed_contribution": 0,
-                }],
+            "initial_discount": 0,
+            "discounts": [],
             "foods_active": []
             })
 
