@@ -11,6 +11,7 @@ def time_display(time_24):
     return datetime.strptime(time_24, "%H:%M").strftime("%I:%M %p")
 
 
+# converts any float to string with float that has 2 decimal places
 def money_display(money_decimal):
     precision = 2
     return "{:.{}f}".format(money_decimal, precision)
