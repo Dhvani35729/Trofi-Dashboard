@@ -29,7 +29,7 @@ def manage(request):
         other = {
             "ccf_percentage": res_private_data["credit_card_percentage"],
             "ccf_constant": res_private_data["credit_card_constant"],
-            }
+        }
     except Exception as e:
         # TODO: add error message to show to user
         return error_500(request, e)
@@ -41,9 +41,8 @@ def manage(request):
     try:
         res_public_data = res_ref.get().to_dict()
         hours_ref = res_ref.collection("hours")
-        open_hours = res_public_data["op_hours"]
-        opening = int(open_hours[0:2])
-        closing = int(open_hours[3:5])
+        opening = res_public_data["opening_hour"]
+        closing = res_public_data["closing_hour"]
 
         for food in res_public_data["menu"]:
             food_ref = db.collection(u'foods').document(food)
@@ -70,15 +69,16 @@ def manage(request):
                 # TODO: add error message to show to user
                 return error_500(request, e)
 
-        hours_query = hours_ref.where("start_id", ">=", opening).where("start_id", "<", closing)
+        hours_query = hours_ref.where(
+            "start_id", ">=", opening).where("start_id", "<=", closing)
         hours_docs = hours_query.get()
         for hour in hours_docs:
             all_hours_data = hour.to_dict()
             starting_discount = 0
-            for discount in all_hours_data["discounts"]:
-                if discount["is_active"]:
-                    starting_discount = discount["percent_discount"]
-                    break
+            # for discount in all_hours_data["discounts"]:
+            #     if discount["is_active"]:
+            #         starting_discount = discount["percent_discount"]
+            #         break
 
             display_id = ""
             if int(hour.id) < 10:
@@ -102,6 +102,7 @@ def manage(request):
         # TODO: add error message to show to user
         return error_500(request, e)
 
-    context = {"hours_data": hours_data, "menu": menu, "other": other, "name": uname}
+    context = {"hours_data": hours_data,
+               "menu": menu, "other": other, "name": uname}
     template = loader.get_template(template_name)
     return HttpResponse(template.render(context, request))

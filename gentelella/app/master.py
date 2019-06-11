@@ -1,9 +1,9 @@
 # Run this file once restaurant vendor has created and account and after foods have been created
+from constants import DISCOUNT_INCREMENT
 from config import db
 
 
 RESTAURANT_ID = "trofi-res-test-123k"
-DISCOUNT_INCREMENT = 0.05
 
 
 def main():
@@ -63,7 +63,10 @@ def init_algorithm(res_public_id):
         # For food.id
         # Got sales_price, ingredients_cost, and profit_margin
         # Trofi Algorithm initialization
-        credit_card_fee = (sales_price * credit_card_percentage) + credit_card_constant
+        credit_card_fee = (
+            sales_price * credit_card_percentage) + credit_card_constant
+        # TESTING:
+        credit_card_fee = 0
         initial_expense_contribution = sales_price - \
             (profit_margin + ingredients_cost + credit_card_fee)
 
@@ -102,7 +105,8 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
 
         percent_discount = 0.0
         while percent_discount < MAX_DISCOUNT:
-            active = True if initial_discount > 0 and percent_discount == initial_discount else False
+            active = True if (initial_discount == 0 and percent_discount == 0) or (
+                initial_discount > 0 and percent_discount == initial_discount) else False
 
             hour_discount = {
                 "is_active": active,
@@ -117,7 +121,8 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
         for food in algo_foods:
             # print("\n--------------------------------\n")
             food_contributions = {}
-            percent_discount = 0.0
+            # do not show breakeven
+            percent_discount = 0.0 + DISCOUNT_INCREMENT
 
             # print("FOR FOOD: " + food["id"])
             while percent_discount < MAX_DISCOUNT:
@@ -127,7 +132,8 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
                 # print("To unlock a discount of: ", percent_discount)
                 # print("Item will contribute: ", expense_contribution)
 
-                format_discount = "{:.2f}".format(percent_discount)
+                format_discount = "{:.2f}".format(
+                    percent_discount-DISCOUNT_INCREMENT)
                 food_contributions[format_discount] = expense_contribution
                 percent_discount += DISCOUNT_INCREMENT
                 percent_discount = round(percent_discount, 2)
@@ -145,6 +151,8 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
             hour_ref, {u'contributions': all_food_contributions})
         batch.update(
             hour_ref, {u'discounts': all_hour_discounts})
+        batch.update(
+            hour_ref, {u'max_discount': round(MAX_DISCOUNT-DISCOUNT_INCREMENT, 2)})
 
     # print("\n--------------------------------\n")
     print("Writing to database...")
@@ -191,6 +199,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "contributions": {},
         "foods_active": []
     })
@@ -202,6 +211,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_2_hours_ref, {
@@ -212,6 +222,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_3_hours_ref, {
@@ -222,6 +233,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_4_hours_ref, {
@@ -232,6 +244,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_5_hours_ref, {
@@ -242,6 +255,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_6_hours_ref, {
@@ -252,6 +266,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_7_hours_ref, {
@@ -262,6 +277,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_8_hours_ref, {
@@ -272,6 +288,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_9_hours_ref, {
@@ -282,6 +299,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_10_hours_ref, {
@@ -292,6 +310,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_11_hours_ref, {
@@ -302,6 +321,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_12_hours_ref, {
@@ -312,6 +332,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_13_hours_ref, {
@@ -322,6 +343,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_14_hours_ref, {
@@ -332,6 +354,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_15_hours_ref, {
@@ -342,6 +365,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_16_hours_ref, {
@@ -352,6 +376,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_17_hours_ref, {
@@ -362,6 +387,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_18_hours_ref, {
@@ -372,6 +398,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_19_hours_ref, {
@@ -382,6 +409,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_20_hours_ref, {
@@ -392,6 +420,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_21_hours_ref, {
@@ -402,6 +431,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_22_hours_ref, {
@@ -412,6 +442,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
     batch.set(init_23_hours_ref, {
@@ -422,6 +453,7 @@ def reset_hours(public_id):
         "hour_is_active": False,
         "initial_discount": 0,
         "discounts": {},
+        "max_discount": 0,
         "foods_active": []
     })
 

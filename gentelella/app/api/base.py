@@ -11,15 +11,28 @@ from .hours.update import (
     update_percent_discount,
     update_payroll,
     update_overhead_cost
-    )
+)
 from .orders.update import (
     update_food_status_ready,
-    )
+)
 from .foods.update import (
     update_food_sales_price,
     update_food_profit_margin,
     update_food_ingredients_cost,
-    )
+)
+from .restaurants.get import (
+    get_all_restaurants_with_hours,
+    get_all_restaurants_with_hour,
+)
+from .restaurants.restaurant.get import (
+    get_restaurant_with_hours,
+    get_restaurant_with_hour,
+    get_restaurant_with_menu,
+    get_restaurant_with_menu_for_hour,
+)
+from .users.get import (
+    get_user_current_order,
+)
 from .other.update import (
     update_ccf_percentage,
     update_ccf_constant,
@@ -27,6 +40,35 @@ from .other.update import (
 
 # TODO: Check out django_rest_framework
 # TODO: Catch proper firebase exceptions
+
+
+def api_user_current_order(request, user_public_id, user_private_id):
+    if request.method == "GET":
+        return get_user_current_order(db, user_public_id, user_private_id)
+
+
+def api_restaurants_hour(request, hour_id=-1):
+    if request.method == "GET":
+        if hour_id == -1:
+            return get_all_restaurants_with_hours(db)
+        else:
+            return get_all_restaurants_with_hour(db, hour_id)
+
+
+def api_restaurant_hour(request, restaurant_id, hour_id=-1):
+    if request.method == "GET":
+        if hour_id == -1:
+            return get_restaurant_with_hours(db, restaurant_id)
+        else:
+            return get_restaurant_with_hour(db, restaurant_id, hour_id)
+
+
+def api_restaurant_menu(request, restaurant_id, hour_id=-1):
+    if request.method == "GET":
+        if hour_id == -1:
+            return get_restaurant_with_menu(db, restaurant_id)
+        else:
+            return get_restaurant_with_menu_for_hour(db, restaurant_id, hour_id)
 
 # TODO: add CSRF support
 @csrf_exempt
@@ -37,8 +79,6 @@ def api_hours(request, hour_id=-1):
         public_id = request.session['public_id']
     except Exception as e:
         return error_500(request, e)
-
-    # TODO: Support GET
 
     # PUT
     if request.method == "PUT":

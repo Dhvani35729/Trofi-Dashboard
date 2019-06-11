@@ -8,8 +8,12 @@ from .api.base import (
     api_hours,
     api_orders,
     api_foods,
+    api_user_current_order,
+    api_restaurants_hour,
+    api_restaurant_hour,
+    api_restaurant_menu,
     api_others
-    )
+)
 
 # Page Views
 from .auth.views import sign_up, sign_in, logout

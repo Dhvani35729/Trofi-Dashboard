@@ -13,7 +13,8 @@ def create_account(email, passw, full_name, trofi_code):
 
         uid = user['localId']
 
-        res_ref = db.collection(u'restaurants').document("trofi-res-" + trofi_code)
+        res_ref = db.collection(u'restaurants').document(
+            "trofi-res-" + trofi_code)
 
         res_private_ref = res_ref.collection(u'private').document(uid)
 
@@ -26,10 +27,11 @@ def create_account(email, passw, full_name, trofi_code):
             "all_discounts_active": False,
             "restaurant_name": "",
             "restaurant_logo": "",
-            "op_hours": "00-00",
+            "opening_hour": 0,
+            "closing_hour": 0,
             "menu": [],
             "tags": [],
-            })
+        })
 
         now = datetime.datetime.now()
 
@@ -44,27 +46,30 @@ def create_account(email, passw, full_name, trofi_code):
             "orders": [],
             "joined": now,
             "last_login": now,
-            })
+        })
 
         batch.set(more_info_ref, {
             "restaurant_desc": "",
             "address": "",
             "contact_email": "",
             "contact_phone": "",
-            })
+        })
 
         batch.set(logs_ref.document("00-00-0000"), {
             "discounts": [],
-            })
+        })
 
         general_ref = db.collection(u'general').document("trofi-verification")
-        batch.update(general_ref, {u'accepted_codes_unused': ArrayRemove([trofi_code])})
-        batch.update(general_ref, {u'accepted_codes_used': ArrayUnion([trofi_code])})
+        batch.update(
+            general_ref, {u'accepted_codes_unused': ArrayRemove([trofi_code])})
+        batch.update(
+            general_ref, {u'accepted_codes_used': ArrayUnion([trofi_code])})
 
-        map_ref = db.collection(u'general').document("trofi-verification").collection(uid).document("map")
+        map_ref = db.collection(u'general').document(
+            "trofi-verification").collection(uid).document("map")
         batch.set(map_ref, {
             "public_id": "trofi-res-" + trofi_code,
-            })
+        })
 
         # Commit the batch
         batch.commit()
@@ -87,7 +92,8 @@ def log_in(email, passw):
             return None, e, None, None
 
         now = datetime.datetime.now()
-        res_private_ref = db.collection(u'restaurants').document(public_id).collection(u'private').document(uid)
+        res_private_ref = db.collection(u'restaurants').document(
+            public_id).collection(u'private').document(uid)
         res_private_ref.update({u'last_login': now})
 
     except Exception as e:
