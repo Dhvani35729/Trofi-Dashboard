@@ -63,10 +63,14 @@ def get_restaurant_with_menu_for_hour(db, res_public_id, hour_id, active=True):
 
         current_discount = "0.00"
         all_discounts = res_hour_data["discounts"]
+        max_discount = res_hour_data["max_discount"]
         for discount in sorted(all_discounts):
             if all_discounts[discount]["is_active"] is True:
                 current_discount = discount
-        current_contribution = res_hour_data["contributions"][food_id][current_discount]
+        if float(current_discount) == max_discount:
+            current_contribution = 0
+        else:
+            current_contribution = res_hour_data["contributions"][food_id][current_discount]
 
         toppings_data = []
         for topping in food_data["toppings"]:

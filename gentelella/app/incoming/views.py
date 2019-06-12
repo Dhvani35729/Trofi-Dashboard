@@ -26,7 +26,8 @@ def incoming(request):
     incoming_orders_data = []
 
     # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
-    all_orders_ref = db.collection(u'restaurants').document(public_id).collection(u'private').document(uid).collection("orders")
+    all_orders_ref = db.collection(u'restaurants').document(
+        public_id).collection(u'private').document(uid).collection("orders")
     all_incoming_orders_query = all_orders_ref.where(u'incoming', u'==', True)
     all_incoming_orders_docs = all_incoming_orders_query.get()
 
@@ -37,7 +38,8 @@ def incoming(request):
 
             order_hours = order_data["placed_at"] - datetime.timedelta(hours=4)
             placed_at = time_display(str(order_hours.time())[:5])
-            active_hours = time_display(order_data["hours_order"][0:2] + ":00") + " - " + time_display(order_data["hours_order"][3:5] + ":00")
+            active_hours = time_display(
+                str(order_data["hour_start"]) + ":00") + " - " + time_display(str(order_data["hour_end"]) + ":00")
 
             an_order = {
                 "id": order_data["order_id"],
@@ -53,6 +55,7 @@ def incoming(request):
             # TODO: add error message to show to user
             return error_500(request, e)
 
-    context = {"incoming_orders": incoming_orders_data, "public_id": public_id, "admin_uid": uid, "name": uname}
+    context = {"incoming_orders": incoming_orders_data,
+               "public_id": public_id, "admin_uid": uid, "name": uname}
     template = loader.get_template(template_name)
     return HttpResponse(template.render(context, request))
