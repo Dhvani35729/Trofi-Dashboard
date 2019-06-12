@@ -92,10 +92,10 @@ def get_restaurant_with_menu_for_hour(db, res_public_id, hour_id, active=True):
 def get_restaurant_with_hours(db, res_public_id, active=True):
     res_data = db.collection(u'restaurants').document(res_public_id).get()
 
-    all_hours = {}
+    all_hours = []
 
     for i in range(24):
-        all_hours[i] = {"key": int(i), "data": []}
+        all_hours.append({"key": str(i), "data": []})
 
     # print(u'{} => {}'.format(res.id, res.to_dict()))
     res_public_data = res_data.to_dict()
@@ -146,7 +146,7 @@ def get_restaurant_with_hours(db, res_public_id, active=True):
         }
         all_hours[hour_id]["data"].append(res_card)
 
-    return JsonResponse(all_hours)
+    return JsonResponse({"list": all_hours})
 
 
 def get_restaurant_with_hour(db, res_public_id, hour_id, active=True):

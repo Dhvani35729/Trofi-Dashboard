@@ -6,10 +6,10 @@ def get_all_restaurants_with_hours(db, active=True):
     res_ref = db.collection(u'restaurants').where(
         u'all_discounts_active', u'==', True).get()
 
-    all_hours = {}
+    all_hours = []
 
     for i in range(24):
-        all_hours[i] = {"key": int(i), "data": []}
+        all_hours.append({"key": str(i), "data": []})
 
     for res in res_ref:
         # print(u'{} => {}'.format(res.id, res.to_dict()))
@@ -59,7 +59,7 @@ def get_all_restaurants_with_hours(db, active=True):
             }
             all_hours[hour_id]["data"].append(res_card)
 
-    return JsonResponse(all_hours)
+    return JsonResponse({"list": all_hours})
 
 
 def get_all_restaurants_with_hour(db, hour_id, active=True):
