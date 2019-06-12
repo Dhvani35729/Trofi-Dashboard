@@ -31,6 +31,7 @@ from .restaurants.restaurant.get import (
     get_restaurant_with_menu_for_hour,
 )
 from .users.get import (
+    get_user_orders,
     get_user_current_order,
 )
 from .other.update import (
@@ -42,9 +43,14 @@ from .other.update import (
 # TODO: Catch proper firebase exceptions
 
 
-def api_user_current_order(request, user_public_id, user_private_id):
+def api_user_all_orders(request, user_private_id):
     if request.method == "GET":
-        return get_user_current_order(db, user_public_id, user_private_id)
+        return get_user_orders(db, user_private_id)
+
+
+def api_user_current_order(request, user_private_id):
+    if request.method == "GET":
+        return get_user_current_order(db, user_private_id)
 
 
 def api_restaurants_hour(request, hour_id=-1):

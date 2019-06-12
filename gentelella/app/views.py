@@ -8,6 +8,7 @@ from .api.base import (
     api_hours,
     api_orders,
     api_foods,
+    api_user_all_orders,
     api_user_current_order,
     api_restaurants_hour,
     api_restaurant_hour,
