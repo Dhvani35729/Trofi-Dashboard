@@ -101,7 +101,16 @@ def post_user_add_card(db, user_private_id, body):
     import pdb
     pdb.set_trace()
     if user_private_data["stripe_id"] == "":
-        return user_not_found(user_private_id)
+        stripe_user = stripe.Customer.create(
+            email=user.email,
+        )
+        card = stripe.Customer.create_source(
+            stripe_user.id,
+            source=body["tokenId"]
+        )
+        user_private_ref.update(
+            {u'stripe_id': stripe_user.id, u'default_card': card.last4})
+        return user_card_added(user_private_id)
     else:
         try:
             card = stripe.Customer.create_source(
@@ -131,23 +140,7 @@ def post_user_order(db, user_private_id, order):
         import pdb
         pdb.set_trace()
         if user_private_data["stripe_id"] == "":
-            stripe_user = stripe.Customer.create(
-                email=user.email,
-            )
-            card = stripe.Customer.create_source(
-                stripe_user.id,
-                source=order["tokenId"]
-            )
-            response = stripe.Charge.create(
-                amount=order["amount"],
-                currency="cad",
-                customer=stripe_user.id,
-                source=card.id,
-                description="Order #: ok"
-            )
-
-            user_private_ref.update(
-                {u'stripe_id': stripe_user.id, u'default_card': card.last4})
+            return user_not_found(user_private_id)
         else:
             # using default card
             if order["card"] == "default":
@@ -155,6 +148,7 @@ def post_user_order(db, user_private_id, order):
                     amount=order["amount"],
                     currency="cad",
                     customer=user_private_data["stripe_id"],
+                    capture=False,
                     description="Order #: ok"
                 )
             else:
