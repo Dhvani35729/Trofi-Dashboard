@@ -38,6 +38,8 @@ from .users.get import (
 )
 from .users.post import (
     post_user_order,
+    post_user_add_card,
+    post_user_change_default_card
 )
 from .other.update import (
     update_ccf_percentage,
@@ -46,6 +48,24 @@ from .other.update import (
 
 # TODO: Check out django_rest_framework
 # TODO: Catch proper firebase exceptions
+
+
+@csrf_exempt
+def api_user_change_default_card(request, user_private_id):
+    if request.method == "GET":
+        return error_500(request, None)
+    if request.method == "POST":
+        body = json.loads(str(request.body, encoding='utf-8'))
+        return post_user_change_default_card(db, user_private_id, body)
+
+
+@csrf_exempt
+def api_user_add_card(request, user_private_id):
+    if request.method == "GET":
+        return error_500(request, None)
+    if request.method == "POST":
+        body = json.loads(str(request.body, encoding='utf-8'))
+        return post_user_add_card(db, user_private_id, body)
 
 
 def api_user_cards(request, user_private_id):

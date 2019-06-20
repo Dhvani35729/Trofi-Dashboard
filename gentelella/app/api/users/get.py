@@ -63,6 +63,7 @@ def get_user_cards(db, user_private_id):
         cards = []
         for card in stripe_user.sources.data:
             formatted_card = {
+                "id": card.id,
                 "brand": card.brand,
                 "last4": card.last4,
                 "funding": card.funding,

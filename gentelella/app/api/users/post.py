@@ -15,7 +15,47 @@ def user_not_found(user_id):
     })
 
 
-def get_user_cards(db, user_private_id):
+def user_card_added(user_id):
+    return JsonResponse({
+        "success": {
+            "code": "CardAdded",
+            "id": user_id,
+            "message": "Succesfully added a card for the specified user",
+        }
+    })
+
+
+def user_card_not_added(user_id):
+    return JsonResponse({
+        "error": {
+            "code": "CardNotAdded",
+            "id": user_id,
+            "message": "Could not add the card for the specified user",
+        }
+    })
+
+
+def user_card_changed(user_id):
+    return JsonResponse({
+        "success": {
+            "code": "CardChanged",
+            "id": user_id,
+            "message": "Succesfully changed a card for the specified user",
+        }
+    })
+
+
+def user_card_not_changed(user_id):
+    return JsonResponse({
+        "error": {
+            "code": "CardNotChanged",
+            "id": user_id,
+            "message": "Could not change the card for the specified user",
+        }
+    })
+
+
+def post_user_change_default_card(db, user_private_id, body):
     try:
         user = auth.get_user(user_private_id)
     except:
@@ -25,16 +65,52 @@ def get_user_cards(db, user_private_id):
 
     # CHECK IF USER HAS ID
     user_private_ref = db.collection(u'users').document(
-        user_public_id).collection(u'private').document(user_private_id).get()
+        user_public_id).collection(u'private').document(user_private_id)
 
-    user_private_data = user_private_ref.to_dict()
-
-    if user_private_data["stripe_id"] != "":
-        all_cards = stripe.PaymentMethod.list(
-            customer=user_private_data["stripe_id"], type="card")
+    user_private_data = user_private_ref.get().to_dict()
+    import pdb
+    pdb.set_trace()
+    if user_private_data["stripe_id"] == "":
+        return user_not_found(user_private_id)
     else:
-        # RETURN NO CARDS FOUND
-        pass
+        try:
+            stripe.Customer.modify(
+                user_private_data["stripe_id"],
+                default_source=body["cardId"]
+            )
+            user_private_ref.update(
+                {u'default_card': body["last4"]})
+            return user_card_changed(user_private_id)
+        except:
+            return user_card_not_changed(user_private_id)
+
+
+def post_user_add_card(db, user_private_id, body):
+    try:
+        user = auth.get_user(user_private_id)
+    except:
+        return user_not_found(user_private_id)
+
+    user_public_id = 'trofi-user-6'
+
+    # CHECK IF USER HAS ID
+    user_private_ref = db.collection(u'users').document(
+        user_public_id).collection(u'private').document(user_private_id)
+
+    user_private_data = user_private_ref.get().to_dict()
+    import pdb
+    pdb.set_trace()
+    if user_private_data["stripe_id"] == "":
+        return user_not_found(user_private_id)
+    else:
+        try:
+            card = stripe.Customer.create_source(
+                user_private_data["stripe_id"],
+                source=body["tokenId"]
+            )
+            return user_card_added(user_private_id)
+        except:
+            return user_card_not_added(user_private_id)
 
 
 def post_user_order(db, user_private_id, order):
