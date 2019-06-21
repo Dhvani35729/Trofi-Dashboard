@@ -127,79 +127,36 @@ def post_user_order(db, user_private_id, order):
         user = auth.get_user(user_private_id)
     except:
         return user_not_found(user_private_id)
+
+    user_public_id = 'trofi-user-6'
+
+    # CHECK IF USER HAS ID
+    user_private_ref = db.collection(u'users').document(
+        user_public_id).collection(u'private').document(user_private_id)
+
+    user_private_data = user_private_ref.get().to_dict()
+    import pdb
+    pdb.set_trace()
     try:
         # Use Stripe's library to make requests...
-
-        user_public_id = 'trofi-user-6'
-
-        # CHECK IF USER HAS ID
-        user_private_ref = db.collection(u'users').document(
-            user_public_id).collection(u'private').document(user_private_id)
-
-        user_private_data = user_private_ref.get().to_dict()
-        import pdb
-        pdb.set_trace()
         if user_private_data["stripe_id"] == "":
             return user_not_found(user_private_id)
         else:
             # using default card
             if order["card"] == "default":
-                response = stripe.Charge.create(
-                    amount=order["amount"],
+                charge = stripe.Charge.create(
+                    amount=order['order']['amount']['total'],
                     currency="cad",
                     customer=user_private_data["stripe_id"],
                     capture=False,
-                    description="Order #: ok"
                 )
             else:
-                import pdb
-                pdb.set_trace()
-                stripe_user = stripe.Customer.retrieve(
-                    user_private_data["stripe_id"])
-                card = stripe.Customer.create_source(
-                    stripe_user.id,
-                    source=order["tokenId"]
-                )
-                response = stripe.Charge.create(
-                    amount=order["amount"],
-                    currency="cad",
-                    customer=stripe_user.id,
-                    source=card.id,
-                    description="Order #: ok"
-                )
+                # SHOW ERROR
+                pass
+    except:
+        # STRIPE ERROR
+        return
 
-        return JsonResponse(response)
-    except stripe.error.CardError as e:
-        # Since it's a decline, stripe.error.CardError will be caught
-        body = e.json_body
-        err = body.get('error', {})
+    # trofi work
 
-        print("Status is: %s" % e.http_status)
-        print("Type is: %s" % err.get('type'))
-        print("Code is: %s" % err.get('code'))
-        # param is '' in this case
-        print("Param is: %s" % err.get('param'))
-        print("Message is: %s" % err.get('message'))
-    except stripe.error.RateLimitError as e:
-        # Too many requests made to the API too quickly
-        pass
-    except stripe.error.InvalidRequestError as e:
-        # Invalid parameters were supplied to Stripe's API
-        pass
-    except stripe.error.AuthenticationError as e:
-        # Authentication with Stripe's API failed
-        # (maybe you changed API keys recently)
-        pass
-    except stripe.error.APIConnectionError as e:
-        # Network communication with Stripe failed
-        pass
-    except stripe.error.StripeError as e:
-        # Display a very generic error to the user, and maybe send
-        # yourself an email
-        pass
-    except Exception as e:
-        # Something else happened, completely unrelated to Stripe
-        pass
-
-
-# post_user_order(db, 'UHrIUw19XLWV2amsKm7u5weEadZ2', {"ok": "hi"})
+    return JsonResponse({"success": "success"})
