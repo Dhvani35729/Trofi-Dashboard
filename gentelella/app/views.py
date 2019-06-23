@@ -10,7 +10,6 @@ from .api.base import (
     api_foods,
     api_user_card_default,
     api_user_add_card,
-    api_user_change_default_card,
     api_user_cards,
     api_user_order_new,
     api_user_all_orders,

@@ -51,15 +51,6 @@ from .other.update import (
 
 
 @csrf_exempt
-def api_user_change_default_card(request, user_private_id):
-    if request.method == "GET":
-        return error_500(request, None)
-    if request.method == "POST":
-        body = json.loads(str(request.body, encoding='utf-8'))
-        return post_user_change_default_card(db, user_private_id, body)
-
-
-@csrf_exempt
 def api_user_add_card(request, user_private_id):
     if request.method == "GET":
         return error_500(request, None)
@@ -73,9 +64,13 @@ def api_user_cards(request, user_private_id):
         return get_user_cards(db, user_private_id)
 
 
+@csrf_exempt
 def api_user_card_default(request, user_private_id):
     if request.method == "GET":
         return get_user_default_card(db, user_private_id)
+    elif request.method == "POST":
+        body = json.loads(str(request.body, encoding='utf-8'))
+        return post_user_change_default_card(db, user_private_id, body)
 
 
 @csrf_exempt

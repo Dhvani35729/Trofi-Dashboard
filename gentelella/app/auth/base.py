@@ -18,26 +18,29 @@ def create_account(email, passw, full_name, trofi_code):
 
         res_private_ref = res_ref.collection(u'private').document(uid)
 
-        more_info_ref = res_ref.collection(u'more-info').document(u'details')
         logs_ref = res_ref.collection(u'logs')
 
         batch = db.batch()
 
         batch.set(res_ref, {
-            "all_discounts_active": False,
-            "restaurant_name": "",
-            "restaurant_logo": "",
+            "is_active": False,
+            "name": "",
+            "logo": "",
             "opening_hour": 0,
             "closing_hour": 0,
             "menu": [],
             "tags": [],
+            "restaurant_desc": "",
+            "address": "",
+            "contact_email": "",
+            "contact_phone": "",
         })
 
         now = datetime.datetime.now()
 
         batch.set(res_private_ref, {
             "accepted_code": trofi_code,
-            "name": full_name,
+            "user_name": full_name,
             "allow_in": False,
             "payment_id": "",
             "total_orders": 0,
@@ -46,13 +49,6 @@ def create_account(email, passw, full_name, trofi_code):
             "orders": [],
             "joined": now,
             "last_login": now,
-        })
-
-        batch.set(more_info_ref, {
-            "restaurant_desc": "",
-            "address": "",
-            "contact_email": "",
-            "contact_phone": "",
         })
 
         batch.set(logs_ref.document("00-00-0000"), {

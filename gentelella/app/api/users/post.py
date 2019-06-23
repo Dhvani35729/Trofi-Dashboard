@@ -1,6 +1,9 @@
 from django.http import JsonResponse
-from firebase_admin import auth
+from firebase_admin import auth, firestore
 import stripe
+import datetime
+import uuid
+from app.constants import DISCOUNT_INCREMENT
 
 stripe.api_key = "sk_test_WZJim1CVcSc7WBSKjdRDxJGS"
 
@@ -122,7 +125,7 @@ def post_user_add_card(db, user_private_id, body):
             return user_card_not_added(user_private_id)
 
 
-def post_user_order(db, user_private_id, order):
+def post_user_order(db, user_private_id, body):
     try:
         user = auth.get_user(user_private_id)
     except:
@@ -143,20 +146,95 @@ def post_user_order(db, user_private_id, order):
             return user_not_found(user_private_id)
         else:
             # using default card
-            if order["card"] == "default":
+            if body["card"] == "default":
                 charge = stripe.Charge.create(
-                    amount=order['order']['amount']['total'],
+                    amount=body['order']['initial_total'],
                     currency="cad",
                     customer=user_private_data["stripe_id"],
                     capture=False,
                 )
             else:
                 # SHOW ERROR
-                pass
+                return
     except:
         # STRIPE ERROR
         return
 
-    # trofi work
+    try:
+        now = datetime.datetime.now()
+        body['order']["charge_id"] = charge.id
+        body['order']["card_id"] = charge.payment_method
+        body['order']["last4"] = charge.payment_method_details.card.last4
+        # TODO: Check if order_number already exists
+        body['order']["order_number"] = str(uuid.uuid4())[:7]
+        body['order']["placed_at"] = now
+    except:
+        # SERVER ERROR
+        return
+
+    try:
+        orders_ref = db.collection(u'orders')
+        orders_ref.document(
+            "wbc_transc_" + body['order']["order_number"]).set(body['order'])
+    except:
+        # FIREBASE ERROR
+        return
+
+    # update contribution and change discount if neccessary
+
+    hours_ref = db.collection(u'restaurants').document(
+        body['order']["restaurant_id"]).collection(u'hours').document(str(body["order"]["hour_id"]))
+
+    # GET CURRENT DISCOUNT
+
+    hour_data = hours_ref.get().to_dict()
+
+    current_discount = 0
+    next_discount = 0
+    current_contribution = 0
+
+    all_discounts = hour_data["discounts"]
+    max_discount = hour_data["max_discount"]
+    max_discount_reached = False
+    for discount in sorted(all_discounts):
+        if all_discounts[discount]["is_active"] is True:
+            current_discount = float(discount)
+            current_contribution = all_discounts[discount]["current_contributed"]
+            if max_discount != current_discount:
+                next_discount = current_discount + DISCOUNT_INCREMENT
+            else:
+                max_discount_reached = True
+                next_discount = max_discount
+            break
+
+    if max_discount_reached:
+        return
+
+    initial_total_contribution = 0.0
+    for food in body['order']["foods"]:
+        initial_total_contribution += food["initial_contribution"] * \
+            food["quantity"]
+
+    body['order']["initial_total_contribution"] = initial_total_contribution
+
+    new_contribution = current_contribution + \
+        body['order']["initial_total_contribution"]
+
+    current_discount = "{0:.2f}".format(current_discount)
+    current_discount = current_discount.replace('.', '\.')
+
+    pdb.set_trace()
+    if new_contribution == hour_data["needed_contribution"]:
+        hours_ref.update({
+            "discounts." + current_discount + ".current_contributed": new_contribution,
+            "discounts." + current_discount + ".is_active": False,
+            "discounts." + next_discount + ".is_active": True,
+            # figure out what to multiply it by
+            "discounts." + next_discount + ".current_contributed": new_contribution * DISCOUNT_INCREMENT,
+        })
+    else:
+        hours_ref.update({
+            "discounts." + current_discount + ".current_contributed": new_contribution
+        })
 
     return JsonResponse({"success": "success"})
