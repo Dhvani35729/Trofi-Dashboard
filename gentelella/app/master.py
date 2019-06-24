@@ -112,7 +112,8 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
                 "is_active": active,
                 "current_contributed": 0,
             }
-            format_discount = "{:.2f}".format(percent_discount)
+            format_discount = "{:.2f}".format(
+                percent_discount).replace('.', '_')
             all_hour_discounts[format_discount] = hour_discount
 
             percent_discount += DISCOUNT_INCREMENT
@@ -133,7 +134,7 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
                 # print("Item will contribute: ", expense_contribution)
 
                 format_discount = "{:.2f}".format(
-                    percent_discount-DISCOUNT_INCREMENT)
+                    percent_discount-DISCOUNT_INCREMENT).replace('.', '_')
                 food_contributions[format_discount] = expense_contribution
                 percent_discount += DISCOUNT_INCREMENT
                 percent_discount = round(percent_discount, 2)

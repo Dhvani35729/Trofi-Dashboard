@@ -165,17 +165,22 @@ def post_user_order(db, user_private_id, body):
         body['order']["charge_id"] = charge.id
         body['order']["card_id"] = charge.payment_method
         body['order']["last4"] = charge.payment_method_details.card.last4
-        # TODO: Check if order_number already exists
-        body['order']["order_number"] = str(uuid.uuid4())[:7]
         body['order']["placed_at"] = now
+
+        initial_total_contribution = 0.0
+        for food in body['order']["foods"]:
+            initial_total_contribution += food["initial_contribution"] * \
+                food["quantity"]
+
+        body['order']["initial_total_contribution"] = initial_total_contribution
     except:
         # SERVER ERROR
         return
 
     try:
-        orders_ref = db.collection(u'orders')
-        orders_ref.document(
-            "wbc_transc_" + body['order']["order_number"]).set(body['order'])
+        orders_ref = db.collection(u'orders').document()
+        body['order']["order_number"] = orders_ref.id[-7:]
+        orders_ref.set(body['order'])
     except:
         # FIREBASE ERROR
         return
@@ -190,51 +195,37 @@ def post_user_order(db, user_private_id, body):
     hour_data = hours_ref.get().to_dict()
 
     current_discount = 0
-    next_discount = 0
-    current_contribution = 0
 
-    all_discounts = hour_data["discounts"]
+    new_all_discounts = hour_data["discounts"]
+    all_contributions = hour_data["contributions"]
     max_discount = hour_data["max_discount"]
     max_discount_reached = False
-    for discount in sorted(all_discounts):
-        if all_discounts[discount]["is_active"] is True:
-            current_discount = float(discount)
-            current_contribution = all_discounts[discount]["current_contributed"]
-            if max_discount != current_discount:
-                next_discount = current_discount + DISCOUNT_INCREMENT
-            else:
+    # pdb.set_trace()
+    for discount in sorted(new_all_discounts):
+        if new_all_discounts[discount]["is_active"] is True:
+            current_discount = float(discount.replace('_', '.'))
+            if max_discount == current_discount:
                 max_discount_reached = True
-                next_discount = max_discount
-            break
-
+        if max_discount != float(discount.replace('_', '.')):
+            for food in body["order"]["foods"]:
+                new_all_discounts[discount]["current_contributed"] += all_contributions[food["id"]
+                                                                                        ][discount] * food["quantity"]
+    # pdb.set_trace()
     if max_discount_reached:
         return
 
-    initial_total_contribution = 0.0
-    for food in body['order']["foods"]:
-        initial_total_contribution += food["initial_contribution"] * \
-            food["quantity"]
+    for discount in sorted(new_all_discounts):
+        if new_all_discounts[discount]["is_active"] is True:
+            if new_all_discounts[discount]["current_contributed"] >= hour_data["needed_contribution"]:
+                new_all_discounts[discount]["is_active"] = False
+                next_discount = float(discount.replace(
+                    '_', '.')) + DISCOUNT_INCREMENT
+                next_discount = "{0:.2f}".format(
+                    next_discount).replace('.', '_')
+                new_all_discounts[next_discount]["is_active"] = True
 
-    body['order']["initial_total_contribution"] = initial_total_contribution
-
-    new_contribution = current_contribution + \
-        body['order']["initial_total_contribution"]
-
-    current_discount = "{0:.2f}".format(current_discount)
-    current_discount = current_discount.replace('.', '\.')
-
-    pdb.set_trace()
-    if new_contribution == hour_data["needed_contribution"]:
-        hours_ref.update({
-            "discounts." + current_discount + ".current_contributed": new_contribution,
-            "discounts." + current_discount + ".is_active": False,
-            "discounts." + next_discount + ".is_active": True,
-            # figure out what to multiply it by
-            "discounts." + next_discount + ".current_contributed": new_contribution * DISCOUNT_INCREMENT,
-        })
-    else:
-        hours_ref.update({
-            "discounts." + current_discount + ".current_contributed": new_contribution
-        })
+    hours_ref.update({
+        "discounts": new_all_discounts
+    })
 
     return JsonResponse({"success": "success"})

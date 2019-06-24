@@ -26,15 +26,15 @@ def incoming(request):
     incoming_orders_data = []
 
     # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
-    all_orders_ref = db.collection(u'restaurants').document(
-        public_id).collection(u'private').document(uid).collection("orders")
-    all_incoming_orders_query = all_orders_ref.where(u'incoming', u'==', True)
+    all_orders_ref = db.collection(u'orders').where(
+        u'restaurant_id', u'==', public_id)
+    all_incoming_orders_query = all_orders_ref.where(
+        u'status_ready', u'==', False)
     all_incoming_orders_docs = all_incoming_orders_query.get()
 
     for order in all_incoming_orders_docs:
-        incoming_order_ref = db.collection(u'orders').document(order.id)
         try:
-            order_data = incoming_order_ref.get().to_dict()
+            order_data = order.to_dict()
 
             order_hours = order_data["placed_at"] - datetime.timedelta(hours=4)
             placed_at = time_display(str(order_hours.time())[:5])
@@ -42,10 +42,10 @@ def incoming(request):
                 str(order_data["hour_start"]) + ":00") + " - " + time_display(str(order_data["hour_end"]) + ":00")
 
             an_order = {
-                "id": order_data["order_id"],
+                "id": order_data["order_number"],
                 "placed_at": placed_at,
                 "active_between": active_hours,
-                "current_price": money_display(order_data["total_price"]),
+                "current_price": order_data["initial_total"] / 100,
                 "items": order_data["foods"],
                 "status": order_data["status_ready"],
             }

@@ -20,17 +20,43 @@ def create_account(email, passw, full_name, trofi_code):
 
         logs_ref = res_ref.collection(u'logs')
 
+        foods_ref = db.collection(u'foods').where(
+            u'restaurant_id', u'==', trofi_code)
+
         batch = db.batch()
 
+        food_data = foods_ref.get()
+        menu = []
+        for food in food_data:
+            try:
+                menu.append(food.id)
+                single_food_ref = db.collection(u'foods').document(food.id)
+                single_food_private_ref = db.collection(
+                    u'foods').document(food.id).collection(u'private')
+                private_docs = single_food_private_ref.get()
+                for doc in private_docs:
+                    old_food_private_ref = single_food_private_ref.document(
+                        doc.id)
+                    private_food_data = doc.to_dict()
+
+                new_food_private_ref = single_food_private_ref.document(uid)
+                batch.set(new_food_private_ref,
+                          private_food_data)
+                old_food_private_ref.delete()
+                batch.update(single_food_ref, {
+                    "restaurant_id": "trofi-res-" + trofi_code})
+            except Exception as e:
+                return None, e
+
         batch.set(res_ref, {
-            "is_active": False,
+            "is_active": True,
             "name": "",
             "logo": "",
             "opening_hour": 0,
             "closing_hour": 0,
-            "menu": [],
+            "menu": menu,
             "tags": [],
-            "restaurant_desc": "",
+            "desc": "",
             "address": "",
             "contact_email": "",
             "contact_phone": "",
@@ -41,12 +67,11 @@ def create_account(email, passw, full_name, trofi_code):
         batch.set(res_private_ref, {
             "accepted_code": trofi_code,
             "user_name": full_name,
-            "allow_in": False,
+            "allow_in": True,
             "payment_id": "",
             "total_orders": 0,
             "credit_card_percentage": 0,
             "credit_card_constant": 0,
-            "orders": [],
             "joined": now,
             "last_login": now,
         })

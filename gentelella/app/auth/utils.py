@@ -14,7 +14,8 @@ def logged_in(request):
 
 
 def get_res_public_id(uid):
-    map_ref = db.collection(u'general').document("trofi-verification").collection(uid).document("map")
+    map_ref = db.collection(u'general').document(
+        "trofi-verification").collection(uid).document("map")
     try:
         map_data = map_ref.get().to_dict()
         return map_data["public_id"], None

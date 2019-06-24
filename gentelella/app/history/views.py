@@ -24,21 +24,22 @@ def history(request):
     all_orders_data = []
 
     # Order Number, Order Placed At, Order Active Between, Current Price, Items, Toppings, Comments, Status
-    all_orders_ref = db.collection(u'restaurants').document(public_id).collection(u'private').document(uid).collection("orders")
+    all_orders_ref = db.collection(u'orders').where(
+        u'restaurant_id', u'==', public_id)
 
     all_orders_docs = all_orders_ref.get()
 
     for order in all_orders_docs:
-        order_ref = db.collection(u'orders').document(order.id)
         try:
-            order_data = order_ref.get().to_dict()
+            order_data = order.to_dict()
 
-            active_hours = time_display(order_data["hours_order"][0:2] + ":00") + " - " + time_display(order_data["hours_order"][3:5] + ":00")
+            active_hours = time_display(
+                str(order_data["hour_start"]) + ":00") + " - " + time_display(str(order_data["hour_end"]) + ":00")
 
             an_order = {
-                "id": order_data["order_id"],
+                "id": order_data["order_number"],
                 "active_between": active_hours,
-                "final_price": money_display(order_data["total_price"] * (100.0 - order_data["final_discount"])/100.0),
+                "final_price": order_data["final_total"],
                 "items": order_data["foods"],
             }
 
@@ -47,6 +48,7 @@ def history(request):
             # TODO: add error message to show to user
             return error_500(request, e)
 
-    context = {"all_orders": all_orders_data, "public_id": public_id, "admin_uid": uid, "name": uname}
+    context = {"all_orders": all_orders_data,
+               "public_id": public_id, "admin_uid": uid, "name": uname}
     template = loader.get_template(template_name)
     return HttpResponse(template.render(context, request))

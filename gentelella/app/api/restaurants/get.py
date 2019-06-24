@@ -36,7 +36,7 @@ def get_all_restaurants_with_hours(db, active=True):
             max_discount_reached = False
             for discount in sorted(all_discounts):
                 if all_discounts[discount]["is_active"] is True:
-                    current_discount = float(discount)
+                    current_discount = float(discount.replace("_", "."))
                     current_contribution = all_discounts[discount]["current_contributed"]
                     if max_discount != current_discount:
                         next_discount = current_discount + DISCOUNT_INCREMENT
@@ -92,7 +92,7 @@ def get_all_restaurants_with_hour(db, hour_id, active=True):
             max_discount_reached = False
             for discount in sorted(all_discounts):
                 if all_discounts[discount]["is_active"] is True:
-                    current_discount = float(discount)
+                    current_discount = float(discount.replace("_", "."))
                     current_contribution = all_discounts[discount]["current_contributed"]
                     if max_discount != current_discount:
                         next_discount = current_discount + DISCOUNT_INCREMENT

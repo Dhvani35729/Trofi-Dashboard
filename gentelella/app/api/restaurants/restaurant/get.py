@@ -67,7 +67,7 @@ def get_restaurant_with_menu_for_hour(db, res_public_id, hour_id, active=True):
         for discount in sorted(all_discounts):
             if all_discounts[discount]["is_active"] is True:
                 current_discount = discount
-        if float(current_discount) == max_discount:
+        if float(current_discount.replace("_", ".")) == max_discount:
             current_contribution = 0
         else:
             current_contribution = res_hour_data["contributions"][food_id][current_discount]
@@ -127,7 +127,7 @@ def get_restaurant_with_hours(db, res_public_id, active=True):
         max_discount_reached = False
         for discount in sorted(all_discounts):
             if all_discounts[discount]["is_active"] is True:
-                current_discount = float(discount)
+                current_discount = float(discount.replace("_", "."))
                 current_contribution = all_discounts[discount]["current_contributed"]
                 if max_discount != current_discount:
                     next_discount = current_discount + DISCOUNT_INCREMENT
@@ -184,7 +184,7 @@ def get_restaurant_with_hour(db, res_public_id, hour_id, active=True):
         max_discount_reached = False
         for discount in sorted(all_discounts):
             if all_discounts[discount]["is_active"] is True:
-                current_discount = float(discount)
+                current_discount = float(discount.replace("_", "."))
                 current_contribution = all_discounts[discount]["current_contributed"]
                 if max_discount != current_discount:
                     next_discount = current_discount + DISCOUNT_INCREMENT
