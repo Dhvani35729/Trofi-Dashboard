@@ -162,6 +162,7 @@ def post_user_order(db, user_private_id, body):
 
     try:
         now = datetime.datetime.now()
+        print(now)
         body['order']["charge_id"] = charge.id
         body['order']["card_id"] = charge.payment_method
         body['order']["last4"] = charge.payment_method_details.card.last4
@@ -215,14 +216,15 @@ def post_user_order(db, user_private_id, body):
         return
 
     for discount in sorted(new_all_discounts):
-        if new_all_discounts[discount]["is_active"] is True:
-            if new_all_discounts[discount]["current_contributed"] >= hour_data["needed_contribution"]:
-                new_all_discounts[discount]["is_active"] = False
-                next_discount = float(discount.replace(
-                    '_', '.')) + DISCOUNT_INCREMENT
-                next_discount = "{0:.2f}".format(
-                    next_discount).replace('.', '_')
-                new_all_discounts[next_discount]["is_active"] = True
+        if max_discount != float(discount.replace('_', '.')):
+            if new_all_discounts[discount]["is_active"] is True:
+                if new_all_discounts[discount]["current_contributed"] >= hour_data["needed_contribution"]:
+                    new_all_discounts[discount]["is_active"] = False
+                    next_discount = float(discount.replace(
+                        '_', '.')) + DISCOUNT_INCREMENT
+                    next_discount = "{0:.2f}".format(
+                        next_discount).replace('.', '_')
+                    new_all_discounts[next_discount]["is_active"] = True
 
     hours_ref.update({
         "discounts": new_all_discounts

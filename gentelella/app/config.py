@@ -17,7 +17,7 @@ authe = firebase.auth()
 
 # firestore config
 # Use a service account
-cred = credentials.Certificate('serviceAccount.json')
+cred = credentials.Certificate('../serviceAccount.json')
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
