@@ -3,13 +3,8 @@ import time
 import stripe
 import datetime
 from config import db
-import pytz
 
 stripe.api_key = "sk_test_WZJim1CVcSc7WBSKjdRDxJGS"
-
-# charge = stripe.Charge.capture('ch_1EnH7GFx6ej5bzOr1r4C9wY2', amount=100)
-
-# print(charge)
 
 
 def run_hourly(hour_id):
@@ -30,26 +25,50 @@ def run_hourly(hour_id):
         print("Working on restaurant: " + str(restaurant.id))
         res_public_data = restaurant.to_dict()
 
+        hour_ref = db.collection(u'restaurants').document(
+            restaurant.id).collection("hours").document(str(hour_id))
+        hour_data = hour_ref.get().to_dict()
+
+        all_discounts = hour_data["discounts"]
+        final_discount = 0.0
+        for discount in sorted(all_discounts):
+            if all_discounts[discount]["is_active"] is True:
+                final_discount = float(discount.replace("_", "."))
+                break
+
         all_orders = db.collection(u'orders').where(
             u'placed_at', u'>=', today).where(
             u'hour_id', u'==', hour_id).where(
             u'restaurant_id', u'==', restaurant.id).stream()
 
         for order in all_orders:
-            print(order.to_dict()["order_number"])
-            print(order.to_dict()["placed_at"])
-            # print(order.to_dict()["placed_at"] >= today)
+            order_ref = db.collection("orders").document(order.id)
+            order_data = order.to_dict()
+            final_total = round(
+                order_data["initial_total"] * (1 - final_discount))
+            print("Working on order: " + str(order_data["order_number"]))
+
+            order_ref.update(
+                {u'final_discount': final_discount, "final_total": final_total})
+            try:
+                charge = stripe.Charge.capture(
+                    order_data["charge_id"], amount=final_total)
+                print("Succesfully captured: " + str(final_total))
+            except:
+                # throw some error
+                return
 
 
-run_hourly(22)
-# def job():
-#     now = datetime.datetime.now()
-#     run_hourly(now.hour)
+# run_hourly(21)
+def job():
+    now = datetime.datetime.now()
+    previous_hour = now.hour - 1
+    run_hourly(now.hour)
 
 
-# scheduler = SafeScheduler()
-# scheduler.every().hour.at(':18').do(job)
+scheduler = SafeScheduler()
+scheduler.every().hour.at(':56').do(job)
 
-# while True:
-#     scheduler.run_pending()
-#     time.sleep(1)
+while True:
+    scheduler.run_pending()
+    time.sleep(1)
