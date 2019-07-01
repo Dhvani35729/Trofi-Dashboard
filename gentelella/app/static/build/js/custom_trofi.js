@@ -159,7 +159,7 @@ function init_incoming_listener(db, public_id, uid){
 
 function init_menu(){
 
-    var menu_table = $('#datatable-responsive-menu').DataTable();
+    var menu_table = $('#datatable-responsive-menu').DataTable({paging: false,});
 
     for(var i = 1; i <= menu_table.data().length; i++){
         $('#update-sales-price-' + parseInt(i)).hide();
@@ -387,7 +387,7 @@ function init_hours(){
     });
 
     for(var i = 1; i <= hours_table.data().length; i++){
-        $('#datatable-responsive-' + parseInt(i)).DataTable();
+        $('#datatable-responsive-' + parseInt(i)).DataTable({paging: false,});
         $('#update-discount-' + parseInt(i)).hide();
         $('#update-payroll-' + parseInt(i)).hide();
         $('#update-overhead-' + parseInt(i)).hide();

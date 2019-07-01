@@ -111,7 +111,7 @@ def get_restaurant_with_hours(db, res_public_id, active=True):
         u'hours').where(u'start_id', u'>=', res_public_data["opening_hour"]).where(u'start_id', u'<=', res_public_data["closing_hour"])
 
     if active:
-        hours_ref = hours_ref.where(u'hour_is_active', u'==', True)
+        hours_ref = hours_ref.where(u'is_active', u'==', True)
 
     hours_ref = hours_ref.get()
     for hour in hours_ref:
@@ -140,7 +140,7 @@ def get_restaurant_with_hours(db, res_public_id, active=True):
         res_card = {
             "hour_id": hour_id,
             "key": res_data.id,
-            "name": res_public_data["restaurant_name"],
+            "name": res_public_data["name"],
             "tags": res_public_data["tags"],
             "needed_contribution": hour_data["needed_contribution"],
             "max_discount_reached": max_discount_reached,
@@ -168,7 +168,7 @@ def get_restaurant_with_hour(db, res_public_id, hour_id, active=True):
         u'hours').where(u'start_id', u'==', int(hour_id))
 
     if active:
-        hours_ref = hours_ref.where(u'hour_is_active', u'==', True)
+        hours_ref = hours_ref.where(u'is_active', u'==', True)
 
     hours_ref = hours_ref.get()
     for hour in hours_ref:
@@ -197,7 +197,7 @@ def get_restaurant_with_hour(db, res_public_id, hour_id, active=True):
         res_card = {
             "hour_id": hour_id,
             "key": res_data.id,
-            "name": res_public_data["restaurant_name"],
+            "name": res_public_data["name"],
             "tags": res_public_data["tags"],
             "needed_contribution": hour_data["needed_contribution"],
             "max_discount_reached": max_discount_reached,

@@ -90,7 +90,7 @@ def manage(request):
                 "sort_id": int(hour.id),
                 "display_id":  display_id,
                 "starting_discount": starting_discount,
-                "active": all_hours_data["hour_is_active"],
+                "active": all_hours_data["is_active"],
                 "foods_active": all_hours_data["foods_active"],
                 "overhead_cost": all_hours_data["overhead_cost"],
                 "payroll": all_hours_data["payroll"],

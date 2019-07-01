@@ -7,20 +7,20 @@ from django.contrib import auth
 from ..utils import (
     error_message,
     get_message_from_exception,
-    )
+)
 
 from ..constants import HOME_PAGE, HOME_PAGE_LOGGED_OUT, DATABASE_ERROR_MSG
 
 from .base import (
     create_account,
     log_in,
-    )
+)
 
 from .utils import (
     logged_in,
     is_valid_trofi_code,
     should_allow_user_in
-    )
+)
 
 
 def logout(request):
@@ -51,12 +51,14 @@ def sign_up(request):
 
     if is_valid is None:
         message = DATABASE_ERROR_MSG
-        context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
+        context = {"messg": message, "email": email, "passw": passw,
+                   "fname": fname, "trofi_code": trofi_code}
         return error_message(request, message, context, template_name)
 
     if not is_valid:
         message = "Invalid Trofi Code!"
-        context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
+        context = {"messg": message, "email": email, "passw": passw,
+                   "fname": fname, "trofi_code": trofi_code}
         return error_message(request, message, context, template_name)
     else:
         user, e = create_account(email, passw, fname, trofi_code)
@@ -66,7 +68,8 @@ def sign_up(request):
         else:
             print(e)
             message = get_message_from_exception(e)
-            context = {"messg": message, "email": email, "passw": passw, "fname": fname, "trofi_code": trofi_code}
+            context = {"messg": message, "email": email,
+                       "passw": passw, "fname": fname, "trofi_code": trofi_code}
             return error_message(request, message, context, template_name)
 
 
@@ -99,7 +102,7 @@ def sign_in(request):
             request.session['uid'] = str(session_id)
             request.session['admin_uid'] = str(uid)
             request.session['public_id'] = str(public_id)
-            request.session['uname'] = data["name"]
+            request.session['uname'] = data["user_name"]
             response = redirect(HOME_PAGE)
             return response
         else:

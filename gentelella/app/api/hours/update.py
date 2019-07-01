@@ -30,12 +30,12 @@ def update_hour_status(db, public_id, uid, body):
 
     if body["hour_active"] == True:
         try:
-            hour_ref.update({u'hour_is_active': True})
+            hour_ref.update({u'is_active': True})
         except Exception as e:
             return api_db_error(e)
     else:
         try:
-            hour_ref.update({u'hour_is_active': False})
+            hour_ref.update({u'is_active': False})
         except Exception as e:
             return api_db_error(e)
 

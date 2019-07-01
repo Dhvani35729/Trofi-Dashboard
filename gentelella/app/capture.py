@@ -19,7 +19,7 @@ def run_hourly(hour_id):
     print("Today: " + str(today))
 
     all_restaurants = db.collection(u'restaurants').where(
-        u'all_discounts_active', u'==', True).stream()
+        u'is_active', u'==', True).stream()
 
     for restaurant in all_restaurants:
         print("Working on restaurant: " + str(restaurant.id))

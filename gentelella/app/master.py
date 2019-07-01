@@ -3,7 +3,7 @@ from constants import DISCOUNT_INCREMENT
 from config import db
 
 
-RESTAURANT_ID = "trofi-res-test-123k"
+RESTAURANT_ID = "trofi-res-trofi-code"
 
 
 def main():
@@ -69,8 +69,9 @@ def init_algorithm(res_public_id):
         credit_card_fee = 0
         initial_expense_contribution = sales_price - \
             (profit_margin + ingredients_cost + credit_card_fee)
-
+        print(initial_expense_contribution)
         max_food_discount = initial_expense_contribution / sales_price
+        print(max_food_discount)
         food = {
             "id": food.id,
             "sales_price": sales_price,
@@ -79,7 +80,7 @@ def init_algorithm(res_public_id):
             "max_discount": max_food_discount,
         }
         if max_food_discount < MAX_DISCOUNT:
-            MAX_DISCOUNT = max_food_discount
+            MAX_DISCOUNT = round(max_food_discount, 2)
 
         algo_foods.append(food)
 
@@ -87,7 +88,6 @@ def init_algorithm(res_public_id):
 
 
 def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
-
     all_hours = db.collection(u'restaurants').document(
         res_public_id).collection("hours").stream()
 
@@ -101,7 +101,7 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
         needed_contribution = hour_data["payroll"] + hour_data["overhead_cost"]
 
         initial_discount = hour_data["initial_discount"]
-        # print("FOR HOUR: " + hour.id)
+        print("FOR HOUR: " + hour.id)
 
         percent_discount = 0.0
         while percent_discount < MAX_DISCOUNT:
@@ -120,18 +120,19 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
             percent_discount = round(percent_discount, 2)
 
         for food in algo_foods:
-            # print("\n--------------------------------\n")
+            print("\n--------------------------------\n")
             food_contributions = {}
             # do not show breakeven
             percent_discount = 0.0 + DISCOUNT_INCREMENT
 
-            # print("FOR FOOD: " + food["id"])
+            print("FOR FOOD: " + food["id"])
+            print(MAX_DISCOUNT)
             while percent_discount < MAX_DISCOUNT:
                 discount = food["sales_price"] * percent_discount
                 expense_contribution = food["initial_expense_contribution"] - discount
 
-                # print("To unlock a discount of: ", percent_discount)
-                # print("Item will contribute: ", expense_contribution)
+                print("To unlock a discount of: ", percent_discount)
+                print("Item will contribute: ", expense_contribution)
 
                 format_discount = "{:.2f}".format(
                     percent_discount-DISCOUNT_INCREMENT).replace('.', '_')
@@ -141,7 +142,7 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
 
             all_food_contributions[str(food["id"])] = food_contributions
 
-        # print(all_food_contributions)
+        print(all_food_contributions)
         # print(all_hour_discounts)
         hour_ref = db.collection(u'restaurants').document(
             res_public_id).collection("hours").document(hour.id)
@@ -153,7 +154,7 @@ def run_algorithm(res_public_id, algo_foods, MAX_DISCOUNT):
         batch.update(
             hour_ref, {u'discounts': all_hour_discounts})
         batch.update(
-            hour_ref, {u'max_discount': round(MAX_DISCOUNT-DISCOUNT_INCREMENT, 2)})
+            hour_ref, {u'max_discount': 0.95})
 
     # print("\n--------------------------------\n")
     print("Writing to database...")

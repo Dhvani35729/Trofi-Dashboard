@@ -37,6 +37,7 @@ def incoming(request):
             order_data = order.to_dict()
 
             order_hours = order_data["placed_at"] - datetime.timedelta(hours=4)
+
             placed_at = time_display(str(order_hours.time())[:5])
             active_hours = time_display(
                 str(order_data["hour_start"]) + ":00") + " - " + time_display(str(order_data["hour_end"]) + ":00")
