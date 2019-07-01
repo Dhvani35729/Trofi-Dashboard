@@ -25,8 +25,9 @@ SECRET_KEY = '8*md2t)o**67@*yhc(d=f@j95kl(dnf^rmm4s00$-mh_vurb2b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 # ADMIN_ENABLED = False
+LOCAL_BUILD = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['biteclub-f12a1.appspot.com', 'localhost']
 
 
 # Application definition
@@ -72,19 +73,44 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gentelella.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+if LOCAL_BUILD:
+    # Database
+    # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    # Running on production App Engine, so connect to Google Cloud SQL using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '/cloudsql/biteclub-f12a1:us-central1:biteclub',
+            'USER': 'root',
+            'PASSWORD': 'ASK DHVANI',
+            'NAME': 'biteclub',
+        }
+    }
+    # # to Cloud SQL via the proxy.  To start the proxy via command line:
+    # #    $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    # # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.mysql',
+    #         'HOST': '127.0.0.1',
+    #         'PORT': '3306',
+    #         'NAME': 'biteclub',
+    #         'USER': 'root',
+    #         'PASSWORD': 'ASK DHVANI',
+    #     }
+    # }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
+    # Password validation
+    # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -117,9 +143,12 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
+# https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+# Google App Engine: set static root for local static files
+# https://cloud.google.com/appengine/docs/flexible/python/serving-static-files
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 

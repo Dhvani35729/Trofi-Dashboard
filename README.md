@@ -1,7 +1,7 @@
 # Trofi Dashboard
 
 ## Live: 
-GCP: http://35.227.34.159/
+GCP: https://biteclub-f12a1.appspot.com/
 
 #### Steps
 Set up a virtualenv and activate
