@@ -926,7 +926,7 @@ function init_manage(){
 function init_incoming_table(){
     console.log('init incoming');
 
-    var incoming_table = $('#datatable-responsive-incoming').DataTable();
+    var incoming_table = $('#datatable-responsive-incoming').DataTable({paging: false,});
 
     for(var i = 1; i <= incoming_table.data().length; i++){
         $('#datatable-responsive-' + parseInt(i)).DataTable();

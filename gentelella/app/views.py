@@ -14,6 +14,7 @@ from .api.base import (
     api_user_order_new,
     api_user_all_orders,
     api_user_current_order,
+    api_app_maint,
     api_restaurants_hour,
     api_restaurant_hour,
     api_restaurant_menu,

@@ -45,6 +45,7 @@ urlpatterns = [
     re_path(r'api/foods/$', views.api_foods, name='apiFoods'),
     re_path(r'api/foods/(?P<food_id>\w+)/$', views.api_foods, name='apiFoods'),
     re_path(r'api/other/$', views.api_others, name='apiFoods'),
+    re_path(r'api/maint/app$', views.api_app_maint, name='apiMaintApp'),
     path('login/', views.sign_in, name='signIn'),
     path('signup/', views.sign_up, name='signUp'),
     path('logout/', views.logout, name='logout'),

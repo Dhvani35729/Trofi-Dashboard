@@ -1,3 +1,4 @@
+from ..utils import get_user_public_id
 from django.http import JsonResponse
 from firebase_admin import auth
 import stripe
@@ -51,7 +52,7 @@ def get_user_cards(db, user_private_id):
     except:
         return user_not_found(user_private_id)
 
-    user_public_id = 'trofi-user-6'
+    user_public_id = get_user_public_id(user_private_id)
 
     user_private_ref = db.collection(u'users').document(
         user_public_id).collection(u'private').document(user_private_id).get()
@@ -84,7 +85,7 @@ def get_user_default_card(db, user_private_id):
     except:
         return user_not_found(user_private_id)
 
-    user_public_id = 'trofi-user-6'
+    user_public_id = get_user_public_id(user_private_id)
 
     user_private_ref = db.collection(u'users').document(
         user_public_id).collection(u'private').document(user_private_id).get()

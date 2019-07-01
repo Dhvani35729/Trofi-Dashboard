@@ -41,6 +41,7 @@ from .users.post import (
     post_user_add_card,
     post_user_change_default_card
 )
+from .other.get import get_app_maint
 from .other.update import (
     update_ccf_percentage,
     update_ccf_constant,
@@ -48,6 +49,13 @@ from .other.update import (
 
 # TODO: Check out django_rest_framework
 # TODO: Catch proper firebase exceptions
+
+
+def api_app_maint(request):
+    if request.method == "GET":
+        return get_app_maint(db)
+    else:
+        return error_500(request, None)
 
 
 @csrf_exempt

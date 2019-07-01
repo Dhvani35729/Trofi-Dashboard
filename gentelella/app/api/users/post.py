@@ -4,6 +4,7 @@ import stripe
 import datetime
 import uuid
 from app.constants import DISCOUNT_INCREMENT
+from ..utils import get_user_public_id
 
 stripe.api_key = "sk_test_WZJim1CVcSc7WBSKjdRDxJGS"
 
@@ -64,7 +65,7 @@ def post_user_change_default_card(db, user_private_id, body):
     except:
         return user_not_found(user_private_id)
 
-    user_public_id = 'trofi-user-6'
+    user_public_id = get_user_public_id(user_private_id)
 
     # CHECK IF USER HAS ID
     user_private_ref = db.collection(u'users').document(
@@ -94,7 +95,7 @@ def post_user_add_card(db, user_private_id, body):
     except:
         return user_not_found(user_private_id)
 
-    user_public_id = 'trofi-user-6'
+    user_public_id = get_user_public_id(user_private_id)
 
     # CHECK IF USER HAS ID
     user_private_ref = db.collection(u'users').document(
@@ -131,15 +132,15 @@ def post_user_order(db, user_private_id, body):
     except:
         return user_not_found(user_private_id)
 
-    user_public_id = 'trofi-user-6'
+    user_public_id = get_user_public_id(user_private_id)
 
     # CHECK IF USER HAS ID
     user_private_ref = db.collection(u'users').document(
         user_public_id).collection(u'private').document(user_private_id)
 
     user_private_data = user_private_ref.get().to_dict()
-    import pdb
-    pdb.set_trace()
+    # import pdb
+    # pdb.set_trace()
     try:
         # Use Stripe's library to make requests...
         if user_private_data["stripe_id"] == "":
