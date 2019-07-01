@@ -49,7 +49,7 @@ def create_account(email, passw, full_name, trofi_code):
                 return None, e
 
         batch.set(res_ref, {
-            "is_active": True,
+            "is_active": False,
             "name": "",
             "logo": "",
             "opening_hour": 0,
@@ -67,7 +67,7 @@ def create_account(email, passw, full_name, trofi_code):
         batch.set(res_private_ref, {
             "accepted_code": trofi_code,
             "user_name": full_name,
-            "allow_in": True,
+            "allow_in": False,
             "payment_id": "",
             "total_orders": 0,
             "credit_card_percentage": 0,

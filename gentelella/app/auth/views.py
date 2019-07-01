@@ -106,7 +106,7 @@ def sign_in(request):
             response = redirect(HOME_PAGE)
             return response
         else:
-            message = "Vibe has not setup your account yet. Please wait to receive an email."
+            message = "BiteClub has not setup your account yet. Please wait to receive an email."
             context = {"messg": message, "email": email, "passw": passw}
             return error_message(request, message, context, template_name)
     else:

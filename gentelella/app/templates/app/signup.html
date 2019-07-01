@@ -37,9 +37,9 @@
                 </div>
                 <div>
                     {% if trofi_code %}
-                    <input type="text" class="form-control" name="trofi_code" placeholder="Vendor Vibe Code" value="{{trofi_code}}" required="" />
+                    <input type="text" class="form-control" name="trofi_code" placeholder="Vendor BiteClub Code" value="{{trofi_code}}" required="" />
                     {% else %}
-                  <input type="text" class="form-control" name="trofi_code" placeholder="Vendor Vibe Code" required="" />
+                  <input type="text" class="form-control" name="trofi_code" placeholder="Vendor BiteClub Code" required="" />
                   {% endif %}
                 </div>
                 <div>
@@ -50,7 +50,7 @@
                     {% endif %}
                 </div>
                 <div>
-                    <input type="submit" value="Submit" class="btn btn-default submit" style="
+                    <input id="signUp" type="submit" value="Submit" class="btn btn-default submit" style="
                     float: none;
                     margin-left: 0;
                 "/>
@@ -59,7 +59,7 @@
 
                 <div class="clearfix"></div>
                 {% if messg %}
-                <div class="alert alert-danger fade in" role="alert" style="
+                <div id="errorMsg" class="alert alert-danger fade in" role="alert" style="
                 margin-top: 5px;
                 text-shadow: 0 0px 0 #fff;
             ">
@@ -76,8 +76,8 @@
                   <br />
 
                   <div>
-                    <h1><i class="fa"></i> Vibe</h1>
-                    <p>Vibe Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
+                    <h1><i class="fa"></i> Bite Club</h1>
+                    <p>BiteClub Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
                     <p><a href="#">Terms of Service</a></p>
                   </div>
                 </div>
@@ -86,9 +86,12 @@
       </div>
     </div>
   </div>
-{% endblock body %}
+  {% block javascripts %}
+  {{ block.super }}
   <!-- PNotify -->
   <script src="/static/vendors/pnotify/dist/iife/PNotify.js"></script>
   <script src="/static/vendors/pnotify/dist/iife/PNotifyButtons.js"></script>
   <script src="/static/vendors/nonblockjs/NonBlock.es5.js"></script>
+{% endblock javascripts %}
+{% endblock body %}
 

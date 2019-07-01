@@ -1,12 +1,12 @@
 from ..common import api_success, api_db_error
-import threading
-from threading import Timer
+# import threading
+# from threading import Timer
 
 
-def updateCurrentOrderStatus(order_ref):
-    # print("I'm running on thread %s" % threading.current_thread())
-    order_ref.update(
-        {'current_order': False})
+# def updateCurrentOrderStatus(order_ref):
+#     # print("I'm running on thread %s" % threading.current_thread())
+#     order_ref.update(
+#         {'current_order': False})
 
 
 def update_food_status_ready(db, uid, body):
@@ -20,15 +20,11 @@ def update_food_status_ready(db, uid, body):
         if body["order_ready"] == True:
             try:
                 order_ref.update({u'status_ready': True})
-                t = Timer(300, updateCurrentOrderStatus,
-                          args=[order_ref], kwargs=None)
-                t.start()
             except Exception as e:
                 return api_db_error(e)
         else:
             try:
-                order_ref.update(
-                    {u'status_ready': False, 'current_order': True})
+                order_ref.update({u'status_ready': False})
             except Exception as e:
                 return api_db_error(e)
 

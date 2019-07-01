@@ -1,73 +1,101 @@
-{% extends "app/base_site.html" %}
-
-{% block title %} Login {% endblock title %}
-
+{% extends "app/base_site.html" %} {% block title %} Login {% endblock title %}
 {% block stylesheets %}
-  {{ block.super }}
-  <!-- Animate.css -->
-  <link href="/static/vendors/animate.css/animate.min.css" rel="stylesheet">
-{% endblock stylesheets %}
-
-{% block body_class %}login{% endblock body_class %}
-
+{{ block.super }}
+<!-- Animate.css -->
+<link href="/static/vendors/animate.css/animate.min.css" rel="stylesheet" />
+{% endblock stylesheets %} {% block body_class %}login{% endblock body_class %}
 {% block body %}
 
-  <div>
+<div>
+  <div class="login_wrapper">
+    <div class="animate form login_form">
+      <section class="login_content">
+        <form action="/login/" method="post">
+          {% csrf_token %}
+          <h1>Dashboard Login</h1>
+          <div>
+            {% if email %}
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              placeholder="Email"
+              value="{{ email }}"
+              required=""
+            />
+            {% else %}
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              placeholder="Email"
+              required=""
+            />
+            {% endif %}
+          </div>
+          <div>
+            {% if passw %}
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Password"
+              value="{{ passw }}"
+              required=""
+            />
+            {% else %}
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Password"
+              required=""
+            />
+            {% endif %}
+          </div>
+          <div>
+            <input
+              type="submit"
+              value="Log in"
+              class="btn btn-default submit"
+            />
+            <a class="reset_pass" href="#">Lost your password?</a>
+          </div>
 
-    <div class="login_wrapper">
-      <div class="animate form login_form">
-        <section class="login_content">
-          <form action="/login/" method="post">
-            {% csrf_token %}
-            <h1>Dashboard Login</h1>
-            <div>
-                {% if email %}
-                  <input type="email" name="email" class="form-control" placeholder="Email" value="{{email}}" required="" />
-                {% else %}
-                  <input type="email" name="email" class="form-control" placeholder="Email" required="" />
-                {% endif %}
-            </div>
-            <div>
-                {% if passw %}
-                <input type="password" name="password" class="form-control" placeholder="Password" value="{{passw}}"  required="" />
-                {% else %}
-                  <input type="password" name="password" class="form-control" placeholder="Password" required="" />
-                {% endif %}
-            </div>
-            <div>
-              <input type="submit" value="Log in" class="btn btn-default submit" />
-              <a class="reset_pass" href="#">Lost your password?</a>
-            </div>
-
-            <div class="clearfix"></div>
-            {% if messg %}
-            <div class="alert alert-danger fade in" role="alert" style="
+          <div class="clearfix"></div>
+          {% if messg %}
+          <div
+            class="alert alert-danger fade in"
+            role="alert"
+            style="
             margin-top: 5px;
             text-shadow: 0 0px 0 #fff;
-        ">
-                <strong>Error:</strong> {{ messg }}
-              </div>
-              {% endif %}
+        "
+          >
+            <strong>Error:</strong> {{ messg }}
+          </div>
+          {% endif %}
 
-            <div class="separator">
-              <p class="change_link">New to site?
-                <a href="{% url 'signUp' %}" class="to_register"> Create Account </a>
-              </p>
+          <div class="separator">
+            <p class="change_link">
+              New to site?
+              <a href="{% url 'signUp' %}" class="to_register">
+                Create Account
+              </a>
+            </p>
 
-              <div class="clearfix"></div>
-              <br />
+            <div class="clearfix"></div>
+            <br />
 
-              <div>
-                <h1><i class="fa"></i> Vibe</h1>
-                <p>Vibe Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
-                <p><a href="#">Terms of Service</a></p>
-              </div>
+            <div>
+              <h1><i class="fa"></i> Bite Club</h1>
+              <p>BiteClub Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
+              <p><a href="#">Terms of Service</a></p>
             </div>
-          </form>
-        </section>
-      </div>
-
+          </div>
+        </form>
+      </section>
     </div>
   </div>
+</div>
 {% endblock body %}
-

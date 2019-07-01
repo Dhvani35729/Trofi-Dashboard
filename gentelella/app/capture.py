@@ -39,7 +39,8 @@ def run_hourly(hour_id):
         all_orders = db.collection(u'orders').where(
             u'placed_at', u'>=', today).where(
             u'hour_id', u'==', hour_id).where(
-            u'restaurant_id', u'==', restaurant.id).stream()
+            u'restaurant_id', u'==', restaurant.id).where(
+            u'status_ready', u'==', True).stream()
 
         for order in all_orders:
             order_ref = db.collection("orders").document(order.id)
@@ -49,7 +50,7 @@ def run_hourly(hour_id):
             print("Working on order: " + str(order_data["order_number"]))
 
             order_ref.update(
-                {u'final_discount': final_discount, "final_total": final_total})
+                {u'final_discount': final_discount, "final_total": final_total, "current_order": False})
             try:
                 charge = stripe.Charge.capture(
                     order_data["charge_id"], amount=final_total)

@@ -1033,6 +1033,15 @@ function init_history_table(){
 
 
 $(document).ready(function() {
+    console.log("here")
+    if ( location.href.includes("signup") ) {
+        $("#signUp").click(function() {
+            if($('input[name=fname]').val() != "" && $('input[name=email]').val() != "" && $('input[name=trofi_code]').val() != "" && $('input[name=password]').val() != "" && $('input[name=email]').val().includes("@") && $('input[name=email]').val().indexOf("@") != $('input[name=email]').val().length-1){
+                loader = show_loading();
+            }
+          });
+          return
+    }
 
     var db = firebase.firestore();
     const uid = $('#uid').val()

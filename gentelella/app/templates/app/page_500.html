@@ -1,34 +1,37 @@
-{% extends "app/base_site.html" %}
-
-{% block title %} Error 500 {% endblock title %}
-
-{% block stylesheets %}
-  {{ block.super }}
-{% endblock stylesheets %}
-
-{% block sidebar %}{% endblock sidebar %}
-
-{% block top_navigation %}{% endblock top_navigation %}
-
-{% block content %}
-  <div class="col-md-12">
-    <div class="col-middle">
-      <div class="text-center text-center">
-        <h1 class="error-number">500</h1>
-        <h2>Internal Server Error</h2>
-        <p>We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing. <a href="mailto:software.wbc@gmail.com">Report this?</a></p>
-        <button type="submit" onclick="window.history.back();" class="btn btn-primary">Go Back</button>
-        <button type="submit" onclick="location.href = '/'" class="btn btn-default">Go Home</button>
-        <p></p>
-        <p>Vibe Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
-        <p><a href="#">Terms of Service</a></p>
-      </div>
+{% extends "app/base_site.html" %} {% block title %} Error 500 {% endblock title%} {% block stylesheets %}
+{{ block.super }}
+{% endblock stylesheets %} {% block sidebar %}{% endblock sidebar %}
+{% block top_navigation %}{% endblock top_navigation %} {% block content %}
+<div class="col-md-12">
+  <div class="col-middle">
+    <div class="text-center text-center">
+      <h1 class="error-number">500</h1>
+      <h2>Internal Server Error</h2>
+      <p>
+        We track these errors automatically, but if the problem persists feel
+        free to contact us. In the meantime, try refreshing.
+        <a href="mailto:software.wbc@gmail.com">Report this?</a>
+      </p>
+      <button
+        type="submit"
+        onclick="window.history.back();"
+        class="btn btn-primary"
+      >
+        Go Back
+      </button>
+      <button
+        type="submit"
+        onclick="location.href = '/'"
+        class="btn btn-default"
+      >
+        Go Home
+      </button>
+      <p></p>
+      <p>BiteClub Dashboard v1.0.0 - Copyright 2019 WBC & LETAP</p>
+      <p><a href="#">Terms of Service</a></p>
     </div>
   </div>
-{% endblock content %}
-
-{% block footer %}{% endblock footer %}
-
-{% block javascripts %}
-  {{ block.super }}
+</div>
+{% endblock content %} {% block footer %}{% endblock footer %} {% block javascripts %}
+{{ block.super }}
 {% endblock javascripts %}

@@ -1,7 +1,16 @@
 from config import db
 import json
 
-res_public_id = "trofi-res-trofi-code"
+res_public_id = "trofi-res-test-123k"
+
+
+def fix_hours():
+    all_hours = db.collection(u'restaurants').document(
+        res_public_id).collection(u'hours').stream()
+    for hour in all_hours:
+        hour_ref = db.collection(u'restaurants').document(
+            res_public_id).collection(u'hours').document(hour.id)
+        hour_ref.update({"is_active": True})
 
 
 def fix_menu():
@@ -25,7 +34,8 @@ def fix_menu():
 
 def main():
     # load menu
-    fix_menu()
+    # fix_menu()
+    fix_hours()
     # print("Opening file...")
     # with open('shawerma_plus_menu.txt', 'r') as menu:
     #     print("Parsing file as JSON...")

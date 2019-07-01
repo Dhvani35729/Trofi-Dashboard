@@ -72,8 +72,6 @@ def post_user_change_default_card(db, user_private_id, body):
         user_public_id).collection(u'private').document(user_private_id)
 
     user_private_data = user_private_ref.get().to_dict()
-    import pdb
-    pdb.set_trace()
     if user_private_data["stripe_id"] == "":
         return user_not_found(user_private_id)
     else:
@@ -102,8 +100,6 @@ def post_user_add_card(db, user_private_id, body):
         user_public_id).collection(u'private').document(user_private_id)
 
     user_private_data = user_private_ref.get().to_dict()
-    import pdb
-    pdb.set_trace()
     if user_private_data["stripe_id"] == "":
         stripe_user = stripe.Customer.create(
             email=user.email,
@@ -133,7 +129,6 @@ def post_user_order(db, user_private_id, body):
         return user_not_found(user_private_id)
 
     user_public_id = get_user_public_id(user_private_id)
-
     # CHECK IF USER HAS ID
     user_private_ref = db.collection(u'users').document(
         user_public_id).collection(u'private').document(user_private_id)
@@ -180,6 +175,12 @@ def post_user_order(db, user_private_id, body):
         return
 
     try:
+        current_order_stream = db.collection(u'orders').where(
+            u"user", u"==", user_private_id).where(u"current_order", u"==", True).stream()
+        for current_order in current_order_stream:
+            current_order_ref = db.collection(
+                u'orders').document(current_order.id)
+            current_order_ref.update({"current_order": False})
         orders_ref = db.collection(u'orders').document()
         body['order']["order_number"] = orders_ref.id[-7:]
         orders_ref.set(body['order'])

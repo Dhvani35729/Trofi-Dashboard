@@ -38,14 +38,16 @@ def run_nightly():
             hour_ref.update({u'discounts': new_discounts})
 
 
-# run_nightly()
-def job():
-    run_nightly()
+run_nightly()
 
 
-scheduler = SafeScheduler()
-scheduler.every().day.at('23:59').do(job)
+# def job():
+#     run_nightly()
 
-while True:
-    scheduler.run_pending()
-    time.sleep(1)
+
+# scheduler = SafeScheduler()
+# scheduler.every().day.at('23:59').do(job)
+
+# while True:
+#     scheduler.run_pending()
+#     time.sleep(1)
