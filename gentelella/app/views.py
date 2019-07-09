@@ -18,7 +18,8 @@ from .api.base import (
     api_restaurants_hour,
     api_restaurant_hour,
     api_restaurant_menu,
-    api_others
+    api_others,
+    api_auth,
 )
 
 # Page Views

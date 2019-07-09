@@ -27,8 +27,8 @@ DEBUG = True
 # ADMIN_ENABLED = False
 LOCAL_BUILD = True
 
-ALLOWED_HOSTS = ['biteclub-f12a1.appspot.com', 'localhost', 
-'dashboard.uwbiteclub.com']
+ALLOWED_HOSTS = ['biteclub-f12a1.appspot.com', 'localhost',
+                 'dashboard.uwbiteclub.com']
 
 
 # Application definition

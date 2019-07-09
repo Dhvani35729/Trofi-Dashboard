@@ -38,6 +38,8 @@ urlpatterns = [
             views.api_user_card_default, name='apiUserCardDefault'),
     re_path(r'api/users/(?P<user_private_id>\w+)/card/new$',
             views.api_user_add_card, name='apiUserAddCard'),
+    re_path(r'api/users/(?P<user_private_id>\w+)/auth$',
+            views.api_auth, name='apiUserAuth'),
     re_path(r'api/orders/$',
             views.api_orders, name='apiOrders'),
     re_path(r'api/orders/(?P<order_id>\w+)/$',

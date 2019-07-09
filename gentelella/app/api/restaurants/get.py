@@ -5,7 +5,8 @@ from ...constants import DISCOUNT_INCREMENT
 def get_all_restaurants_with_hours(db, active=True):
     res_ref = db.collection(u'restaurants').where(
         u'is_active', u'==', True).get()
-
+    # import pdb
+    # pdb.set_trace()
     all_hours = []
 
     for i in range(24):

@@ -35,6 +35,7 @@ from .users.get import (
     get_user_current_order,
     get_user_default_card,
     get_user_cards,
+    get_auth,
 )
 from .users.post import (
     post_user_order,
@@ -49,12 +50,20 @@ from .other.update import (
 
 # TODO: Check out django_rest_framework
 # TODO: Catch proper firebase exceptions
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 def api_app_maint(request):
     if request.method == "GET":
         return get_app_maint(db)
     else:
+        return error_500(request, None)
+
+
+def api_auth(request, user_private_id):
+    if request.method == "GET":
+        return get_auth(db, user_private_id)
+    if request.method == "POST":
         return error_500(request, None)
 
 
@@ -67,12 +76,12 @@ def api_user_add_card(request, user_private_id):
         return post_user_add_card(db, user_private_id, body)
 
 
+@csrf_exempt
 def api_user_cards(request, user_private_id):
     if request.method == "GET":
         return get_user_cards(db, user_private_id)
 
 
-@csrf_exempt
 def api_user_card_default(request, user_private_id):
     if request.method == "GET":
         return get_user_default_card(db, user_private_id)

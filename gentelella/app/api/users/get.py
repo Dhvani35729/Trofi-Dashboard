@@ -2,6 +2,8 @@ from ..utils import get_user_public_id
 from django.http import JsonResponse
 from firebase_admin import auth
 import stripe
+import datetime
+from google.cloud.firestore_v1 import Increment
 
 stripe.api_key = "sk_test_WZJim1CVcSc7WBSKjdRDxJGS"
 
@@ -44,6 +46,66 @@ def cards_not_found(user_id):
             "message": "No cards found for the specified user",
         }
     })
+
+
+def general_error():
+    return JsonResponse({
+        "error": {
+            "code": "GeneralError",
+            "message": "A problem occurred...",
+        }
+    })
+
+
+def get_auth(db, user_private_id):
+    try:
+        user = auth.get_user(user_private_id)
+    except:
+        return user_not_found(user_private_id)
+
+    user_public_id = get_user_public_id(user_private_id)
+
+    now = datetime.datetime.now()
+
+    if user_public_id:
+        user_private_ref = db.collection(u'users').document(
+            user_public_id).collection(u'private').document(user_private_id)
+        user_private_ref.update({
+            "num_opened": Increment(1),
+            "last_opened": now
+        })
+        return JsonResponse({"success": {"user_public_id": user_public_id}})
+    else:
+        # new user
+        try:
+            user_ref = db.collection(u'users').document()
+            public_id = user_ref.id
+            user_private_ref = user_ref.collection(
+                u'private').document(user_private_id)
+            batch = db.batch()
+
+            batch.set(user_ref, {"name": user.display_name, "friends": []})
+            batch.set(user_private_ref, {
+                "avg_time": 0.0,
+                "num_opened": 1,
+                "date_joined": now,
+                "last_opened": now,
+                "default_card": -1,
+                "stripe_id": ""
+            })
+            user_map_ref = db.collection(u'general').document(
+                u'user-verification').collection(user_private_id).document(u'map')
+            batch.set(user_map_ref, {"public_id": public_id})
+
+            general_ref = db.collection('general').document('maint')
+            batch.update(general_ref, {"total_users": Increment(1)})
+
+            batch.commit()
+            return JsonResponse({"success": {"user_public_id": public_id}})
+        except:
+            return general_error()
+
+    pass
 
 
 def get_user_cards(db, user_private_id):
