@@ -4,6 +4,8 @@ from firebase_admin import auth
 import stripe
 import datetime
 from google.cloud.firestore_v1 import Increment
+from ..restaurants.restaurant.get import get_restaurant_with_hour
+import json
 
 stripe.api_key = "sk_test_WZJim1CVcSc7WBSKjdRDxJGS"
 
@@ -192,7 +194,10 @@ def get_user_current_order(db, user_private_id):
 
     for order in order_data:
         order_data = order.to_dict()
+        hour_response = get_restaurant_with_hour(
+            db, order_data["restaurant_id"], str(order_data["hour_id"]))
+        hour_data = json.loads(hour_response.content)
 
-        return JsonResponse(order_data)
+        return JsonResponse({"order_info": order_data, "hour_info": hour_data})
 
     return order_not_found(user_private_id)
