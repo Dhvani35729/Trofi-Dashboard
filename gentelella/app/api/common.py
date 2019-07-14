@@ -11,7 +11,17 @@ def api_success():
     return JsonResponse(response)
 
 
+def generic_api_error():
+    return JsonResponse({
+        "error": {
+            "code": "TrofiAPIError",
+            "message": "Unknown error.",
+        }
+    })
+
 # TODO: Show detailed error message
+
+
 def api_db_error(e):
     err_msg = ""
     if e is not None:

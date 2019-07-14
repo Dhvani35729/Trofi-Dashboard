@@ -20,6 +20,7 @@ from .api.base import (
     api_restaurant_menu,
     api_others,
     api_auth,
+    api_biteclub_restaurants,
 )
 
 # Page Views

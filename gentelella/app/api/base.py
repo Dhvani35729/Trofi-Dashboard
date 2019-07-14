@@ -47,10 +47,18 @@ from .other.update import (
     update_ccf_percentage,
     update_ccf_constant,
 )
+from .biteclub.get import get_all_restaurants
 
 # TODO: Check out django_rest_framework
 # TODO: Catch proper firebase exceptions
 from django.views.decorators.csrf import ensure_csrf_cookie
+
+
+def api_biteclub_restaurants(request):
+    if request.method == "GET":
+        return get_all_restaurants()
+    else:
+        return error_500(request, None)
 
 
 def api_app_maint(request):
